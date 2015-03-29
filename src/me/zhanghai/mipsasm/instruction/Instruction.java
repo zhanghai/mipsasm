@@ -5,41 +5,38 @@
 
 package me.zhanghai.mipsasm.instruction;
 
-import me.zhanghai.mipsasm.util.BitArray;
+import java.util.Arrays;
 
-public abstract class Instruction {
-
-    public enum Type {
-        Register,
-        Immediate,
-        OffsetBase,
-        Jump,
-    }
+public class Instruction {
 
     private Operation operation;
+    private OperandInstance[] operands;
+    private InstructionCompiler compiler;
 
-    public Instruction(Operation operation) {
+    public Instruction(Operation operation, OperandInstance[] operands, InstructionCompiler compiler) {
         this.operation = operation;
-    }
-
-    public Instruction of(Type type, Operation operation, Operand[] operands) {
-        switch (type) {
-            case Register:
-                return RegisterInstruction.of(operation, operands);
-            case Immediate:
-                return ImmediateInstruction.of(operation, operands);
-            case OffsetBase:
-                return OffsetBaseInstruction.of(operation, operands);
-            case Jump:
-                return JumpInstruction.of(operation, operands);
-            default:
-                throw new IllegalArgumentException("Unknown type: " + type);
-        }
+        this.operands = operands;
+        this.compiler = compiler;
     }
 
     public Operation getOperation() {
         return operation;
     }
 
-    public abstract BitArray getBits();
+    public OperandInstance[] getOperands() {
+        return operands;
+    }
+
+    public Operand getOperand(String name) {
+        for (OperandInstance operandInstance : operands) {
+            if (operandInstance.getName().equals(name)) {
+                return operandInstance.getOperand();
+            }
+        }
+        throw new OperandNotFoundException("Operand name: " + name + ", operands: " + Arrays.toString(operands));
+    }
+
+    public InstructionCompiler getCompiler() {
+        return compiler;
+    }
 }

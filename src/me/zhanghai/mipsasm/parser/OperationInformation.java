@@ -5,36 +5,42 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.Instruction.Type;
-import me.zhanghai.mipsasm.instruction.Operation;
-import me.zhanghai.mipsasm.instruction.ShiftAmount;
-import me.zhanghai.mipsasm.parser.OperandFormat.OperandType;
+import me.zhanghai.mipsasm.instruction.*;
 
 public enum OperationInformation {
 
-    ADD(Operation.ADD, Type.Register, new OperandFormat[] {
-            new OperandFormat(OperandType.REGISTER),
-            new OperandFormat(OperandType.REGISTER),
-            new OperandFormat(OperandType.REGISTER),
-            new OperandFormat(OperandType.SHIFT_AMOUNT, ShiftAmount.of(0b0))
-    }),
-    ADDI(Operation.ADDI, Type.Immediate, new OperandFormat[] {
-            new OperandFormat(OperandType.REGISTER),
-            new OperandFormat(OperandType.REGISTER),
-            new OperandFormat(OperandType.IMMEDIATE)
-    }),
-    ADDIU(0b001001),
-    ADDU(0b000000, 0b100001),
-    AND(0b000000, 0b100100),
-    ANDI(0b001100),
-    BEQ(0b000100),
-    BGEZ(0b000001),
-    BGEZAL(0b000001),
-    BGTZ(0b000111),
-    BLEZ(0b000110),
-    BLTZ(0b000001),
-    BLTZAL(0b000001),
-    BNE(0b000101),
+    ADD(Operation.ADD, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
+    ADDI(Operation.ADDI, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE),
+    ADDIU(Operation.ADDIU, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE),
+    ADDU(Operation.ADDU, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
+    AND(Operation.AND, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
+    ANDI(Operation.ANDI, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE),
+    BEQ(Operation.BEQ, OperandListPrototypes.SOURCE_TARGET_OFFSET, InstructionCompilers.SOURCE_TARGET_OFFSET),
+    BEQL(Operation.BEQL, OperandListPrototypes.SOURCE_TARGET_OFFSET, InstructionCompilers.SOURCE_TARGET_OFFSET),
+    BGEZ(Operation.BGEZ, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00001))),
+    BGEZAL(Operation.BGEZAL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b10001))),
+    BGEZALL(Operation.BGEZALL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b10011))),
+    BGEZL(Operation.BGEZL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00011))),
+    BGTZ(Operation.BGTZ, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00000))),
+    BGTZL(Operation.BGTZL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00000))),
+    BLEZ(Operation.BLEZ, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00000))),
+    BLEZL(Operation.BLEZL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00000))),
+    BLTZ(Operation.BLTZ, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00000))),
+    BLTZAL(Operation.BLTZAL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b10000))),
+    BLTZALL(Operation.BLTZALL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b10010))),
+    BLTZL(Operation.BLTZL, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_OFFSET(Register.of(0b00010))),
+    BNE(Operation.BNE, OperandListPrototypes.SOURCE_TARGET_OFFSET, InstructionCompilers.SOURCE_TARGET_OFFSET),
+    BNEL(Operation.BNEL, OperandListPrototypes.SOURCE_TARGET_OFFSET, InstructionCompilers.SOURCE_TARGET_OFFSET),
+    COP0(Operation.COP0, OperandListPrototypes.COPROCESSOR_FUNCTION, InstructionCompilers.COPROCESSOR_FUNCTION),
+    COP1(Operation.COP1, OperandListPrototypes.COPROCESSOR_FUNCTION, InstructionCompilers.COPROCESSOR_FUNCTION),
+    COP2(Operation.COP2, OperandListPrototypes.COPROCESSOR_FUNCTION, InstructionCompilers.COPROCESSOR_FUNCTION),
+    COP3(Operation.COP3, OperandListPrototypes.COPROCESSOR_FUNCTION, InstructionCompilers.COPROCESSOR_FUNCTION),
+    DADD(Operation.DADD, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
+    DADDI(Operation.DADDI, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE),
+    DADDIU(Operation.DADDIU, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE),
+    DADDU(Operation.DADDU, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
+    DDIV(Operation.DDIV, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_TARGET),
+    DDIVU(Operation.DDIVU, OperandListPrototypes.SOURCE_OFFSET, InstructionCompilers.SOURCE_TARGET),
     DIV(0b000000, 0b011010),
     DIVU(0b000000, 0b011011),
     J(0b000010),
@@ -68,12 +74,13 @@ public enum OperationInformation {
     XORI(0b001110);
 
     private Operation operation;
-    private Type type;
-    private OperandFormat[] operandFormats;
+    private OperandPrototype[] operandListPrototype;
+    private InstructionCompiler instructionCompiler;
 
-    OperationInformation(Operation operation, Type type, OperandFormat[] operandFormats) {
+    OperationInformation(Operation operation, OperandPrototype[] operandListPrototype,
+                         InstructionCompiler instructionCompiler) {
         this.operation = operation;
-        this.type = type;
-        this.operandFormats = operandFormats;
+        this.operandListPrototype = operandListPrototype;
+        this.instructionCompiler = instructionCompiler;
     }
 }

@@ -11,6 +11,8 @@ public class ShiftAmount implements Operand, BitProvider {
 
     private static final int SHIFT_AMOUNT_LENGTH = 5;
 
+    public static final ShiftAmount ZERO = ShiftAmount.of(0b00000);
+
     private BitArray value;
 
     private ShiftAmount(BitArray value) {

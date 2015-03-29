@@ -6,28 +6,29 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.instruction.Operand;
+import me.zhanghai.mipsasm.instruction.OperandPrototype;
 
 public class OperandsParser {
 
     private OperandsParser() {}
 
-    public static Operand[] parse(String[] operandStrings, OperandFormat[] operandFormats) {
+    public static Operand[] parse(String[] operandStrings, OperandPrototype[] operandPrototypes) {
 
-        if (operandStrings.length != operandFormats.length) {
-            throw new OperandCountMismatchException("Expected: " + operandFormats.length + ", found: "
+        if (operandStrings.length != operandPrototypes.length) {
+            throw new OperandCountMismatchException("Expected: " + operandPrototypes.length + ", found: "
                     + operandStrings.length);
         }
 
-        int operandCount = operandFormats.length;
+        int operandCount = operandPrototypes.length;
         Operand[] operands = new Operand[operandCount];
         for (int i = 0; i < operandCount; ++i) {
-            OperandFormat operandFormat = operandFormats[i];
-            if (operandFormat.isPreset()) {
-                operands[i] = operandFormat.getPreset();
+            OperandPrototype operandPrototype = operandPrototypes[i];
+            if (operandPrototype.isPreset()) {
+                operands[i] = operandPrototype.getPreset();
             } else {
                 String operandString = operandStrings[i];
                 Operand operand;
-                switch (operandFormat.getType()) {
+                switch (operandPrototype.getType()) {
                     case REGISTER:
                         operand = RegisterParser.parse(operandString);
                         break;
@@ -41,7 +42,7 @@ public class OperandsParser {
                         operand = ShiftAmountParser.parse(operandString);
                         break;
                     default:
-                        throw new IllegalArgumentException("Unknown operand type: " + operandFormat.getType());
+                        throw new IllegalArgumentException("Unknown operand type: " + operandPrototype.getType());
                 }
                 operands[i] = operand;
             }

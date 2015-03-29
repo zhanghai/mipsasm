@@ -44,6 +44,10 @@ public enum Register implements Operand, BitProvider {
 
     private static final int REGISTER_LENGTH = 5;
 
+    public static Register of(int index) {
+        return values()[index];
+    }
+
     public BitArray getBits() {
         return BitArray.of(ordinal(), REGISTER_LENGTH);
     }

@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class CoprocessorFunction implements Compilable {
+public class CoprocessorFunction implements Operand, Compilable {
 
     private static final int COPROCESSOR_PROCESSOR_LENGTH = 26;
 

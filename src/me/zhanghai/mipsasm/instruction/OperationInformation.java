@@ -3,9 +3,10 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.parser;
+package me.zhanghai.mipsasm.instruction;
 
-import me.zhanghai.mipsasm.instruction.*;
+import java.util.EnumMap;
+import java.util.Map;
 
 public enum OperationInformation {
 
@@ -89,7 +90,7 @@ public enum OperationInformation {
     MULT(Operation.MULT, OperandListPrototypes.SOURCE_TARGET, InstructionCompilers.SOURCE_TARGET),
     MULTU(Operation.MULTU, OperandListPrototypes.SOURCE_TARGET, InstructionCompilers.SOURCE_TARGET),
     NOR(Operation.NOR, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
-    //TODO: NOOP(0b000000, 0b000000),
+    //TODO: NOOP,
     OR(Operation.OR, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
     ORI(Operation.ORI, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE),
     PREF(Operation.PREF, OperandListPrototypes.HINT_OFFSET_BASE, InstructionCompilers.HINT_OFFSET_BASE),
@@ -120,9 +121,16 @@ public enum OperationInformation {
     SWC3(Operation.SWC3, OperandListPrototypes.TARGET_OFFSET_BASE, InstructionCompilers.TARGET_OFFSET_BASE),
     SWL(Operation.SWL, OperandListPrototypes.TARGET_OFFSET_BASE, InstructionCompilers.TARGET_OFFSET_BASE),
     SWR(Operation.SWR, OperandListPrototypes.TARGET_OFFSET_BASE, InstructionCompilers.TARGET_OFFSET_BASE),
-    // TODO: SYSCALL(0b000000, 0b001100),
+    // TODO: SYSCALL,
     XOR(Operation.XOR, OperandListPrototypes.DESTINATION_SOURCE_TARGET, InstructionCompilers.DESTINATION_SOURCE_TARGET),
     XORI(Operation.XORI, OperandListPrototypes.TARGET_SOURCE_IMMEDIATE, InstructionCompilers.TARGET_SOURCE_IMMEDIATE);
+
+    private static final Map<Operation, OperationInformation> OPERATION_MAP = new EnumMap<>(Operation.class);
+    static {
+        for (OperationInformation operationInformation : values()) {
+            OPERATION_MAP.put(operationInformation.getOperation(), operationInformation);
+        }
+    }
 
     private Operation operation;
     private OperandPrototype[] operandListPrototype;
@@ -133,5 +141,25 @@ public enum OperationInformation {
         this.operation = operation;
         this.operandListPrototype = operandListPrototype;
         this.instructionCompiler = instructionCompiler;
+    }
+
+    public static OperationInformation ofOperation(Operation operation) {
+        OperationInformation operationInformation = OPERATION_MAP.get(operation);
+        if (operationInformation == null) {
+            throw new IllegalArgumentException("Operation not found: " + operation);
+        }
+        return operationInformation;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public OperandPrototype[] getOperandListPrototype() {
+        return operandListPrototype;
+    }
+
+    public InstructionCompiler getInstructionCompiler() {
+        return instructionCompiler;
     }
 }

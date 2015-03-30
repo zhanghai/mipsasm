@@ -10,30 +10,35 @@ import java.util.Arrays;
 public class Instruction {
 
     private Operation operation;
-    private OperandInstance[] operands;
+    private OperandInstance[] operandListInstance;
     private InstructionCompiler compiler;
 
-    public Instruction(Operation operation, OperandInstance[] operands, InstructionCompiler compiler) {
+    private Instruction(Operation operation, OperandInstance[] operandListInstance, InstructionCompiler compiler) {
         this.operation = operation;
-        this.operands = operands;
+        this.operandListInstance = operandListInstance;
         this.compiler = compiler;
+    }
+
+    public static Instruction of(Operation operation, OperandInstance[] operandListInstance, InstructionCompiler compiler) {
+        return new Instruction(operation, operandListInstance, compiler);
     }
 
     public Operation getOperation() {
         return operation;
     }
 
-    public OperandInstance[] getOperands() {
-        return operands;
+    public OperandInstance[] getOperandListInstance() {
+        return operandListInstance;
     }
 
     public Operand getOperand(String name) {
-        for (OperandInstance operandInstance : operands) {
+        for (OperandInstance operandInstance : operandListInstance) {
             if (operandInstance.getName().equals(name)) {
                 return operandInstance.getOperand();
             }
         }
-        throw new OperandNotFoundException("Operand name: " + name + ", operands: " + Arrays.toString(operands));
+        throw new OperandNotFoundException("Operand name: " + name + ", operandListInstance: "
+                + Arrays.toString(operandListInstance));
     }
 
     public InstructionCompiler getCompiler() {

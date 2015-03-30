@@ -6,7 +6,9 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.instruction.Instruction;
+import me.zhanghai.mipsasm.instruction.OperandInstance;
 import me.zhanghai.mipsasm.instruction.Operation;
+import me.zhanghai.mipsasm.instruction.OperationInformation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +16,7 @@ import java.util.regex.Pattern;
 public class InstructionParser {
 
     private static final Pattern INSTRUCTION_PATTERN = Pattern.compile(
-            "([a-zA-Z]+)(?:\\s+([0-9a-zA-Z$]+)(?:\\s*,\\s*([0-9a-zA-Z$]+))*)?");
+            "([0-9a-zA-Z]+)(?:\\s+([0-9a-zA-Z$_]+)(?:\\s*,\\s*([0-9a-zA-Z$_]+))*)?");
 
     private static final ThreadLocal<Matcher> INSTRUCTION_MATCHER = new ThreadLocal<Matcher>() {
         @Override
@@ -47,14 +49,16 @@ public class InstructionParser {
             throw new NoSuchOperationException("Operation: " + operationName);
         }
 
+        OperationInformation operationInformation = OperationInformation.ofOperation(operation);
+
         int operandCount = matcher.groupCount() - 1;
-        String[] operands = new String[operandCount];
+        String[] operandStringList = new String[operandCount];
         for (int i = 0; i < operandCount; ++i) {
-            operands[i] = matcher.group(i + 2);
+            operandStringList[i] = matcher.group(i + 2);
         }
+        OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
+                operationInformation.getOperandListPrototype());
 
-
-        // TODO:
-        return null;
+        return Instruction.of(operation, operandInstances, operationInformation.getInstructionCompiler());
     }
 }

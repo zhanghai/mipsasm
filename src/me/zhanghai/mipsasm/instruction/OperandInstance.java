@@ -9,10 +9,14 @@ public class OperandInstance extends OperandPrototype {
 
     private Operand operand;
 
-    public OperandInstance(String name, OperandType type, Operand operand) {
+    private OperandInstance(String name, OperandType type, Operand operand) {
         super(name, type);
 
         this.operand = operand;
+    }
+
+    public static OperandInstance fromPrototype(OperandPrototype operandPrototype, Operand operand) {
+        return new OperandInstance(operandPrototype.getName(), operandPrototype.getType(), operand);
     }
 
     public Operand getOperand() {

@@ -14,13 +14,14 @@ public class InstructionCompilers {
     public static final InstructionCompiler DESTINATION_SOURCE_TARGET = new InstructionCompiler() {
         @Override
         public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
             return new BitArray[] {BitArray.of(
-                    instruction.getOperation().getCode(),
-                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).getBits(),
-                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).getBits(),
-                    ((Register)instruction.getOperand(OperandPrototypes.DESTINATION.getName())).getBits(),
-                    ShiftAmount.ZERO.getBits(),
-                    instruction.getOperation().getFunction())};
+                    operation.getCode(),
+                    ((Register) instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION.getName())).compile(),
+                    ShiftAmount.ZERO.compile(),
+                    operation.getFunction())};
         }
     };
 
@@ -29,9 +30,9 @@ public class InstructionCompilers {
         public BitArray[] compile(Instruction instruction) {
             return new BitArray[] {BitArray.of(
                     instruction.getOperation().getCode(),
-                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).getBits(),
-                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).getBits(),
-                    ((Immediate)instruction.getOperand(OperandPrototypes.IMMEDIATE.getName())).getBits()
+                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    ((Immediate)instruction.getOperand(OperandPrototypes.IMMEDIATE.getName())).compile()
             )};
         }
     };
@@ -41,9 +42,9 @@ public class InstructionCompilers {
         public BitArray[] compile(Instruction instruction) {
             return new BitArray[] {BitArray.of(
                     instruction.getOperation().getCode(),
-                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).getBits(),
-                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).getBits(),
-                    ((Immediate)instruction.getOperand(OperandPrototypes.OFFSET.getName())).getBits()
+                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    ((Immediate)instruction.getOperand(OperandPrototypes.OFFSET.getName())).compile()
             )};
         }
     };
@@ -54,9 +55,9 @@ public class InstructionCompilers {
             public BitArray[] compile(Instruction instruction) {
                 return new BitArray[]{BitArray.of(
                         instruction.getOperation().getCode(),
-                        ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).getBits(),
-                        destination.getBits(),
-                        ((Immediate)instruction.getOperand(OperandPrototypes.OFFSET.getName())).getBits()
+                        ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                        destination.compile(),
+                        ((Immediate)instruction.getOperand(OperandPrototypes.OFFSET.getName())).compile()
                 )};
             }
         };
@@ -67,7 +68,7 @@ public class InstructionCompilers {
         public BitArray[] compile(Instruction instruction) {
             return new BitArray[] {BitArray.of(
                     instruction.getOperation().getCode(),
-                    ((CoprocessorFunction)instruction.getOperand(OperandPrototypes.COPROCESSOR_FUNCTION.getName())).getBits()
+                    ((CoprocessorFunction)instruction.getOperand(OperandPrototypes.COPROCESSOR_FUNCTION.getName())).compile()
             )};
         }
     };
@@ -75,13 +76,137 @@ public class InstructionCompilers {
     public static final InstructionCompiler SOURCE_TARGET = new InstructionCompiler() {
         @Override
         public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
+            return new BitArray[] {BitArray.of(
+                    operation.getCode(),
+                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    Register.ZERO.compile(),
+                    ShiftAmount.ZERO.compile(),
+                    operation.getFunction()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler DESTINATION_TARGET_SHIFT_AMOUNT = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
+            return new BitArray[] {BitArray.of(
+                    operation.getCode(),
+                    Register.ZERO.compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION.getName())).compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    ((ShiftAmount) instruction.getOperand(OperandPrototypes.SHIFT_AMOUNT.getName())).compile(),
+                    operation.getFunction()
+            )};
+        }
+    };
+
+
+    public static final InstructionCompiler DESTINATION_TARGET_SOURCE = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
+            return new BitArray[] {BitArray.of(
+                    operation.getCode(),
+                    ((Register) instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION.getName())).compile(),
+                    ShiftAmount.ZERO.compile(),
+                    operation.getFunction())};
+        }
+    };
+
+    public static final InstructionCompiler LABEL = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
             return new BitArray[] {BitArray.of(
                     instruction.getOperation().getCode(),
-                    ((Register)instruction.getOperand(OperandPrototypes.SOURCE.getName())).getBits(),
-                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).getBits(),
-                    Register.ZERO.getBits(),
-                    ShiftAmount.ZERO.getBits(),
-                    instruction.getOperation().getFunction()
+                    ((Label)instruction.getOperand(OperandPrototypes.LABEL.getName())).compile()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler DESTINATION_SOURCE = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
+            return new BitArray[] {BitArray.of(
+                    operation.getCode(),
+                    ((Register) instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    Register.ZERO.compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION.getName())).compile(),
+                    ShiftAmount.ZERO.compile(),
+                    operation.getFunction()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler SOURCE = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
+            return new BitArray[] {BitArray.of(
+                    operation.getCode(),
+                    ((Register) instruction.getOperand(OperandPrototypes.SOURCE.getName())).compile(),
+                    Register.ZERO.compile(),
+                    Register.ZERO.compile(),
+                    ShiftAmount.ZERO.compile(),
+                    operation.getFunction()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler TARGET_OFFSET_BASE = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            OffsetBase offsetBase = (OffsetBase)instruction.getOperand(OperandPrototypes.OFFSET_BASE.getName());
+            return new BitArray[] {BitArray.of(
+                    instruction.getOperation().getCode(),
+                    offsetBase.getBase().compile(),
+                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    offsetBase.getOffset().compile()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler TARGET_IMMEDIATE = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            return new BitArray[] {BitArray.of(
+                    instruction.getOperation().getCode(),
+                    Register.ZERO.compile(),
+                    ((Register)instruction.getOperand(OperandPrototypes.TARGET.getName())).compile(),
+                    ((Immediate)instruction.getOperand(OperandPrototypes.IMMEDIATE.getName())).compile()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler DESTINATION = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            Operation operation = instruction.getOperation();
+            return new BitArray[] {BitArray.of(
+                    operation.getCode(),
+                    Register.ZERO.compile(),
+                    Register.ZERO.compile(),
+                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION.getName())).compile(),
+                    ShiftAmount.ZERO.compile(),
+                    operation.getFunction()
+            )};
+        }
+    };
+
+    public static final InstructionCompiler HINT_OFFSET_BASE = new InstructionCompiler() {
+        @Override
+        public BitArray[] compile(Instruction instruction) {
+            OffsetBase offsetBase = (OffsetBase)instruction.getOperand(OperandPrototypes.OFFSET_BASE.getName());
+            return new BitArray[] {BitArray.of(
+                    instruction.getOperation().getCode(),
+                    offsetBase.getBase().compile(),
+                    ((Register)instruction.getOperand(OperandPrototypes.HINT.getName())).compile(),
+                    offsetBase.getOffset().compile()
             )};
         }
     };

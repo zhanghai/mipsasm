@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public interface BitProvider {
+public interface Compilable {
 
-    BitArray getBits();
+    BitArray compile();
 }

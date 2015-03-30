@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public enum Register implements Operand, BitProvider {
+public enum Register implements Operand, Compilable {
 
     ZERO,
     AT,
@@ -48,7 +48,7 @@ public enum Register implements Operand, BitProvider {
         return values()[index];
     }
 
-    public BitArray getBits() {
+    public BitArray compile() {
         return BitArray.of(ordinal(), REGISTER_LENGTH);
     }
 }

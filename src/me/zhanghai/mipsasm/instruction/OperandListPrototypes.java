@@ -38,4 +38,48 @@ public class OperandListPrototypes {
             OperandPrototypes.SOURCE,
             OperandPrototypes.TARGET
     };
+
+    public static final OperandPrototype[] DESTINATION_TARGET_SHIFT_AMOUNT = new OperandPrototype[] {
+            OperandPrototypes.DESTINATION,
+            OperandPrototypes.TARGET,
+            OperandPrototypes.SHIFT_AMOUNT
+    };
+
+    public static final OperandPrototype[] DESTINATION_TARGET_SOURCE = new OperandPrototype[] {
+            OperandPrototypes.DESTINATION,
+            OperandPrototypes.TARGET,
+            OperandPrototypes.SOURCE
+    };
+
+    public static final OperandPrototype[] LABEL = new OperandPrototype[] {
+            OperandPrototypes.LABEL
+    };
+
+    public static final OperandPrototype[] DESTINATION_SOURCE = new OperandPrototype[] {
+            OperandPrototypes.DESTINATION,
+            OperandPrototypes.SOURCE
+    };
+
+    public static final OperandPrototype[] SOURCE = new OperandPrototype[] {
+            OperandPrototypes.SOURCE
+    };
+
+    public static final OperandPrototype[] TARGET_OFFSET_BASE = new OperandPrototype[] {
+            OperandPrototypes.TARGET,
+            OperandPrototypes.OFFSET_BASE
+    };
+
+    public static final OperandPrototype[] TARGET_IMMEDIATE = new OperandPrototype[] {
+            OperandPrototypes.TARGET,
+            OperandPrototypes.IMMEDIATE
+    };
+
+    public static final OperandPrototype[] DESTINATION = new OperandPrototype[] {
+            OperandPrototypes.DESTINATION
+    };
+
+    public static final OperandPrototype[] HINT_OFFSET_BASE = new OperandPrototype[] {
+            OperandPrototypes.HINT,
+            OperandPrototypes.OFFSET_BASE
+    };
 }

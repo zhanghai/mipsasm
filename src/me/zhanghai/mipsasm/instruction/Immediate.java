@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class Immediate implements Operand, BitProvider {
+public class Immediate implements Operand, Compilable {
 
     private static final int IMMEDIATE_LENGTH = 16;
 
@@ -25,7 +25,7 @@ public class Immediate implements Operand, BitProvider {
         return new Immediate(BitArray.of(value, IMMEDIATE_LENGTH));
     }
 
-    public BitArray getBits() {
+    public BitArray compile() {
         return value;
     }
 }

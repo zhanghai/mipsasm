@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class ShiftAmount implements Operand, BitProvider {
+public class ShiftAmount implements Operand, Compilable {
 
     private static final int SHIFT_AMOUNT_LENGTH = 5;
 
@@ -27,7 +27,7 @@ public class ShiftAmount implements Operand, BitProvider {
         return new ShiftAmount(BitArray.of(value, SHIFT_AMOUNT_LENGTH));
     }
 
-    public BitArray getBits() {
+    public BitArray compile() {
         return value;
     }
 }

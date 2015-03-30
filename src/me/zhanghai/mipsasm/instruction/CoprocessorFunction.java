@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class CoprocessorFunction implements BitProvider {
+public class CoprocessorFunction implements Compilable {
 
     private static final int COPROCESSOR_PROCESSOR_LENGTH = 26;
 
@@ -25,7 +25,7 @@ public class CoprocessorFunction implements BitProvider {
         return new CoprocessorFunction(BitArray.of(value, COPROCESSOR_PROCESSOR_LENGTH));
     }
 
-    public BitArray getBits() {
+    public BitArray compile() {
         return value;
     }
 }

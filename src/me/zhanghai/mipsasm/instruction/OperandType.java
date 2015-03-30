@@ -9,6 +9,7 @@ public enum OperandType {
     REGISTER,
     IMMEDIATE,
     COPROCESSOR_FUNCTION,
-    OFFSET_BASE,
-    SHIFT_AMOUNT
+    SHIFT_AMOUNT,
+    LABEL,
+    OFFSET_BASE
 }

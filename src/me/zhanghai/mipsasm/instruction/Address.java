@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.instruction;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class Address implements BitProvider {
+public class Address implements Compilable {
 
     private static final int ADDRESS_LENGTH = 26;
 
@@ -25,7 +25,7 @@ public class Address implements BitProvider {
         return new Address(BitArray.of(value, ADDRESS_LENGTH));
     }
 
-    public BitArray getBits() {
+    public BitArray compile() {
         return value;
     }
 }

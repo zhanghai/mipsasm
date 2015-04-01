@@ -5,15 +5,15 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.Label;
+import me.zhanghai.mipsasm.assembler.TargetLabel;
 
-public class LabelParser {
+public class TargetLabelParser {
 
-    private LabelParser() {}
+    private TargetLabelParser() {}
 
-    public static Label parse(String labelString) {
+    public static TargetLabel parse(String labelString) {
         try {
-            return Label.of(labelString);
+            return TargetLabel.of(labelString);
         } catch (IllegalArgumentException e) {
             throw new InvalidOperandException("Illegal label name: " + labelString, e);
         }

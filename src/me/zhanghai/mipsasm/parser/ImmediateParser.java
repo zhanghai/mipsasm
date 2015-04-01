@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.Immediate;
+import me.zhanghai.mipsasm.assembler.Immediate;
 import me.zhanghai.mipsasm.util.IoUtils;
 
 public class ImmediateParser {

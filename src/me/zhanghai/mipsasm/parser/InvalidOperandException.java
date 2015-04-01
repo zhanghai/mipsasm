@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-public class InvalidOperandException extends IllegalFormatException {
+public class InvalidOperandException extends ParserException {
 
     public InvalidOperandException() {}
 

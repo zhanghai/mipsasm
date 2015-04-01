@@ -5,6 +5,9 @@
 
 package me.zhanghai.mipsasm.util;
 
+/**
+ * Index starts from right to left.
+ */
 public class BitArray {
 
     public static final int CAPACITY = Integer.SIZE;
@@ -14,12 +17,10 @@ public class BitArray {
     private int length;
 
     private BitArray(int value, int length) {
-        // FIXME: DEBUG
         if (lengthOf(value) > length) {
             throw new IllegalArgumentException("Value length > specified length, value: " + value + ", length: "
                     + length);
         }
-        value = value & makeBitRange(length);
         this.value = value;
         this.length = length;
     }
@@ -61,7 +62,7 @@ public class BitArray {
     }
 
     /**
-     * Obtain a {@code BitArray} with specified {@code BitArray}s concatenated together.
+     * Obtain a {@code BitArray} with specified {@code BitArray}s concatenated together, left to right.
      * @param bitArrays Values for the new {@code BitArray}
      * @return The new {@code BitArray}
      */
@@ -69,13 +70,25 @@ public class BitArray {
         int value = 0;
         int size = 0;
         for (BitArray bitArray : bitArrays) {
-            value |= bitArray.value() >>> size;
             size += bitArray.length();
-        }
-        if (size > CAPACITY) {
-            throw new IllegalArgumentException("BitArray length sum > " + CAPACITY + ": " + size);
+            if (size > CAPACITY) {
+                throw new IllegalArgumentException("BitArray length sum > " + CAPACITY + ": " + size);
+            }
+            value <<= bitArray.length();
+            value |= bitArray.value();
         }
         return new BitArray(value, size);
+    }
+
+    public static BitArray ofInt(int value, int length) {
+        int magnitude = value & makeBitRange(CAPACITY - 1);
+        if (lengthOf(magnitude) >= length) {
+            throw new IllegalArgumentException("value magnitude length >= specified length: " + length
+                    + ", with value: " + value);
+        }
+        boolean sign = (value & makeBit(CAPACITY - 1)) != 0;
+        value = sign ? makeBit(length - 1) | magnitude : magnitude;
+        return of(value, length);
     }
 
     /**
@@ -96,7 +109,7 @@ public class BitArray {
 
     public boolean get(int index) {
         checkOutOfBound(index);
-        return (value & makeBit(index)) == 1;
+        return (value & makeBit(index)) != 0;
     }
 
     public void set(int index) {
@@ -146,19 +159,23 @@ public class BitArray {
     }
 
     public void setTo(int fromIndex, int value, int length) {
-        checkRange(fromIndex, fromIndex + length);
-        int mask = makeBitRange(fromIndex, fromIndex + length);
-        value = (value >>> fromIndex) & mask;
-        this.value &= ~mask;
-        this.value |= value;
+        if (lengthOf(value) > length) {
+            throw new IllegalArgumentException("value :" + value + "length > specified length: " + length);
+        }
+        int toIndex = fromIndex + length;
+        checkRange(fromIndex, toIndex);
+        this.value &= ~makeBitRange(fromIndex, toIndex);
+        this.value |= value << fromIndex;
     }
 
     /**
-     * Set the value as {@param value}. The length of this {@code BitArray} will remain unchanged.
+     * Set the value as {@param value}. The length of this {@code BitArray} will not change.
      * @param value The value
      */
     public void setTo(int value) {
-        value = value & makeBitRange(length);
+        if (lengthOf(value) > length) {
+            throw new IllegalArgumentException("value length > " + length + ": " + value);
+        }
         this.value = value;
     }
 
@@ -167,7 +184,7 @@ public class BitArray {
     }
 
     /**
-     * Set the value as {@param bitArray}. The length of this {@code BitArray} will remain unchanged.
+     * Set the value as {@param bitArray}. The length of this {@code BitArray} will not change.
      * @param bitArray The bit array for value
      */
     public void setTo(BitArray bitArray) {
@@ -204,7 +221,7 @@ public class BitArray {
     public String toString() {
         StringBuilder builder = new StringBuilder(2 + length)
                 .append("0b");
-        for (int i = 0; i < length; ++i) {
+        for (int i = length - 1; i >= 0; --i) {
             builder.append(get(i) ? '1' : '0');
         }
         return builder.toString();
@@ -213,9 +230,9 @@ public class BitArray {
     public static int lengthOf(int value) {
         int length = 0;
         do {
-            value /= 2;
+            value >>>= 1;
             ++length;
-        } while (value > 0);
+        } while (value != 0);
         return length;
     }
 
@@ -248,7 +265,7 @@ public class BitArray {
     }
 
     private static int makeBitRange(int fromIndex, int toIndex) {
-        return ((~0) << (CAPACITY - (toIndex - fromIndex))) >>> fromIndex;
+        return ((~0) >>> (CAPACITY - (toIndex - fromIndex))) << fromIndex;
     }
 
     private static int makeBitRange(int length) {

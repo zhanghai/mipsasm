@@ -5,9 +5,9 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.Immediate;
-import me.zhanghai.mipsasm.instruction.OffsetBase;
-import me.zhanghai.mipsasm.instruction.Register;
+import me.zhanghai.mipsasm.assembler.Immediate;
+import me.zhanghai.mipsasm.assembler.OffsetBase;
+import me.zhanghai.mipsasm.assembler.Register;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

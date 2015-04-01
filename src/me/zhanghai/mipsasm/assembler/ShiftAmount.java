@@ -3,13 +3,13 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.instruction;
+package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class ShiftAmount implements Operand, Compilable {
+public class ShiftAmount implements Operand, Assemblable {
 
-    private static final int SHIFT_AMOUNT_LENGTH = 5;
+    private static final int LENGTH = 5;
 
     public static final ShiftAmount ZERO = ShiftAmount.of(0b00000);
 
@@ -21,13 +21,13 @@ public class ShiftAmount implements Operand, Compilable {
 
     public static ShiftAmount of(int value) {
         int length = BitArray.lengthOf(value);
-        if (length > SHIFT_AMOUNT_LENGTH) {
-            throw new IllegalArgumentException("Shift amount length > " + SHIFT_AMOUNT_LENGTH + ": " + length);
+        if (length > LENGTH) {
+            throw new IllegalArgumentException("Shift amount length > " + LENGTH + ": " + length);
         }
-        return new ShiftAmount(BitArray.of(value, SHIFT_AMOUNT_LENGTH));
+        return new ShiftAmount(BitArray.of(value, LENGTH));
     }
 
-    public BitArray compile() {
+    public BitArray assemble(AssemblyContext context) {
         return value;
     }
 }

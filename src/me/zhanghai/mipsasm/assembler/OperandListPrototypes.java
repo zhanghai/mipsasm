@@ -3,25 +3,25 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.instruction;
+package me.zhanghai.mipsasm.assembler;
 
 public class OperandListPrototypes {
 
-    public static final OperandPrototype[] DESTINATION_SOURCE_TARGET = new OperandPrototype[] {
+    public static final OperandPrototype[] DESTINATION_SOURCE_SOURCE2 = new OperandPrototype[] {
             OperandPrototypes.DESTINATION,
             OperandPrototypes.SOURCE,
-            OperandPrototypes.TARGET
+            OperandPrototypes.SOURCE2
     };
 
-    public static final OperandPrototype[] TARGET_SOURCE_IMMEDIATE = new OperandPrototype[] {
-            OperandPrototypes.TARGET,
+    public static final OperandPrototype[] SOURCE2_SOURCE_IMMEDIATE = new OperandPrototype[] {
+            OperandPrototypes.SOURCE2,
             OperandPrototypes.SOURCE,
             OperandPrototypes.IMMEDIATE
     };
 
-    public static final OperandPrototype[] SOURCE_TARGET_OFFSET = new OperandPrototype[] {
+    public static final OperandPrototype[] SOURCE_SOURCE2_OFFSET = new OperandPrototype[] {
             OperandPrototypes.SOURCE,
-            OperandPrototypes.TARGET,
+            OperandPrototypes.SOURCE2,
             OperandPrototypes.OFFSET
     };
 
@@ -34,25 +34,25 @@ public class OperandListPrototypes {
             OperandPrototypes.COPROCESSOR_FUNCTION
     };
 
-    public static final OperandPrototype[] SOURCE_TARGET = new OperandPrototype[] {
+    public static final OperandPrototype[] SOURCE_SOURCE2 = new OperandPrototype[] {
             OperandPrototypes.SOURCE,
-            OperandPrototypes.TARGET
+            OperandPrototypes.SOURCE2
     };
 
-    public static final OperandPrototype[] DESTINATION_TARGET_SHIFT_AMOUNT = new OperandPrototype[] {
+    public static final OperandPrototype[] DESTINATION_SOURCE2_SHIFT_AMOUNT = new OperandPrototype[] {
             OperandPrototypes.DESTINATION,
-            OperandPrototypes.TARGET,
+            OperandPrototypes.SOURCE2,
             OperandPrototypes.SHIFT_AMOUNT
     };
 
-    public static final OperandPrototype[] DESTINATION_TARGET_SOURCE = new OperandPrototype[] {
+    public static final OperandPrototype[] DESTINATION_SOURCE2_SOURCE = new OperandPrototype[] {
             OperandPrototypes.DESTINATION,
-            OperandPrototypes.TARGET,
+            OperandPrototypes.SOURCE2,
             OperandPrototypes.SOURCE
     };
 
-    public static final OperandPrototype[] LABEL = new OperandPrototype[] {
-            OperandPrototypes.LABEL
+    public static final OperandPrototype[] TARGET = new OperandPrototype[] {
+            OperandPrototypes.TARGET
     };
 
     public static final OperandPrototype[] DESTINATION_SOURCE = new OperandPrototype[] {
@@ -64,13 +64,13 @@ public class OperandListPrototypes {
             OperandPrototypes.SOURCE
     };
 
-    public static final OperandPrototype[] TARGET_OFFSET_BASE = new OperandPrototype[] {
-            OperandPrototypes.TARGET,
+    public static final OperandPrototype[] SOURCE2_OFFSET_BASE = new OperandPrototype[] {
+            OperandPrototypes.SOURCE2,
             OperandPrototypes.OFFSET_BASE
     };
 
-    public static final OperandPrototype[] TARGET_IMMEDIATE = new OperandPrototype[] {
-            OperandPrototypes.TARGET,
+    public static final OperandPrototype[] SOURCE2_IMMEDIATE = new OperandPrototype[] {
+            OperandPrototypes.SOURCE2,
             OperandPrototypes.IMMEDIATE
     };
 

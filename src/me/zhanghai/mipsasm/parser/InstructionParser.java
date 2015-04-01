@@ -5,10 +5,10 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.Instruction;
-import me.zhanghai.mipsasm.instruction.OperandInstance;
-import me.zhanghai.mipsasm.instruction.Operation;
-import me.zhanghai.mipsasm.instruction.OperationInformation;
+import me.zhanghai.mipsasm.assembler.Instruction;
+import me.zhanghai.mipsasm.assembler.OperandInstance;
+import me.zhanghai.mipsasm.assembler.Operation;
+import me.zhanghai.mipsasm.assembler.OperationInformation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +59,6 @@ public class InstructionParser {
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
                 operationInformation.getOperandListPrototype());
 
-        return Instruction.of(operation, operandInstances, operationInformation.getInstructionCompiler());
+        return Instruction.of(operation, operandInstances, operationInformation.getInstructionAssembler());
     }
 }

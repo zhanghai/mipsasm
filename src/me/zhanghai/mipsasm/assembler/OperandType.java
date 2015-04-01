@@ -3,13 +3,14 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.instruction;
+package me.zhanghai.mipsasm.assembler;
 
 public enum OperandType {
     REGISTER,
     IMMEDIATE,
+    OFFSET,
     COPROCESSOR_FUNCTION,
     SHIFT_AMOUNT,
-    LABEL,
+    TARGET,
     OFFSET_BASE
 }

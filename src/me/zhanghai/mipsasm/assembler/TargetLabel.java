@@ -3,14 +3,14 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.instruction;
+package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Label implements Operand, Compilable {
+public class TargetLabel implements Operand, Assemblable {
 
     private static final Pattern NAME_PATTERN = Pattern.compile("\\w+");
 
@@ -21,28 +21,34 @@ public class Label implements Operand, Compilable {
         }
     };
 
+    private static final int LENGTH = 26;
+
     private String name;
 
-    private Label(String name) {
+    private TargetLabel(String name) {
         this.name = name;
     }
 
-    public static Label of(String name) {
+    public static TargetLabel of(String name) {
         Matcher nameMatcher = NAME_MATCHER.get();
         nameMatcher.reset(name);
         if (!nameMatcher.matches()) {
             throw new IllegalArgumentException("Label name must match \\w+");
         }
-        return new Label(name);
+        return new TargetLabel(name);
     }
 
     public String getName() {
         return name;
     }
 
-    // TODO
     @Override
-    public BitArray compile() {
-        return null;
+    public BitArray assemble(AssemblyContext context) {
+        int offset = context.getLabelOffset(name);
+        try {
+            return BitArray.of(offset, LENGTH);
+        } catch (IllegalArgumentException e) {
+            throw new OffsetTooLargeException("Label name: " + name + ", offset: " + offset);
+        }
     }
 }

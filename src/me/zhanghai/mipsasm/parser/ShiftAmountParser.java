@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.ShiftAmount;
+import me.zhanghai.mipsasm.assembler.ShiftAmount;
 import me.zhanghai.mipsasm.util.IoUtils;
 
 public class ShiftAmountParser {

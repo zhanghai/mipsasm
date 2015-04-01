@@ -3,11 +3,11 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.instruction;
+package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public enum Register implements Operand, Compilable {
+public enum Register implements Operand, Assemblable {
 
     ZERO,
     AT,
@@ -42,13 +42,13 @@ public enum Register implements Operand, Compilable {
     FP,
     RA;
 
-    private static final int REGISTER_LENGTH = 5;
+    private static final int LENGTH = 5;
 
     public static Register of(int index) {
         return values()[index];
     }
 
-    public BitArray compile() {
-        return BitArray.of(ordinal(), REGISTER_LENGTH);
+    public BitArray assemble(AssemblyContext context) {
+        return BitArray.of(ordinal(), LENGTH);
     }
 }

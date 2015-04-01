@@ -5,9 +5,9 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.Operand;
-import me.zhanghai.mipsasm.instruction.OperandInstance;
-import me.zhanghai.mipsasm.instruction.OperandPrototype;
+import me.zhanghai.mipsasm.assembler.Operand;
+import me.zhanghai.mipsasm.assembler.OperandInstance;
+import me.zhanghai.mipsasm.assembler.OperandPrototype;
 
 public class OperandListParser {
 
@@ -33,14 +33,17 @@ public class OperandListParser {
                 case IMMEDIATE:
                     operand = ImmediateParser.parse(operandString);
                     break;
+                case OFFSET:
+                    operand = OffsetLabelParser.parse(operandString);
+                    break;
                 case COPROCESSOR_FUNCTION:
                     operand = CoprocessorFunctionParser.parse(operandString);
                     break;
                 case SHIFT_AMOUNT:
                     operand = ShiftAmountParser.parse(operandString);
                     break;
-                case LABEL:
-                    operand = LabelParser.parse(operandString);
+                case TARGET:
+                    operand = TargetLabelParser.parse(operandString);
                     break;
                 case OFFSET_BASE:
                     operand = OffsetBaseParser.parse(operandString);

@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-public class OperandCountMismatchException extends IllegalFormatException {
+public class OperandCountMismatchException extends ParserException {
 
     public OperandCountMismatchException() {}
 

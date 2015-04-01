@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.instruction.CoprocessorFunction;
+import me.zhanghai.mipsasm.assembler.CoprocessorFunction;
 import me.zhanghai.mipsasm.util.IoUtils;
 
 public class CoprocessorFunctionParser {

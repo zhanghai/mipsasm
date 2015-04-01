@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-public class NoSuchOperationException extends IllegalFormatException {
+public class NoSuchOperationException extends ParserException {
 
     public NoSuchOperationException() {}
 

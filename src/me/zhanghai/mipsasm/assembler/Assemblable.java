@@ -3,11 +3,11 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.instruction;
+package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public interface Compilable {
+public interface Assemblable {
 
-    BitArray compile();
+    BitArray assemble(AssemblyContext context);
 }

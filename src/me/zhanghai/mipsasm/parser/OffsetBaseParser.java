@@ -14,25 +14,25 @@ import java.util.regex.Pattern;
 
 public class OffsetBaseParser {
 
-    private static final Pattern OFFSET_BASE_PATTERN = Pattern.compile(
-            "(.*)\\((.+)\\)");
+    private static final Pattern PATTERN = Pattern.compile("(\\S*)\\s*\\(\\s*(\\S+)\\s*\\)");
 
-    private static final ThreadLocal<Matcher> OFFSET_BASE_MATCHER = new ThreadLocal<Matcher>() {
+    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
         @Override
         protected Matcher initialValue() {
-            return OFFSET_BASE_PATTERN.matcher("");
+            return PATTERN.matcher("");
         }
     };
 
+
     private OffsetBaseParser() {}
 
-    public static OffsetBase parse(String offsetBaseString) {
+    public static OffsetBase parse(String offsetBaseString) throws ParserException {
 
-        Matcher offsetBaseMatcher = OFFSET_BASE_MATCHER.get();
+        Matcher offsetBaseMatcher = MATCHER.get();
         offsetBaseMatcher.reset(offsetBaseString);
 
         if (!offsetBaseMatcher.matches()) {
-            throw new InvalidOperandException("Cannot parse offset and base: " + offsetBaseString);
+            throw new IllegalOperandException("Cannot parse offset and base: " + offsetBaseString);
         }
 
         Immediate offset;
@@ -43,9 +43,9 @@ public class OffsetBaseParser {
             try {
                 offset = Immediate.of(Integer.parseInt(offsetString));
             } catch (NumberFormatException e) {
-                throw new InvalidOperandException("Offset cannot be parsed: " + offsetString, e);
+                throw new IllegalOperandException("Offset cannot be parsed: " + offsetString, e);
             } catch (IllegalArgumentException e) {
-                throw new InvalidOperandException("Offset length to long: " + offsetString, e);
+                throw new IllegalOperandException("Offset length to long: " + offsetString, e);
             }
         }
 

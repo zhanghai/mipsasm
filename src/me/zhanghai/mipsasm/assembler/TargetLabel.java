@@ -43,12 +43,13 @@ public class TargetLabel implements Operand, Assemblable {
     }
 
     @Override
-    public BitArray assemble(AssemblyContext context) {
+    public BitArray assemble(AssemblyContext context) throws AssemblerException {
+        // FIXME: offset should be direct addressed.
         int offset = context.getLabelOffset(name);
         try {
             return BitArray.of(offset, LENGTH);
         } catch (IllegalArgumentException e) {
-            throw new OffsetTooLargeException("Label name: " + name + ", offset: " + offset);
+            throw new OffsetTooLargeException("Label name: " + name + ", offset: " + offset, e);
         }
     }
 }

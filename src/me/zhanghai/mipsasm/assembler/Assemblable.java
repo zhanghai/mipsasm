@@ -9,5 +9,5 @@ import me.zhanghai.mipsasm.util.BitArray;
 
 public interface Assemblable {
 
-    BitArray assemble(AssemblyContext context);
+    BitArray assemble(AssemblyContext context) throws AssemblerException;
 }

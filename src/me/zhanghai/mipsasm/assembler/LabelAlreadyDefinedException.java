@@ -3,7 +3,9 @@
  * All Rights Reserved.
  */
 
-package me.zhanghai.mipsasm.parser;
+package me.zhanghai.mipsasm.assembler;
+
+import me.zhanghai.mipsasm.parser.ParserException;
 
 public class LabelAlreadyDefinedException extends ParserException {
 

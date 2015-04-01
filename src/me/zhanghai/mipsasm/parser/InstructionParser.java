@@ -5,40 +5,33 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.assembler.Instruction;
-import me.zhanghai.mipsasm.assembler.OperandInstance;
-import me.zhanghai.mipsasm.assembler.Operation;
-import me.zhanghai.mipsasm.assembler.OperationInformation;
+import me.zhanghai.mipsasm.assembler.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InstructionParser {
 
-    private static final Pattern INSTRUCTION_PATTERN = Pattern.compile(
-            "([0-9a-zA-Z]+)(?:\\s+([0-9a-zA-Z$_]+)(?:\\s*,\\s*([0-9a-zA-Z$_]+))*)?");
+    private static final Pattern PATTERN = Pattern.compile("(\\S+)(?:\\s+(.*))?");
 
-    private static final ThreadLocal<Matcher> INSTRUCTION_MATCHER = new ThreadLocal<Matcher>() {
+    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
         @Override
         protected Matcher initialValue() {
-            return INSTRUCTION_PATTERN.matcher("");
+            return PATTERN.matcher("");
         }
     };
 
+    private static final String OPERAND_SPLITTER_REGEX = "\\s*,\\s*";
+
+
     private InstructionParser() {}
 
-    public static Instruction parse(String instructionString) {
+    public static void parse(String instructionString, AssemblyContext context) throws ParserException {
 
-        instructionString = instructionString.trim();
-
-        Matcher matcher = INSTRUCTION_MATCHER.get();
+        Matcher matcher = MATCHER.get();
         matcher.reset(instructionString);
         if (!matcher.matches()) {
-            throw new InvalidInstructionException("Instruction: " + instructionString);
-        }
-
-        if (matcher.groupCount() < 1) {
-            throw new MissingOperationException();
+            throw new IllegalInstructionException("Instruction: " + instructionString);
         }
 
         String operationName = matcher.group(1);
@@ -49,16 +42,14 @@ public class InstructionParser {
             throw new NoSuchOperationException("Operation: " + operationName);
         }
 
+        String operandListString = matcher.group(2);
+        String[] operandStringList = operandListString != null ? operandListString.split(OPERAND_SPLITTER_REGEX)
+                : new String[0];
         OperationInformation operationInformation = OperationInformation.ofOperation(operation);
-
-        int operandCount = matcher.groupCount() - 1;
-        String[] operandStringList = new String[operandCount];
-        for (int i = 0; i < operandCount; ++i) {
-            operandStringList[i] = matcher.group(i + 2);
-        }
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
                 operationInformation.getOperandListPrototype());
 
-        return Instruction.of(operation, operandInstances, operationInformation.getInstructionAssembler());
+        context.appendInstruction(Instruction.of(operation, operandInstances,
+                operationInformation.getInstructionAssembler()));
     }
 }

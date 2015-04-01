@@ -49,7 +49,7 @@ public class Instruction {
         return assembler;
     }
 
-    public void assemble(AssemblyContext context) {
+    public void assemble(AssemblyContext context) throws AssemblerException {
         assembler.assemble(this, context);
     }
 }

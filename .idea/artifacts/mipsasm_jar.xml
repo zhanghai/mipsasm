@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="mipsasm:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/mipsasm_jar</output-path>
+    <root id="archive" name="mipsasm.jar">
+      <element id="module-output" name="mipsasm" />
+    </root>
+  </artifact>
+</component>

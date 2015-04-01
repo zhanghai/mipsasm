@@ -11,11 +11,11 @@ public class TargetLabelParser {
 
     private TargetLabelParser() {}
 
-    public static TargetLabel parse(String labelString) {
+    public static TargetLabel parse(String labelString) throws ParserException {
         try {
             return TargetLabel.of(labelString);
         } catch (IllegalArgumentException e) {
-            throw new InvalidOperandException("Illegal label name: " + labelString, e);
+            throw new IllegalOperandException("Illegal label name: " + labelString, e);
         }
     }
 }

@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
-public class AssemblerException extends RuntimeException {
+public class AssemblerException extends Exception {
 
     public AssemblerException() {}
 

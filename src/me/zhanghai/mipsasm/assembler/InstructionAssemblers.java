@@ -15,7 +15,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -28,7 +28,7 @@ public class InstructionAssemblers {
     public static final InstructionAssembler SOURCE2_SOURCE_IMMEDIATE = new BaseInstructionAssembler() {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -39,8 +39,8 @@ public class InstructionAssemblers {
 
     public static final InstructionAssembler SOURCE_SOURCE2_OFFSET = new BaseInstructionAssembler() {
         @Override
-        public void assemble(Instruction instruction, AssemblyContext context) {
-            context.appendWord(BitArray.of(
+        public void assemble(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -52,8 +52,8 @@ public class InstructionAssemblers {
     public static InstructionAssembler SOURCE_OFFSET(final Register destination) {
         return new BaseInstructionAssembler() {
             @Override
-            public void assemble(Instruction instruction, AssemblyContext context) {
-                context.appendWord(BitArray.of(
+            public void assemble(Instruction instruction, AssemblyContext context) throws AssemblerException {
+                context.appendAssembly(BitArray.of(
                         instruction.getOperation().getCode(),
                         ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                         destination.assemble(context),
@@ -66,7 +66,7 @@ public class InstructionAssemblers {
     public static final InstructionAssembler COPROCESSOR_FUNCTION = new BaseInstructionAssembler() {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     ((CoprocessorFunction) instruction.getOperand(OperandPrototypes.COPROCESSOR_FUNCTION)).assemble(context)
             ));
@@ -77,7 +77,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -92,7 +92,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     Register.ZERO.assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.DESTINATION)).assemble(context),
@@ -108,7 +108,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -120,8 +120,8 @@ public class InstructionAssemblers {
 
     public static final InstructionAssembler TARGET = new BaseInstructionAssembler() {
         @Override
-        public void assemble(Instruction instruction, AssemblyContext context) {
-            context.appendWord(BitArray.of(
+        public void assemble(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     ((TargetLabel) instruction.getOperand(OperandPrototypes.TARGET)).assemble(context)
             ));
@@ -132,7 +132,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     Register.ZERO.assemble(context),
@@ -147,7 +147,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     Register.ZERO.assemble(context),
@@ -162,7 +162,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             OffsetBase offsetBase = (OffsetBase) instruction.getOperand(OperandPrototypes.OFFSET_BASE);
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     offsetBase.getBase().assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -174,7 +174,7 @@ public class InstructionAssemblers {
     public static final InstructionAssembler SOURCE2_IMMEDIATE = new BaseInstructionAssembler() {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     Register.ZERO.assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
@@ -187,7 +187,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             Operation operation = instruction.getOperation();
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     Register.ZERO.assemble(context),
                     Register.ZERO.assemble(context),
@@ -202,7 +202,7 @@ public class InstructionAssemblers {
         @Override
         public void assemble(Instruction instruction, AssemblyContext context) {
             OffsetBase offsetBase = (OffsetBase) instruction.getOperand(OperandPrototypes.OFFSET_BASE);
-            context.appendWord(BitArray.of(
+            context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
                     offsetBase.getBase().assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.HINT)).assemble(context),

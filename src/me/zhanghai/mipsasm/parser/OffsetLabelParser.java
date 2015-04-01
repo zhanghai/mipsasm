@@ -11,11 +11,11 @@ public class OffsetLabelParser {
 
     private OffsetLabelParser() {}
 
-    public static OffsetLabel parse(String labelString) {
+    public static OffsetLabel parse(String labelString) throws ParserException {
         try {
             return OffsetLabel.of(labelString);
         } catch (IllegalArgumentException e) {
-            throw new InvalidOperandException("Illegal label name: " + labelString, e);
+            throw new IllegalLabelException("Label name: " + labelString, e);
         }
     }
 }

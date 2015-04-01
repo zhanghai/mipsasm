@@ -9,15 +9,18 @@ import me.zhanghai.mipsasm.assembler.Operand;
 import me.zhanghai.mipsasm.assembler.OperandInstance;
 import me.zhanghai.mipsasm.assembler.OperandPrototype;
 
+import java.util.Arrays;
+
 public class OperandListParser {
 
     private OperandListParser() {}
 
-    public static OperandInstance[] parse(String[] operandStringList, OperandPrototype[] operandListPrototype) {
+    public static OperandInstance[] parse(String[] operandStringList, OperandPrototype[] operandListPrototype)
+            throws ParserException {
 
         if (operandStringList.length != operandListPrototype.length) {
-            throw new OperandCountMismatchException("Expected: " + operandListPrototype.length + ", found: "
-                    + operandStringList.length);
+            throw new OperandCountMismatchException("Expected: " + Arrays.toString(operandListPrototype) + ", found: "
+                    + Arrays.toString(operandStringList));
         }
 
         int operandCount = operandListPrototype.length;

@@ -43,12 +43,12 @@ public class OffsetLabel implements Operand, Assemblable {
     }
 
     @Override
-    public BitArray assemble(AssemblyContext context) {
+    public BitArray assemble(AssemblyContext context) throws AssemblerException {
         int offset = context.getLabelOffset(name) - (context.getOffset() + 1);
         try {
             return BitArray.ofInt(offset, LENGTH);
         } catch (IllegalArgumentException e) {
-            throw new OffsetTooLargeException("Label name: " + name + ", offset: " + offset);
+            throw new OffsetTooLargeException("Label name: " + name + ", offset: " + offset, e);
         }
     }
 }

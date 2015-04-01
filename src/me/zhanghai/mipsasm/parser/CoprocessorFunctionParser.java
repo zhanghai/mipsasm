@@ -12,13 +12,13 @@ public class CoprocessorFunctionParser {
 
     private CoprocessorFunctionParser() {}
 
-    public static CoprocessorFunction parse(String coprocessorFunctionString) {
+    public static CoprocessorFunction parse(String coprocessorFunctionString) throws ParserException {
         try {
             return CoprocessorFunction.of(IoUtils.decodeInteger(coprocessorFunctionString));
         } catch (NumberFormatException e) {
-            throw new InvalidOperandException("Unable to parse coprocessor function: " + coprocessorFunctionString, e);
+            throw new IllegalOperandException("Unable to parse coprocessor function: " + coprocessorFunctionString, e);
         } catch (IllegalArgumentException e) {
-            throw new InvalidOperandException("coprocessor function length too long: " + coprocessorFunctionString, e);
+            throw new IllegalOperandException("coprocessor function length too long: " + coprocessorFunctionString, e);
         }
     }
 }

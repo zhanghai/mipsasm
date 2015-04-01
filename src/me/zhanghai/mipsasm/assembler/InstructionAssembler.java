@@ -9,5 +9,5 @@ public interface InstructionAssembler {
 
     void offset(Instruction instruction, AssemblyContext context);
 
-    void assemble(Instruction instruction, AssemblyContext context);
+    void assemble(Instruction instruction, AssemblyContext context) throws AssemblerException;
 }

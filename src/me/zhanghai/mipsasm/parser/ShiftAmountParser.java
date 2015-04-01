@@ -12,13 +12,13 @@ public class ShiftAmountParser {
 
     private ShiftAmountParser() {}
 
-    public static ShiftAmount parse(String shiftAmountString) {
+    public static ShiftAmount parse(String shiftAmountString) throws ParserException {
         try {
             return ShiftAmount.of(IoUtils.decodeInteger(shiftAmountString));
         } catch (NumberFormatException e) {
-            throw new InvalidOperandException("Unable to parse shift amount: " + shiftAmountString, e);
+            throw new IllegalOperandException("Unable to parse shift amount: " + shiftAmountString, e);
         } catch (IllegalArgumentException e) {
-            throw new InvalidOperandException("Shift amount length too long: " + shiftAmountString, e);
+            throw new IllegalOperandException("Shift amount length too long: " + shiftAmountString, e);
         }
     }
 }

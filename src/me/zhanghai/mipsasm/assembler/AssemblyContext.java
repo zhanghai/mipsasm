@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
-import me.zhanghai.mipsasm.parser.LabelAlreadyDefinedException;
+import me.zhanghai.mipsasm.parser.ParserException;
 import me.zhanghai.mipsasm.util.BitArray;
 
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ public class AssemblyContext {
     private int offset;
 
     private Map<String, Integer> labelOffsetMap = new HashMap<>();
+
+    private List<Instruction> instructions = new ArrayList<>();
 
     private List<Integer> assembly = new ArrayList<>();
 
@@ -33,7 +35,7 @@ public class AssemblyContext {
         return offset;
     }
 
-    public void setLabelAtOffset(String name) {
+    public void addLabelAtOffset(String name) throws ParserException {
         if (labelOffsetMap.containsKey(name)) {
             throw new LabelAlreadyDefinedException("Label name: " + name + ", old offset: " + labelOffsetMap.get(name)
                     + ", new offset: " + offset);
@@ -41,15 +43,23 @@ public class AssemblyContext {
         labelOffsetMap.put(name, offset);
     }
 
-    public int getLabelOffset(String name) {
+    public int getLabelOffset(String name) throws UndefinedLabelException {
         if (!labelOffsetMap.containsKey(name)) {
-            throw new UnknownLabelException("Label name: " + name);
+            throw new UndefinedLabelException("Label name: " + name);
         }
         return labelOffsetMap.get(name);
     }
 
+    public void appendInstruction(Instruction instruction) {
+        instructions.add(instruction);
+    }
+
+    public List<Instruction> getInstructions() {
+        return instructions;
+    }
+
     // NOTE: offset is automatically incremented.
-    public void appendWord(BitArray bitArray) {
+    public void appendAssembly(BitArray bitArray) {
         if (bitArray.length() != Integer.SIZE) {
             throw new IllegalArgumentException("bitArray length not equal to " + Integer.SIZE + ": " + bitArray.length());
         }

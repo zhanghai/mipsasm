@@ -81,13 +81,14 @@ public class BitArray {
     }
 
     public static BitArray ofInt(int value, int length) {
-        int magnitude = value & makeBitRange(CAPACITY - 1);
-        if (lengthOf(magnitude) >= length) {
-            throw new IllegalArgumentException("value magnitude length >= specified length: " + length
+        if (value >= 0 && lengthOf(value) > length) {
+            throw new IllegalArgumentException("value length: " + lengthOf(value) + ">= specified length: " + length
+                    + ", with value: " + value);
+        } else if (value < 0 && lengthOf(~value) > length){
+            throw new IllegalArgumentException("value length: " + lengthOf(~value) + ">= specified length: " + length
                     + ", with value: " + value);
         }
-        boolean sign = (value & makeBit(CAPACITY - 1)) != 0;
-        value = sign ? makeBit(length - 1) | magnitude : magnitude;
+        value &= makeBitRange(length);
         return of(value, length);
     }
 

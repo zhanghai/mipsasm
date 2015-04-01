@@ -12,13 +12,13 @@ public class ImmediateParser {
 
     private ImmediateParser() {}
 
-    public static Immediate parse(String immediateString) {
+    public static Immediate parse(String immediateString) throws ParserException {
         try {
             return Immediate.of(IoUtils.decodeInteger(immediateString));
         } catch (NumberFormatException e) {
-            throw new InvalidOperandException("Unable to parse immediate: " + immediateString, e);
+            throw new IllegalOperandException("Unable to parse immediate: " + immediateString, e);
         } catch (IllegalArgumentException e) {
-            throw new InvalidOperandException("Immediate length too long: " + immediateString, e);
+            throw new IllegalOperandException("Immediate length too long: " + immediateString, e);
         }
     }
 }

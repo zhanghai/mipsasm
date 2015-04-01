@@ -18,11 +18,7 @@ public class Immediate implements Operand, Assemblable {
     }
 
     public static Immediate of(int value) {
-        int length = BitArray.lengthOf(value);
-        if (length > LENGTH) {
-            throw new IllegalArgumentException("Immediate length > " + LENGTH + ": " + length);
-        }
-        return new Immediate(BitArray.of(value, LENGTH));
+        return new Immediate(BitArray.ofInt(value, LENGTH));
     }
 
     public BitArray assemble(AssemblyContext context) {

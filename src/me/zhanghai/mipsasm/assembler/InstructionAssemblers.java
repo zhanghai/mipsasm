@@ -95,8 +95,8 @@ public class InstructionAssemblers {
             context.appendAssembly(BitArray.of(
                     operation.getCode(),
                     Register.ZERO.assemble(context),
-                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
+                    ((Register) instruction.getOperand(OperandPrototypes.DESTINATION)).assemble(context),
                     ((ShiftAmount) instruction.getOperand(OperandPrototypes.SHIFT_AMOUNT)).assemble(context),
                     operation.getFunction()
             ));

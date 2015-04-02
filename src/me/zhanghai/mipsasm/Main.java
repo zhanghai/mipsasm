@@ -13,9 +13,6 @@ import me.zhanghai.mipsasm.parser.ParserException;
 import me.zhanghai.mipsasm.writer.CoeWriter;
 import me.zhanghai.mipsasm.writer.WriterException;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 public class Main {
 
     public static void main(String[] args) {

@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.writer;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.util.IoUtils;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class CoeWriter {
 
         boolean first = true;
         for (Integer assembly : context.getAssembly()) {
-            String assemblyString = String.format("%08X", assembly);
+            String assemblyString = IoUtils.toHexString(assembly);
             try {
                 if (first) {
                     first = false;
@@ -41,7 +42,7 @@ public class CoeWriter {
                 }
                 writer.write(assemblyString);
             } catch (IOException e) {
-                throw new WriterException("Error writing " + Integer.toHexString(assembly), e);
+                throw new WriterException("Error writing " + assemblyString, e);
             }
         }
         try {

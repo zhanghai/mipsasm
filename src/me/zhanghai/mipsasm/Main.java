@@ -11,6 +11,7 @@ import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
 import me.zhanghai.mipsasm.writer.CoeWriter;
+import me.zhanghai.mipsasm.writer.DebugWriter;
 import me.zhanghai.mipsasm.writer.WriterException;
 
 public class Main {
@@ -35,7 +36,7 @@ public class Main {
         }
 
         try {
-            CoeWriter.write(System.out, context);
+            DebugWriter.write(System.out, context);
         } catch (WriterException e) {
             e.printStackTrace();
         }

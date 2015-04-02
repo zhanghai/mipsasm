@@ -59,4 +59,12 @@ public class IoUtils {
         }
         return result;
     }
+
+    public static String toBinaryString(int integer) {
+        return String.format("%32s", Integer.toBinaryString(integer)).replace(' ', '0');
+    }
+
+    public static String toHexString(int integer) {
+        return String.format("%08X", integer);
+    }
 }

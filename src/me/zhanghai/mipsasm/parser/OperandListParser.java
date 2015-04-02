@@ -37,7 +37,7 @@ public class OperandListParser {
                     operand = ImmediateParser.parse(operandString);
                     break;
                 case OFFSET:
-                    operand = OffsetLabelParser.parse(operandString);
+                    operand = OffsetParser.parse(operandString);
                     break;
                 case COPROCESSOR_FUNCTION:
                     operand = CoprocessorFunctionParser.parse(operandString);
@@ -46,7 +46,7 @@ public class OperandListParser {
                     operand = ShiftAmountParser.parse(operandString);
                     break;
                 case TARGET:
-                    operand = TargetLabelParser.parse(operandString);
+                    operand = TargetParser.parse(operandString);
                     break;
                 case OFFSET_BASE:
                     operand = OffsetBaseParser.parse(operandString);

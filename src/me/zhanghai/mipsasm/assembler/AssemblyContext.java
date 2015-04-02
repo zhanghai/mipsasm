@@ -59,11 +59,20 @@ public class AssemblyContext {
     }
 
     // NOTE: offset is automatically incremented.
-    public void appendAssembly(BitArray bitArray) {
-        if (bitArray.length() != Integer.SIZE) {
-            throw new IllegalArgumentException("bitArray length not equal to " + Integer.SIZE + ": " + bitArray.length());
+    public void appendAssembly(BitArray assembly) {
+        if (assembly.length() != Integer.SIZE) {
+            throw new IllegalArgumentException("bitArray length not equal to " + Integer.SIZE + ": " + assembly.length());
         }
-        assembly.add(bitArray.value());
+        appendAssembly(assembly.value());
+    }
+
+    // NOTE: offset is automatically incremented.
+    public void appendAssembly(int assembly) {
+        this.assembly.add(assembly);
         offsetByWord();
+    }
+
+    public List<Integer> getAssembly() {
+        return assembly;
     }
 }

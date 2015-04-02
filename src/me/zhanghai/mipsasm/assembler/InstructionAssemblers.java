@@ -44,7 +44,7 @@ public class InstructionAssemblers {
                     instruction.getOperation().getCode(),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                     ((Register) instruction.getOperand(OperandPrototypes.SOURCE2)).assemble(context),
-                    ((OffsetLabel) instruction.getOperand(OperandPrototypes.OFFSET)).assemble(context)
+                    ((Offset) instruction.getOperand(OperandPrototypes.OFFSET)).assemble(context)
             ));
         }
     };
@@ -57,7 +57,7 @@ public class InstructionAssemblers {
                         instruction.getOperation().getCode(),
                         ((Register) instruction.getOperand(OperandPrototypes.SOURCE)).assemble(context),
                         destination.assemble(context),
-                        ((OffsetLabel) instruction.getOperand(OperandPrototypes.OFFSET)).assemble(context)
+                        ((Offset) instruction.getOperand(OperandPrototypes.OFFSET)).assemble(context)
                 ));
             }
         };
@@ -123,7 +123,7 @@ public class InstructionAssemblers {
         public void assemble(Instruction instruction, AssemblyContext context) throws AssemblerException {
             context.appendAssembly(BitArray.of(
                     instruction.getOperation().getCode(),
-                    ((TargetLabel) instruction.getOperand(OperandPrototypes.TARGET)).assemble(context)
+                    ((Target) instruction.getOperand(OperandPrototypes.TARGET)).assemble(context)
             ));
         }
     };

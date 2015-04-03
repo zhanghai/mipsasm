@@ -10,7 +10,6 @@ import me.zhanghai.mipsasm.assembler.AssemblerException;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
-import me.zhanghai.mipsasm.writer.CoeWriter;
 import me.zhanghai.mipsasm.writer.DebugWriter;
 import me.zhanghai.mipsasm.writer.WriterException;
 

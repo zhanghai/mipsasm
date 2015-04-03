@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class LabelParser {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\w+)");
+    private static final Pattern PATTERN = Pattern.compile(Tokens.IDENTIFIER_REGEX);
 
     private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
         @Override
@@ -26,14 +26,11 @@ public class LabelParser {
 
     public static void parse(String labelString, AssemblyContext context) throws ParserException {
 
-        Matcher matcher = MATCHER.get();
-        matcher.reset(labelString);
+        Matcher matcher = MATCHER.get().reset(labelString);
         if (!matcher.matches()) {
             throw new IllegalLabelException("Label: " + labelString);
         }
 
-        String labelName = matcher.group(1);
-
-        context.addLabelAtOffset(labelName);
+        context.addLabelAtOffset(labelString);
     }
 }

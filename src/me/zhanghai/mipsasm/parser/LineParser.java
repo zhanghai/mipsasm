@@ -12,15 +12,11 @@ import java.util.regex.Pattern;
 
 public class LineParser {
 
-    private static final String GROUP_LABEL = "label";
-    private static final String GROUP_INSTRUCTION = "instruction";
-    private static final Pattern PATTERN = Pattern.compile(
-            "(?:(?<" + GROUP_LABEL + ">\\S+):)?\\s*(?<" + GROUP_INSTRUCTION + ">[^#]+)?\\s*(?:#.*)?");
-
-    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
+    private static final Pattern COMMENT_PATTERN = Pattern.compile(Tokens.COMMENT_REGEX);
+    private static final ThreadLocal<Matcher> COMMENT_MATCHER = new ThreadLocal<Matcher>() {
         @Override
         protected Matcher initialValue() {
-            return PATTERN.matcher("");
+            return COMMENT_PATTERN.matcher("");
         }
     };
 
@@ -29,23 +25,13 @@ public class LineParser {
 
     public static void parse(String line, AssemblyContext context) throws ParserException {
 
-        line = line.trim();
+        line = COMMENT_MATCHER.get().reset(line).replaceAll("");
 
-        Matcher matcher = MATCHER.get();
-        matcher.reset(line);
-
-        if (!matcher.matches()) {
-            throw new IllegalLineException("Line: " + line);
-        }
-
-        String labelString = matcher.group(GROUP_LABEL);
-        if (labelString != null) {
-            LabelParser.parse(labelString, context);
-        }
-
-        String instructionString = matcher.group(GROUP_INSTRUCTION);
-        if (instructionString != null) {
-            InstructionParser.parse(instructionString, context);
+        for (String statementString : line.split(Tokens.STATEMENT_SEPARATOR_REGEX)) {
+            statementString = statementString.trim();
+            if (!statementString.isEmpty()) {
+                StatementParser.parse(statementString, context);
+            }
         }
     }
 }

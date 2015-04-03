@@ -27,8 +27,7 @@ public class RegisterParser {
 
     public static Register parse(String registerString) throws ParserException {
 
-        Matcher matcher = MATCHER.get();
-        matcher.reset(registerString);
+        Matcher matcher = MATCHER.get().reset(registerString);
         if (!matcher.matches()) {
             throw new IllegalOperandException("Cannot parse register: " + registerString);
         }

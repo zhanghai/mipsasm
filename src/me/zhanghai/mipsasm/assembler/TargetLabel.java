@@ -30,8 +30,7 @@ public class TargetLabel implements Operand, Assemblable {
     }
 
     public static TargetLabel of(String name) {
-        Matcher nameMatcher = NAME_MATCHER.get();
-        nameMatcher.reset(name);
+        Matcher nameMatcher = NAME_MATCHER.get().reset(name);
         if (!nameMatcher.matches()) {
             throw new IllegalArgumentException("Label name must match \\w+");
         }

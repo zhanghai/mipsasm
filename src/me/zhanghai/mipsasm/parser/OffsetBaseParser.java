@@ -29,8 +29,7 @@ public class OffsetBaseParser {
 
     public static OffsetBase parse(String offsetBaseString) throws ParserException {
 
-        Matcher offsetBaseMatcher = MATCHER.get();
-        offsetBaseMatcher.reset(offsetBaseString);
+        Matcher offsetBaseMatcher = MATCHER.get().reset(offsetBaseString);
 
         if (!offsetBaseMatcher.matches()) {
             throw new IllegalOperandException("Cannot parse offset and base: " + offsetBaseString);

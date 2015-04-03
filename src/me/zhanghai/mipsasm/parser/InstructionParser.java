@@ -28,8 +28,7 @@ public class InstructionParser {
 
     public static void parse(String instructionString, AssemblyContext context) throws ParserException {
 
-        Matcher matcher = MATCHER.get();
-        matcher.reset(instructionString);
+        Matcher matcher = MATCHER.get().reset(instructionString);
         if (!matcher.matches()) {
             throw new IllegalInstructionException("Instruction: " + instructionString);
         }

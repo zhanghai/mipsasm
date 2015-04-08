@@ -9,7 +9,6 @@ package me.zhanghai.mipsasm.util;
  * Index starts from right to left.
  */
 public class BitArray {
-
     public static final int CAPACITY = Integer.SIZE;
 
     private int value;
@@ -92,6 +91,10 @@ public class BitArray {
         return of(value, length);
     }
 
+    public static BitArray copyOf(BitArray bitArray) {
+        return new BitArray(bitArray.value, bitArray.length);
+    }
+
     /**
      * Get the value of this {@code BitArray} as an int.
      * @return The value of this {@code BitArray}
@@ -106,6 +109,10 @@ public class BitArray {
      */
     public int length() {
         return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 
     public boolean get(int index) {
@@ -190,6 +197,11 @@ public class BitArray {
      */
     public void setTo(BitArray bitArray) {
         setTo(bitArray.value());
+    }
+
+    public void setAs(BitArray bitArray) {
+        value = bitArray.value();
+        length = bitArray.length();
     }
 
     @Override

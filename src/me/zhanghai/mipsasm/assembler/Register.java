@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public enum Register implements Operand, Assemblable {
+public enum Register implements Operand, AssemblyProvider {
 
     ZERO,
     AT,

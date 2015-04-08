@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.writer;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.util.BitArray;
 import me.zhanghai.mipsasm.util.IoUtils;
 
 import java.io.BufferedWriter;
@@ -31,8 +32,8 @@ public class CoeWriter {
         }
 
         boolean first = true;
-        for (Integer assembly : context.getAssembly()) {
-            String assemblyString = IoUtils.toHexString(assembly);
+        for (BitArray assembly : context.getAssembly()) {
+            String assemblyString = IoUtils.toHexString(assembly.value());
             try {
                 if (first) {
                     first = false;

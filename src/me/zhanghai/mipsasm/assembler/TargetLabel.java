@@ -10,7 +10,7 @@ import me.zhanghai.mipsasm.util.BitArray;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TargetLabel implements Operand, Assemblable {
+public class TargetLabel implements Operand, AssemblyProvider {
 
     private static final Pattern NAME_PATTERN = Pattern.compile("\\w+");
 
@@ -44,7 +44,7 @@ public class TargetLabel implements Operand, Assemblable {
     @Override
     public BitArray assemble(AssemblyContext context) throws AssemblerException {
         // FIXME: offset should be direct addressed.
-        int offset = context.getLabelOffset(name);
+        int offset = context.getLabelAddress(name);
         try {
             return BitArray.of(offset, LENGTH);
         } catch (IllegalArgumentException e) {

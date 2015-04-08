@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class Target implements Operand, Assemblable {
+public class Target implements Operand, AssemblyProvider {
 
     private boolean isLabel;
 

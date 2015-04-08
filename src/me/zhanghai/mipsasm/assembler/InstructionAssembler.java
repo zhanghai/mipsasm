@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 public interface InstructionAssembler {
 
-    void offset(Instruction instruction, AssemblyContext context);
+    void locate(Instruction instruction, AssemblyContext context);
 
     void assemble(Instruction instruction, AssemblyContext context) throws AssemblerException;
 }

@@ -7,9 +7,9 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class InstructionIndex implements Operand, Assemblable {
+public class InstructionIndex implements Operand, AssemblyProvider {
 
-    static final int LENGTH = 26;
+    private static final int LENGTH = 26;
 
     private BitArray value;
 
@@ -19,6 +19,10 @@ public class InstructionIndex implements Operand, Assemblable {
 
     public static InstructionIndex of(int value) {
         return new InstructionIndex(BitArray.ofInt(value, LENGTH));
+    }
+
+    public BitArray getValue() {
+        return value;
     }
 
     public BitArray assemble(AssemblyContext context) {

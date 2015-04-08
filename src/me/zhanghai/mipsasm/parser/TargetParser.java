@@ -10,13 +10,14 @@ import me.zhanghai.mipsasm.assembler.Target;
 import me.zhanghai.mipsasm.assembler.TargetLabel;
 import me.zhanghai.mipsasm.util.IoUtils;
 
+// FIXME: Should be a label instead.
 public class TargetParser {
 
     private TargetParser() {}
 
     public static Target parse(String targetString) throws ParserException {
         try {
-            return Target.of(InstructionIndex.of(IoUtils.decodeInteger(targetString)));
+            return Target.of(InstructionIndex.of(IoUtils.decodeUnsignedInteger(targetString)));
         } catch (NumberFormatException e) {
             try {
                 return Target.of(TargetLabel.of(targetString));

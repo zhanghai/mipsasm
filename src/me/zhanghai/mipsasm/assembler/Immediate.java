@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class Immediate implements Operand, Assemblable {
+public class Immediate implements Operand, AssemblyProvider {
 
     static final int LENGTH = 16;
 
@@ -19,6 +19,10 @@ public class Immediate implements Operand, Assemblable {
 
     public static Immediate of(int value) {
         return new Immediate(BitArray.ofInt(value, LENGTH));
+    }
+
+    public BitArray getValue() {
+        return value;
     }
 
     public BitArray assemble(AssemblyContext context) {

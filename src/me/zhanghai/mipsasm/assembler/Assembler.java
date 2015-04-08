@@ -10,11 +10,12 @@ public class Assembler {
     private Assembler() {}
 
     public static void assemble(AssemblyContext context) throws AssemblerException {
-        for (Instruction instruction : context.getInstructions()) {
+        context.resetAddress();
+        for (Assemblable assemblable : context.getAssemblableList()) {
             try {
-                instruction.assemble(context);
+                assemblable.assemble(context);
             } catch (AssemblerException e) {
-                throw new AssemblerException("Instruction: " + instruction, e);
+                throw new AssemblerException("Assemblable: " + assemblable, e);
             }
         }
     }

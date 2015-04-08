@@ -60,6 +60,42 @@ public class IoUtils {
         return result;
     }
 
+    public static int decodeUnsignedInteger(String string) {
+
+        if (string.length() == 0) {
+            throw new NumberFormatException("Zero length string");
+        }
+
+        int index = 0;
+        int radix = 10;
+
+        // Handle radix specifier, if present
+        if (string.startsWith("0x", index) || string.startsWith("0X", index)) {
+            index += 2;
+            radix = 16;
+        } else if (string.startsWith("0b", index) || string.startsWith("0B", index)) {
+            index += 2;
+            radix = 2;
+        } else if (string.startsWith("#", index)) {
+            ++index;
+            radix = 16;
+        } else if (string.startsWith("0", index) && string.length() > 1 + index) {
+            ++index;
+            radix = 8;
+        }
+
+        if (string.startsWith("-", index) || string.startsWith("+", index)) {
+            throw new NumberFormatException("Illegal sign character found");
+        }
+
+        // For unsigned int capacity.
+        long result = Long.parseLong(string.substring(index), radix);
+        if (result > 0xffffffffL) {
+            throw new IllegalArgumentException("Integer will overflow: " + string);
+        }
+        return (int) result;
+    }
+
     public static String toBinaryString(int integer) {
         return String.format("%32s", Integer.toBinaryString(integer)).replace(' ', '0');
     }

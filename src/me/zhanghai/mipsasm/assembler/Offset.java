@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class Offset implements Operand, Assemblable {
+public class Offset implements Operand, AssemblyProvider {
 
     private boolean isLabel;
 

@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class CoprocessorFunction implements Operand, Assemblable {
+public class CoprocessorFunction implements Operand, AssemblyProvider {
 
     private static final int LENGTH = 26;
 
@@ -23,6 +23,10 @@ public class CoprocessorFunction implements Operand, Assemblable {
             throw new IllegalArgumentException("Coprocessor function length > " + LENGTH + ": " + length);
         }
         return new CoprocessorFunction(BitArray.of(value, LENGTH));
+    }
+
+    public BitArray getValue() {
+        return value;
     }
 
     public BitArray assemble(AssemblyContext context) {

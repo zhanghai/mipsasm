@@ -5,9 +5,9 @@
 
 package me.zhanghai.mipsasm.assembler;
 
-import me.zhanghai.mipsasm.util.BitArray;
-
 public interface Assemblable {
 
-    BitArray assemble(AssemblyContext context) throws AssemblerException;
+    void locate(AssemblyContext context);
+
+    void assemble(AssemblyContext context) throws AssemblerException;
 }

@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.writer;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.util.BitArray;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,9 +17,9 @@ public class BinaryWriter {
     public static void write(OutputStream outputStream, AssemblyContext context) throws WriterException {
 
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        for (Integer assembly : context.getAssembly()) {
+        for (BitArray assembly : context.getAssembly()) {
             try {
-                dataOutputStream.writeInt(assembly);
+                dataOutputStream.writeInt(assembly.value());
             } catch (IOException e) {
                 throw new WriterException("Error writing " + String.format("%08X", assembly), e);
             }

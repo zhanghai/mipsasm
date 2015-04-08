@@ -13,5 +13,7 @@ public class Tokens {
 
     public static final String IDENTIFIER_REGEX = "[a-zA-Z._$][0-9a-zA-Z._$]*";
 
-    public static final String STATEMENT_SEPARATOR_REGEX = ",";
+    public static final String STATEMENT_SEPARATOR_REGEX = ";";
+
+    public static final String OPERAND_SEPARATOR_REGEX = ",";
 }

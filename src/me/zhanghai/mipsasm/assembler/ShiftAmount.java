@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class ShiftAmount implements Operand, Assemblable {
+public class ShiftAmount implements Operand, AssemblyProvider {
 
     private static final int LENGTH = 5;
 

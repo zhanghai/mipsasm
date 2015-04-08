@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 import java.util.Arrays;
 
-public class Instruction {
+public class Instruction implements Assemblable {
 
     private Operation operation;
     private OperandInstance[] operandListInstance;
@@ -47,6 +47,10 @@ public class Instruction {
 
     public InstructionAssembler getAssembler() {
         return assembler;
+    }
+
+    public void locate(AssemblyContext context) {
+        assembler.locate(this, context);
     }
 
     public void assemble(AssemblyContext context) throws AssemblerException {

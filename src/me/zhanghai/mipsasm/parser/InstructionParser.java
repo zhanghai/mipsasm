@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.*;
+import me.zhanghai.mipsasm.util.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,9 +21,6 @@ public class InstructionParser {
             return PATTERN.matcher("");
         }
     };
-
-    private static final String OPERAND_SPLITTER_REGEX = "\\s*,\\s*";
-
 
     private InstructionParser() {}
 
@@ -42,13 +40,13 @@ public class InstructionParser {
         }
 
         String operandListString = matcher.group(2);
-        String[] operandStringList = operandListString != null ? operandListString.split(OPERAND_SPLITTER_REGEX)
-                : new String[0];
+        String[] operandStringList = operandListString != null ?
+                StringUtils.splitAndTrim(operandListString, Tokens.OPERAND_SEPARATOR_REGEX) : new String[0];
         OperationInformation operationInformation = OperationInformation.ofOperation(operation);
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
                 operationInformation.getOperandListPrototype());
 
-        context.appendInstruction(Instruction.of(operation, operandInstances,
+        context.appendAssemblable(Instruction.of(operation, operandInstances,
                 operationInformation.getInstructionAssembler()));
     }
 }

@@ -112,6 +112,9 @@ public class BitArray {
     }
 
     public void setLength(int length) {
+        if (length > CAPACITY) {
+            throw new IllegalArgumentException("Length: " + length + " is greater than capacity :" + CAPACITY);
+        }
         this.length = length;
     }
 

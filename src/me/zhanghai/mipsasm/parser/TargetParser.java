@@ -10,7 +10,6 @@ import me.zhanghai.mipsasm.assembler.Target;
 import me.zhanghai.mipsasm.assembler.TargetLabel;
 import me.zhanghai.mipsasm.util.IoUtils;
 
-// FIXME: Should be a label instead.
 public class TargetParser {
 
     private TargetParser() {}

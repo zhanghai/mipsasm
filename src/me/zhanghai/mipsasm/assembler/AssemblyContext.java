@@ -113,15 +113,15 @@ public class AssemblyContext {
         if (assembly.size() > 0) {
             BitArray last = assembly.get(assembly.size() - 1);
             if (last.length() <= BYTE_LENGTH) {
-                last.setLength(BYTE_LENGTH);
+                last.setLength(2 * BYTE_LENGTH);
                 last.setTo(BYTE_LENGTH, theByte);
                 appended = true;
             } else if (last.length() <= 2 * BYTE_LENGTH) {
-                last.setLength(2 * BYTE_LENGTH);
+                last.setLength(3 * BYTE_LENGTH);
                 last.setTo(2 * BYTE_LENGTH, theByte);
                 appended = true;
             } else if (last.length() <= 3 * BYTE_LENGTH) {
-                last.setLength(3 * BYTE_LENGTH);
+                last.setLength(4 * BYTE_LENGTH);
                 last.setTo(3 * BYTE_LENGTH, theByte);
                 appended = true;
             } else {
@@ -143,7 +143,7 @@ public class AssemblyContext {
         if (assembly.size() > 0) {
             BitArray last = assembly.get(assembly.size() - 1);
             if (last.length() <= HALF_WORD_LENGTH) {
-                last.setLength(WORD_LENGTH);
+                last.setLength(2 * HALF_WORD_LENGTH);
                 last.setTo(HALF_WORD_LENGTH, halfWord);
                 appended = true;
             } else {

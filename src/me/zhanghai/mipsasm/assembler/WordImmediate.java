@@ -7,22 +7,28 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class Address {
-
-    private static final int LENGTH = 32;
+public class WordImmediate implements Operand {
 
     private BitArray value;
 
-    private Address(BitArray value) {
+    private WordImmediate(BitArray value) {
         this.value = value;
     }
 
-    public static Address of(int value) {
-        return new Address(BitArray.of(value, LENGTH));
+    public static WordImmediate of(int value) {
+        return new WordImmediate(BitArray.ofValue(value));
     }
 
     public BitArray getValue() {
         return value;
+    }
+
+    public BitArray getUpper() {
+        return value.subArray(0, AssemblyContext.HALF_WORD_LENGTH);
+    }
+
+    public BitArray getLower() {
+        return value.subArray(AssemblyContext.HALF_WORD_LENGTH);
     }
 
     @Override
@@ -34,8 +40,8 @@ public class Address {
             return false;
         }
 
-        Address address = (Address) object;
-        return value.equals(address.value);
+        WordImmediate that = (WordImmediate) object;
+        return value.equals(that.value);
     }
 
     @Override
@@ -45,6 +51,6 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address {" + "value=" + value + '}';
+        return "WordImmediate {" + "value=" + value + '}';
     }
 }

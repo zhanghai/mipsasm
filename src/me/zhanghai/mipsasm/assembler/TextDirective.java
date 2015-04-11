@@ -7,17 +7,17 @@ package me.zhanghai.mipsasm.assembler;
 
 public class TextDirective extends Directive {
 
-    private Address address;
+    private WordImmediate address;
 
-    private TextDirective(Address address) {
+    private TextDirective(WordImmediate address) {
         this.address = address;
     }
 
-    public static TextDirective of(Address address) {
+    public static TextDirective of(WordImmediate address) {
         return new TextDirective(address);
     }
 
-    public Address getAddress() {
+    public WordImmediate getAddress() {
         return address;
     }
 

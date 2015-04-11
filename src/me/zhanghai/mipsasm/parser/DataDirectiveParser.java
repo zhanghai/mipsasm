@@ -5,7 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.assembler.Address;
+import me.zhanghai.mipsasm.assembler.WordImmediate;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.BackwardAddressException;
 import me.zhanghai.mipsasm.assembler.DataDirective;
@@ -25,9 +25,9 @@ public class DataDirectiveParser {
         }
 
         String addressString = operandStringList[0];
-        Address address;
+        WordImmediate address;
         try {
-            address = Address.of(IoUtils.decodeUnsignedInteger(addressString));
+            address = WordImmediate.of(IoUtils.decodeUnsignedInt(addressString));
         } catch (IllegalArgumentException e) {
             throw new IllegalOperandException("Address: " + addressString, e);
         }

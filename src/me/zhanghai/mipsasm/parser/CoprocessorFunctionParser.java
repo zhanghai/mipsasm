@@ -14,7 +14,7 @@ public class CoprocessorFunctionParser {
 
     public static CoprocessorFunction parse(String coprocessorFunctionString) throws ParserException {
         try {
-            return CoprocessorFunction.of(IoUtils.decodeUnsignedInteger(coprocessorFunctionString));
+            return CoprocessorFunction.of(IoUtils.decodeUnsignedInt(coprocessorFunctionString));
         } catch (NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse coprocessor function: " + coprocessorFunctionString, e);
         } catch (IllegalArgumentException e) {

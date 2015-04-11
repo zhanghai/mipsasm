@@ -18,7 +18,7 @@ public class InstructionIndex implements Operand, AssemblyProvider {
     }
 
     public static InstructionIndex of(int value) {
-        return new InstructionIndex(BitArray.ofInt(value, LENGTH));
+        return new InstructionIndex(BitArray.ofInteger(value, LENGTH));
     }
 
     public BitArray getValue() {

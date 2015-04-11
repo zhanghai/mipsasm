@@ -7,47 +7,26 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-public class OffsetLabel implements Operand, AssemblyProvider {
-
-    private static final Pattern NAME_PATTERN = Pattern.compile("\\w+");
-
-    private static ThreadLocal<Matcher> NAME_MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return NAME_PATTERN.matcher("");
-        }
-    };
+public class OffsetLabel extends Label implements AssemblyProvider {
 
     private static final int LENGTH = Immediate.LENGTH;
 
-    private String name;
-
     private OffsetLabel(String name) {
-        this.name = name;
+        super(name);
     }
 
     public static OffsetLabel of(String name) {
-        Matcher nameMatcher = NAME_MATCHER.get().reset(name);
-        if (!nameMatcher.matches()) {
-            throw new IllegalArgumentException("Label name must match \\w+");
-        }
+        checkName(name);
         return new OffsetLabel(name);
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override
     public BitArray assemble(AssemblyContext context) throws AssemblerException {
-        int offset = context.getLabelAddress(name) - (context.getAddress() + 1);
+        int offset = context.getLabelAddress(this) - (context.getAddress() + AssemblyContext.BYTES_IN_WORD);
         try {
-            return BitArray.ofInt(offset, LENGTH);
+            return BitArray.ofInteger(offset, LENGTH);
         } catch (IllegalArgumentException e) {
-            throw new OffsetTooLargeException("Label name: " + name + ", offset: " + offset, e);
+            throw new OffsetTooLargeException("Label name: " + getName() + ", offset: " + offset, e);
         }
     }
 }

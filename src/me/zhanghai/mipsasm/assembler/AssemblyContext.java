@@ -15,9 +15,11 @@ import java.util.Map;
 
 public class AssemblyContext {
 
-    private static final int BYTE_LENGTH = 8;
-    private static final int HALF_WORD_LENGTH = 16;
-    private static final int WORD_LENGTH = 32;
+    public static final int BYTE_LENGTH = 8;
+    public static final int HALF_WORD_LENGTH = 16;
+    public static final int WORD_LENGTH = 32;
+    public static final int ADDRESS_LENGTH = WORD_LENGTH;
+    public static final int BYTES_IN_WORD = WORD_LENGTH / BYTE_LENGTH;
 
     private int address = 0;
 
@@ -38,7 +40,7 @@ public class AssemblyContext {
         this.address = address;
     }
 
-    public void advanceToAddress(Address address) {
+    public void advanceToAddress(WordImmediate address) {
         advanceToAddress(address.getValue().value());
     }
 
@@ -93,6 +95,10 @@ public class AssemblyContext {
             throw new UndefinedLabelException("Label name: " + name);
         }
         return labelAddressMap.get(name);
+    }
+
+    public int getLabelAddress(Label label) throws UndefinedLabelException {
+        return getLabelAddress(label.getName());
     }
 
     public void appendAssemblable(Assemblable assemblable) {
@@ -194,7 +200,7 @@ public class AssemblyContext {
         appendAssemblyByZeroBytes(address - this.address);
     }
 
-    public void appendAssemblyByZeroToAddress(Address address) {
+    public void appendAssemblyByZeroToAddress(WordImmediate address) {
         appendAssemblyByZeroToAddress(address.getValue().value());
     }
 

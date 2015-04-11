@@ -10,9 +10,13 @@ public class OperandPrototype {
     private String name;
     private OperandType type;
 
-    public OperandPrototype(String name, OperandType type) {
+    private OperandPrototype(String name, OperandType type) {
         this.name = name;
         this.type = type;
+    }
+
+    public static OperandPrototype of(String name, OperandType type) {
+        return new OperandPrototype(name, type);
     }
 
     public String getName() {

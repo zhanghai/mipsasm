@@ -82,4 +82,14 @@ public class OperandListPrototypes {
             OperandPrototypes.HINT,
             OperandPrototypes.OFFSET_BASE
     };
+
+    public static final OperandPrototype[] SOURCE2_WORD_IMMEDIATE = new OperandPrototype[] {
+            OperandPrototypes.SOURCE2,
+            OperandPrototypes.WORD_IMMEDIATE
+    };
+
+    public static final OperandPrototype[] SOURCE2_LABEL = new OperandPrototype[] {
+            OperandPrototypes.SOURCE2,
+            OperandPrototypes.LABEL
+    };
 }

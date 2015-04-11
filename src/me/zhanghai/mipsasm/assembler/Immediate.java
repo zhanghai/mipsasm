@@ -9,7 +9,7 @@ import me.zhanghai.mipsasm.util.BitArray;
 
 public class Immediate implements Operand, AssemblyProvider {
 
-    static final int LENGTH = 16;
+    static final int LENGTH = AssemblyContext.HALF_WORD_LENGTH;
 
     private BitArray value;
 
@@ -18,7 +18,7 @@ public class Immediate implements Operand, AssemblyProvider {
     }
 
     public static Immediate of(int value) {
-        return new Immediate(BitArray.ofInt(value, LENGTH));
+        return new Immediate(BitArray.ofInteger(value, LENGTH));
     }
 
     public BitArray getValue() {

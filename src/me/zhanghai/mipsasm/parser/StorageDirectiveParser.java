@@ -22,7 +22,7 @@ public abstract class StorageDirectiveParser {
         for (String operandString : operandStringList) {
             StorageDirective storage;
             try {
-                storage = StorageDirective.of(IoUtils.decodeUnsignedInteger(operandString), length);
+                storage = StorageDirective.of(IoUtils.decodeUnsignedInt(operandString), length);
             } catch (IllegalArgumentException e) {
                 throw new IllegalOperandException("Storage: " + operandString, e);
             }

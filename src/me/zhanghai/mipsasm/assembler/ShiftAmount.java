@@ -20,10 +20,6 @@ public class ShiftAmount implements Operand, AssemblyProvider {
     }
 
     public static ShiftAmount of(int value) {
-        int length = BitArray.lengthOf(value);
-        if (length > LENGTH) {
-            throw new IllegalArgumentException("Shift amount length > " + LENGTH + ": " + length);
-        }
         return new ShiftAmount(BitArray.of(value, LENGTH));
     }
 

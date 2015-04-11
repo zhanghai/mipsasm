@@ -9,6 +9,7 @@ package me.zhanghai.mipsasm.util;
  * Index starts from right to left.
  */
 public class BitArray {
+
     public static final int CAPACITY = Integer.SIZE;
 
     private int value;
@@ -16,20 +17,16 @@ public class BitArray {
     private int length;
 
     private BitArray(int value, int length) {
-        if (lengthOf(value) > length) {
-            throw new IllegalArgumentException("Value length > specified length, value: " + value + ", length: "
-                    + length);
-        }
         this.value = value;
         this.length = length;
     }
 
-    /**
-     * Initializes a {@code BitArray} with specified length.
-     * @param length Length of this {@code BitArray}
-     */
-    public BitArray(int length) {
-        this(0, length);
+    public static BitArray ofValue(int value) {
+        return of(value, CAPACITY);
+    }
+
+    public static BitArray ofLength(int length) {
+        return of(0, length);
     }
 
     /**
@@ -39,7 +36,19 @@ public class BitArray {
      * @return The new {@code BitArray}
      */
     public static BitArray of(int value, int length) {
+        if (lengthOf(value) > length) {
+            throw new IllegalArgumentException("Value length > specified length, value: " + value + ", length: "
+                    + length);
+        } else if (length > CAPACITY) {
+            throw new IllegalArgumentException("Length > capacity, " + "length: " + length + ", capacity: " + CAPACITY);
+        }
         return new BitArray(value, length);
+    }
+
+    public static BitArray of(int value, int fromIndex, int toIndex) {
+        return of(value, toIndex)
+                .rightShift(fromIndex)
+                .setLength(toIndex - fromIndex);
     }
 
     /**
@@ -51,7 +60,7 @@ public class BitArray {
         if (value.length > CAPACITY) {
             throw new IllegalArgumentException("Boolean array length > " + CAPACITY + ": " + value.length);
         }
-        BitArray bitArray = new BitArray(value.length);
+        BitArray bitArray = ofLength(value.length);
         for (int i = 0; i < value.length; ++i) {
             if (value[i]) {
                 bitArray.set(i);
@@ -76,10 +85,10 @@ public class BitArray {
             value <<= bitArray.length();
             value |= bitArray.value();
         }
-        return new BitArray(value, size);
+        return of(value, size);
     }
 
-    public static BitArray ofInt(int value, int length) {
+    public static BitArray ofInteger(int value, int length) {
         if (value >= 0 && lengthOf(value) > length) {
             throw new IllegalArgumentException("value length: " + lengthOf(value) + ">= specified length: " + length
                     + ", with value: " + value);
@@ -92,7 +101,7 @@ public class BitArray {
     }
 
     public static BitArray copyOf(BitArray bitArray) {
-        return new BitArray(bitArray.value, bitArray.length);
+        return of(bitArray.value, bitArray.length);
     }
 
     /**
@@ -111,11 +120,17 @@ public class BitArray {
         return length;
     }
 
-    public void setLength(int length) {
+    /**
+     * Set the length of this {@code BitArray}. Will truncate the value if length is shorten.
+     * @param length The desired length
+     */
+    public BitArray setLength(int length) {
         if (length > CAPACITY) {
             throw new IllegalArgumentException("Length: " + length + " is greater than capacity :" + CAPACITY);
         }
         this.length = length;
+        trimValue();
+        return this;
     }
 
     public boolean get(int index) {
@@ -123,53 +138,87 @@ public class BitArray {
         return (value & makeBit(index)) != 0;
     }
 
-    public void set(int index) {
+    public BitArray set(int index) {
         checkOutOfBound(index);
         value |= makeBit(index);
+        return this;
     }
 
-    public void set(int fromIndex, int toIndex) {
+    public BitArray set(int fromIndex, int toIndex) {
         checkRange(fromIndex, toIndex);
         value |= makeBitRange(fromIndex, toIndex);
+        return this;
     }
 
-    public void clear(int index) {
+    public BitArray clear(int index) {
         checkOutOfBound(index);
         value &= ~makeBit(index);
+        return this;
     }
 
-    public void clear(int fromIndex, int toIndex) {
+    public BitArray clear(int fromIndex, int toIndex) {
         checkRange(fromIndex, toIndex);
         value &= ~makeBitRange(fromIndex, toIndex);
+        return this;
     }
 
-    public void flip(int index) {
+    public BitArray flip(int index) {
         checkOutOfBound(index);
         value ^= makeBit(index);
+        return this;
     }
 
-    public void flip(int fromIndex, int toIndex) {
+    public BitArray flip(int fromIndex, int toIndex) {
         checkRange(fromIndex, toIndex);
         value ^= makeBitRange(fromIndex, toIndex);
+        return this;
     }
 
-    public void setTo(int index, boolean value) {
+    public BitArray leftShift(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount < 0: " + amount);
+        }
+        value <<= amount;
+        trimValue();
+        return this;
+    }
+
+    public BitArray rightShift(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount < 0: " + amount);
+        }
+        value >>>= amount;
+        return this;
+    }
+
+    public BitArray subArray(int fromIndex, int toIndex) {
+        checkRange(fromIndex, toIndex);
+        return BitArray.copyOf(this).rightShift(fromIndex).setLength(toIndex - fromIndex);
+    }
+
+    public BitArray subArray(int fromIndex) {
+        return subArray(fromIndex, length);
+    }
+
+    public BitArray setTo(int index, boolean value) {
         if (value) {
             set(index);
         } else {
             clear(index);
         }
+        return this;
     }
 
-    public void setTo(int fromIndex, int toIndex, boolean value) {
+    public BitArray setTo(int fromIndex, int toIndex, boolean value) {
         if (value) {
             set(fromIndex, toIndex);
         } else {
             clear(fromIndex, toIndex);
         }
+        return this;
     }
 
-    public void setTo(int fromIndex, int value, int length) {
+    public BitArray setTo(int fromIndex, int value, int length) {
         if (lengthOf(value) > length) {
             throw new IllegalArgumentException("value :" + value + "length > specified length: " + length);
         }
@@ -177,34 +226,41 @@ public class BitArray {
         checkRange(fromIndex, toIndex);
         this.value &= ~makeBitRange(fromIndex, toIndex);
         this.value |= value << fromIndex;
+        return this;
     }
 
     /**
      * Set the value as {@param value}. The length of this {@code BitArray} will not change.
      * @param value The value
      */
-    public void setTo(int value) {
+    public BitArray setTo(int value) {
         if (lengthOf(value) > length) {
             throw new IllegalArgumentException("value length > " + length + ": " + value);
         }
         this.value = value;
+        return this;
     }
 
-    public void setTo(int fromIndex, BitArray bitArray) {
-        setTo(fromIndex, bitArray.value(), bitArray.length());
+    public BitArray setTo(int fromIndex, BitArray bitArray) {
+        return setTo(fromIndex, bitArray.value(), bitArray.length());
     }
 
     /**
      * Set the value as {@param bitArray}. The length of this {@code BitArray} will not change.
      * @param bitArray The bit array for value
      */
-    public void setTo(BitArray bitArray) {
-        setTo(bitArray.value());
+    public BitArray setTo(BitArray bitArray) {
+        return setTo(bitArray.value());
     }
 
-    public void setAs(BitArray bitArray) {
+    public BitArray setAs(BitArray bitArray) {
         value = bitArray.value();
         length = bitArray.length();
+        return this;
+    }
+
+    public boolean isZero() {
+        return value == 0;
     }
 
     @Override
@@ -274,6 +330,10 @@ public class BitArray {
         if (fromIndex > toIndex) {
             throw new IndexOutOfBoundsException("fromIndex: " + fromIndex + " > toIndex: " + toIndex);
         }
+    }
+
+    private void trimValue() {
+        clear(length, CAPACITY);
     }
 
     private static int makeBit(int index) {

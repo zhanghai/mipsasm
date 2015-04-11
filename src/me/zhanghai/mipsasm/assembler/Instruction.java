@@ -31,14 +31,18 @@ public class Instruction implements Assemblable {
         return operandListInstance;
     }
 
-    public Operand getOperand(String operandName) {
+    public OperandInstance getOperandInstance(String operandName) {
         for (OperandInstance operandInstance : operandListInstance) {
             if (operandInstance.getName().equals(operandName)) {
-                return operandInstance.getOperand();
+                return operandInstance;
             }
         }
         throw new OperandNotFoundException("Operand name: " + operandName + ", operandListInstance: "
                 + Arrays.toString(operandListInstance));
+    }
+
+    public Operand getOperand(String operandName) {
+        return getOperandInstance(operandName).getOperand();
     }
 
     public Operand getOperand(OperandPrototype operandPrototype) {

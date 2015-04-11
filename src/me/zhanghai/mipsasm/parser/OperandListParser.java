@@ -51,6 +51,12 @@ public class OperandListParser {
                 case OFFSET_BASE:
                     operand = OffsetBaseParser.parse(operandString);
                     break;
+                case WORD_IMMEDIATE:
+                    operand = WordImmediateParser.parse(operandString);
+                    break;
+                case LABEL:
+                    operand = LabelOperandParser.parse(operandString);
+                    break;
                 default:
                     // Never happens.
                     throw new RuntimeException("Unknown operand type: " + operandPrototype.getType());

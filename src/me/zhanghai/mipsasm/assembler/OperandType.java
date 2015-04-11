@@ -12,5 +12,7 @@ public enum OperandType {
     COPROCESSOR_FUNCTION,
     SHIFT_AMOUNT,
     TARGET,
-    OFFSET_BASE
+    OFFSET_BASE,
+    WORD_IMMEDIATE,
+    LABEL
 }

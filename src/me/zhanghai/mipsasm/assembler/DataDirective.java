@@ -7,17 +7,17 @@ package me.zhanghai.mipsasm.assembler;
 
 public class DataDirective extends Directive {
 
-    private Address address;
+    private WordImmediate address;
 
-    private DataDirective(Address address) {
+    private DataDirective(WordImmediate address) {
         this.address = address;
     }
 
-    public static DataDirective of(Address address) {
+    public static DataDirective of(WordImmediate address) {
         return new DataDirective(address);
     }
 
-    public Address getAddress() {
+    public WordImmediate getAddress() {
         return address;
     }
 

@@ -16,7 +16,7 @@ public class TargetParser {
 
     public static Target parse(String targetString) throws ParserException {
         try {
-            return Target.of(InstructionIndex.of(IoUtils.decodeUnsignedInteger(targetString)));
+            return Target.of(InstructionIndex.of(IoUtils.decodeUnsignedInt(targetString)));
         } catch (NumberFormatException e) {
             try {
                 return Target.of(TargetLabel.of(targetString));

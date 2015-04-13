@@ -5,10 +5,10 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.assembler.WordImmediate;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.BackwardAddressException;
 import me.zhanghai.mipsasm.assembler.TextDirective;
+import me.zhanghai.mipsasm.assembler.WordImmediate;
 import me.zhanghai.mipsasm.util.IoUtils;
 
 import java.util.Arrays;

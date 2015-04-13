@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.InternalException;
+import me.zhanghai.mipsasm.parser.LabelAlreadyDefinedException;
 import me.zhanghai.mipsasm.parser.MultiplePendingLabelException;
 import me.zhanghai.mipsasm.parser.ParserException;
 import me.zhanghai.mipsasm.parser.PendingLabelException;

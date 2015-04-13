@@ -7,9 +7,6 @@ package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.util.BitArray;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class TargetLabel extends Label implements AssemblyProvider {
 
     private static final int LENGTH = 26;

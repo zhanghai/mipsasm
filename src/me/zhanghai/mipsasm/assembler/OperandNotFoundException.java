@@ -5,7 +5,9 @@
 
 package me.zhanghai.mipsasm.assembler;
 
-public class OperandNotFoundException extends IllegalArgumentException {
+import me.zhanghai.mipsasm.InternalException;
+
+public class OperandNotFoundException extends InternalException {
 
     public OperandNotFoundException() {}
 

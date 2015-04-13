@@ -14,7 +14,7 @@ public class ShiftAmountParser {
 
     public static ShiftAmount parse(String shiftAmountString) throws ParserException {
         try {
-            return ShiftAmount.of(IoUtils.decodeInteger(shiftAmountString));
+            return ShiftAmount.of(IoUtils.parseUnsignedInteger(shiftAmountString));
         } catch (NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse shift amount: " + shiftAmountString, e);
         } catch (IllegalArgumentException e) {

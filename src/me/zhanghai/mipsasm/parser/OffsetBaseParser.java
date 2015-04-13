@@ -41,7 +41,7 @@ public class OffsetBaseParser {
             offset = Immediate.of(0);
         } else {
             try {
-                offset = Immediate.of(IoUtils.decodeInteger(offsetString));
+                offset = Immediate.of(IoUtils.parseSignedInteger(offsetString));
             } catch (NumberFormatException e) {
                 throw new IllegalOperandException("Offset cannot be parsed: " + offsetString, e);
             } catch (IllegalArgumentException e) {

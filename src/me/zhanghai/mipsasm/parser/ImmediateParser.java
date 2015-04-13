@@ -14,7 +14,7 @@ public class ImmediateParser {
 
     public static Immediate parse(String immediateString) throws ParserException {
         try {
-            return Immediate.of(IoUtils.decodeInteger(immediateString));
+            return Immediate.of(IoUtils.parseInteger(immediateString));
         } catch (NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse immediate: " + immediateString, e);
         } catch (IllegalArgumentException e) {

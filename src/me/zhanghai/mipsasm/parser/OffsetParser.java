@@ -16,7 +16,7 @@ public class OffsetParser {
 
     public static Offset parse(String offsetString) throws ParserException {
         try {
-            return Offset.of(Immediate.of(IoUtils.decodeInteger(offsetString)));
+            return Offset.of(Immediate.of(IoUtils.parseSignedInteger(offsetString)));
         } catch (NumberFormatException e) {
             try {
                 return Offset.of(OffsetLabel.of(offsetString));

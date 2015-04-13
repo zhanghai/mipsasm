@@ -9,13 +9,12 @@ public class IoUtils {
 
     private IoUtils() {}
 
-    // Modified from Integer.decode().
-    public static int decodeInteger(String string) {
+    // Parse an integer, result can be either signed or unsigned, the only limitation being the length of int.
+    public static int parseSignedInteger(String string) {
 
         int radix = 10;
         int index = 0;
         boolean negative = false;
-        Integer result;
 
         if (string.length() == 0) {
             throw new NumberFormatException("Zero length string");
@@ -48,19 +47,10 @@ public class IoUtils {
             throw new NumberFormatException("Sign character in wrong position");
         }
 
-        try {
-            result = Integer.parseInt(string.substring(index), radix);
-            result = negative ? -result : result;
-        } catch (NumberFormatException e) {
-            // If number is Integer.MIN_VALUE, we'll end up here. The next line  handles this case, and causes any
-            // genuine format error to be rethrown.
-            String constant = negative ? ("-" + string.substring(index)) : string.substring(index);
-            result = Integer.valueOf(constant, radix);
-        }
-        return result;
+        return Integer.parseInt(negative ? "-" + string.substring(index) : string.substring(index), radix);
     }
 
-    public static int decodeUnsignedInt(String string) {
+    public static int parseUnsignedInteger(String string) {
 
         if (string.length() == 0) {
             throw new NumberFormatException("Zero length string");
@@ -91,14 +81,24 @@ public class IoUtils {
         return UnsignedCompat.parseUnsignedInt(string.substring(index), radix);
     }
 
-    public static long decodeUnsignedLong(String string) {
+    // Parse an integer, result can be either signed or unsigned, the only limitation being the length of int.
+    public static int parseInteger(String string) {
+
+        int radix = 10;
+        int index = 0;
+        boolean negative = false;
 
         if (string.length() == 0) {
             throw new NumberFormatException("Zero length string");
         }
-
-        int index = 0;
-        int radix = 10;
+        char firstChar = string.charAt(0);
+        // Handle sign, if present
+        if (firstChar == '-') {
+            negative = true;
+            ++index;
+        } else if (firstChar == '+') {
+            ++index;
+        }
 
         // Handle radix specifier, if present
         if (string.startsWith("0x", index) || string.startsWith("0X", index)) {
@@ -116,10 +116,14 @@ public class IoUtils {
         }
 
         if (string.startsWith("-", index) || string.startsWith("+", index)) {
-            throw new NumberFormatException("Illegal sign character found");
+            throw new NumberFormatException("Sign character in wrong position");
         }
 
-        return UnsignedCompat.parseUnsignedLong(string.substring(index), radix);
+        if (negative) {
+            return Integer.parseInt("-" + string.substring(index), radix);
+        } else {
+            return UnsignedCompat.parseUnsignedInt(string.substring(index), radix);
+        }
     }
 
     public static String toBinaryString(int integer) {

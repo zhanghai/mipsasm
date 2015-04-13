@@ -10,7 +10,7 @@ public class OperandPrototype {
     private String name;
     private OperandType type;
 
-    private OperandPrototype(String name, OperandType type) {
+    protected OperandPrototype(String name, OperandType type) {
         this.name = name;
         this.type = type;
     }

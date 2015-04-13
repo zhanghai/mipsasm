@@ -54,6 +54,7 @@ public class AssemblyContext {
     private void addPendingLabelIfHas() {
         if (pendinglabel != null) {
             labelAddressMap.put(pendinglabel, address);
+            pendinglabel = null;
         }
     }
 

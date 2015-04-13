@@ -125,7 +125,9 @@ public class BitArray {
      * @param length The desired length
      */
     public BitArray setLength(int length) {
-        if (length > CAPACITY) {
+        if (length < 0) {
+            throw new IllegalArgumentException("Length < 0: " + length);
+       } else if (length > CAPACITY) {
             throw new IllegalArgumentException("Length: " + length + " is greater than capacity :" + CAPACITY);
         }
         this.length = length;
@@ -333,7 +335,8 @@ public class BitArray {
     }
 
     private void trimValue() {
-        clear(length, CAPACITY);
+        // clear() checks range.
+        value &= ~makeBitRange(length, CAPACITY);
     }
 
     private static int makeBit(int index) {

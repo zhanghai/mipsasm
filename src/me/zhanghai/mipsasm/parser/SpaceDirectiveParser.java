@@ -25,7 +25,7 @@ public class SpaceDirectiveParser {
         String byteCountString = operandStringList[0];
         SpaceDirective space;
         try {
-            space = SpaceDirective.of(IoUtils.decodeUnsignedInt(byteCountString));
+            space = SpaceDirective.of(IoUtils.parseUnsignedInteger(byteCountString));
         } catch (IllegalArgumentException e) {
             throw new IllegalOperandException("ByteCount: " + byteCountString, e);
         }

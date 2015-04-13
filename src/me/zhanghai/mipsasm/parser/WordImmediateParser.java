@@ -14,7 +14,7 @@ public class WordImmediateParser {
 
     public static WordImmediate parse(String wordImmediateString) throws ParserException {
         try {
-            return WordImmediate.of(IoUtils.decodeUnsignedInt(wordImmediateString));
+            return WordImmediate.of(IoUtils.parseInteger(wordImmediateString));
         } catch (NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse word immediate: " + wordImmediateString, e);
         } catch (IllegalArgumentException e) {

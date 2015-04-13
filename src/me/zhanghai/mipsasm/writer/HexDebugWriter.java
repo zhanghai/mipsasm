@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-public class DebugWriter {
+public class HexDebugWriter {
 
-    private DebugWriter() {}
+    private HexDebugWriter() {}
 
     public static void write(OutputStream outputStream, AssemblyContext context) throws WriterException {
 
@@ -25,9 +25,9 @@ public class DebugWriter {
 
         int address = 0;
         for (BitArray assembly : context.getAssembly()) {
-            String assemblyString = IoUtils.toBinaryString(assembly.value());
+            String assemblyString = IoUtils.toHexString(assembly.value());
             try {
-                if (address % Constants.BYTES_PER_WORD == 0) {
+                if (address % (4 * Constants.BYTES_PER_WORD) == 0) {
                     if (address != 0) {
                         writer.newLine();
                     }

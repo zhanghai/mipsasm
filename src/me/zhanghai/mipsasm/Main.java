@@ -40,7 +40,7 @@ public class Main {
     private static final Option OPTION_WRITER = OptionBuilder
             .hasArg()
             .withArgName("TYPE")
-            .withDescription("Use writer of TYPE. TYPE can be 'binary', 'coe', or 'debug' (the default)")
+            .withDescription("Use writer of TYPE. TYPE can be 'binary', 'coe', 'debug' (the default), or 'hexdebug'")
             .withLongOpt("writer")
             .create("w");
     private static final String OPTION_WRITER_ARGUMENT_DEFAULT = "debug";

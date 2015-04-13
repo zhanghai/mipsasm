@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.InternalException;
 import me.zhanghai.mipsasm.parser.LabelAlreadyDefinedException;
 import me.zhanghai.mipsasm.parser.MultiplePendingLabelException;
@@ -19,17 +20,8 @@ import java.util.Map;
 
 public class AssemblyContext {
 
-    public static final int BYTE_LENGTH = 8;
-    public static final int HALF_WORD_LENGTH = 16;
-    public static final int WORD_LENGTH = 32;
-    public static final int ADDRESS_LENGTH = WORD_LENGTH;
-    public static final int INSTRUCTION_LENGTH = WORD_LENGTH;
-    public static final int BYTES_PER_HALF_WORD = HALF_WORD_LENGTH / BYTE_LENGTH;
-    public static final int BYTES_PER_WORD = WORD_LENGTH / BYTE_LENGTH;
-    public static final int BYTES_PER_INSTRUCTION = INSTRUCTION_LENGTH / BYTE_LENGTH;
-
-    private static final BitArray ZERO_BYTE = BitArray.of(0, BYTE_LENGTH);
-    private static final BitArray ZERO_WORD = BitArray.of(0, WORD_LENGTH);
+    private static final BitArray ZERO_BYTE = BitArray.of(0, Constants.BYTE_LENGTH);
+    private static final BitArray ZERO_WORD = BitArray.of(0, Constants.WORD_LENGTH);
 
     private String pendinglabel;
 
@@ -94,7 +86,7 @@ public class AssemblyContext {
     public void allocateBytes(int bytes) {
         if (bytes <= 0) {
             throw new InternalException(new IllegalArgumentException("bytes <= 0: " + bytes));
-        } else if (bytes > BYTES_PER_WORD) {
+        } else if (bytes > Constants.BYTES_PER_WORD) {
             throw new InternalException(new IllegalArgumentException("bytes > word: " + bytes));
         }
         allocatePaddingForBytes(bytes);
@@ -123,10 +115,10 @@ public class AssemblyContext {
     }
 
     public void allocateBits(int bits) {
-        if (bits % BYTE_LENGTH != 0) {
+        if (bits % Constants.BYTE_LENGTH != 0) {
             throw new InternalException(new IllegalArgumentException("bits should be in bytes"));
         }
-        allocateBytes(bits / BYTE_LENGTH);
+        allocateBytes(bits / Constants.BYTE_LENGTH);
     }
 
     private void checkBackwardAddress(int address) {
@@ -183,10 +175,10 @@ public class AssemblyContext {
     }
 
     public void writeBytes(BitArray bitArray) {
-        if (bitArray.length() % BYTE_LENGTH != 0) {
+        if (bitArray.length() % Constants.BYTE_LENGTH != 0) {
             throw new InternalException(new IllegalArgumentException("BitArray should be in bytes: " + bitArray));
         }
-        int bytes = bitArray.length() / BYTE_LENGTH;
+        int bytes = bitArray.length() / Constants.BYTE_LENGTH;
         writePaddingForBytes(bytes);
         // Make a copy so it will not be changed accidentally.
         // TODO: Is this necessary?

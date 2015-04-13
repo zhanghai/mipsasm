@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class OffsetLabel extends Label implements AssemblyProvider {
@@ -22,7 +23,7 @@ public class OffsetLabel extends Label implements AssemblyProvider {
 
     @Override
     public BitArray assemble(AssemblyContext context) throws AssemblerException {
-        int offset = context.getLabelAddress(this) - (context.getAddress() + AssemblyContext.BYTES_PER_INSTRUCTION);
+        int offset = context.getLabelAddress(this) - (context.getAddress() + Constants.BYTES_PER_INSTRUCTION);
         try {
             return BitArray.ofInteger(offset, LENGTH);
         } catch (IllegalArgumentException e) {

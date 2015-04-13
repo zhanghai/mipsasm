@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class WordImmediate implements Operand {
@@ -24,11 +25,11 @@ public class WordImmediate implements Operand {
     }
 
     public BitArray getUpper() {
-        return value.subArray(0, AssemblyContext.HALF_WORD_LENGTH);
+        return value.subArray(0, Constants.HALF_WORD_LENGTH);
     }
 
     public BitArray getLower() {
-        return value.subArray(AssemblyContext.HALF_WORD_LENGTH);
+        return value.subArray(Constants.HALF_WORD_LENGTH);
     }
 
     @Override

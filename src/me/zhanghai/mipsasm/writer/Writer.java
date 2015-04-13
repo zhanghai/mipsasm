@@ -13,7 +13,8 @@ public enum Writer {
 
     BINARY,
     COE,
-    DEBUG;
+    DEBUG,
+    HEXDEBUG;
 
     public void write(OutputStream outputStream, AssemblyContext context) throws WriterException {
         switch (this) {
@@ -25,6 +26,9 @@ public enum Writer {
                 break;
             case DEBUG:
                 DebugWriter.write(outputStream, context);
+                break;
+            case HEXDEBUG:
+                HexDebugWriter.write(outputStream, context);
                 break;
         }
     }

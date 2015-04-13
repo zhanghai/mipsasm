@@ -5,11 +5,12 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class Immediate implements Operand, AssemblyProvider {
 
-    static final int LENGTH = AssemblyContext.HALF_WORD_LENGTH;
+    static final int LENGTH = Constants.HALF_WORD_LENGTH;
 
     private BitArray value;
 

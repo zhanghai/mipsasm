@@ -22,13 +22,13 @@ public class SpaceDirective extends Directive {
     }
 
     @Override
-    public void locate(AssemblyContext context) {
-        context.advanceByBytes(length);
+    public void allocate(AssemblyContext context) {
+        context.allocateSpace(length);
     }
 
     @Override
-    public void assemble(AssemblyContext context) throws AssemblerException {
-        context.appendAssemblyByZeroBytes(length);
+    public void write(AssemblyContext context) throws AssemblerException {
+        context.writeSpace(length);
     }
 
     @Override

@@ -10,10 +10,9 @@ public class Assembler {
     private Assembler() {}
 
     public static void assemble(AssemblyContext context) throws AssemblerException {
-        context.resetAddress();
         for (Assemblable assemblable : context.getAssemblableList()) {
             try {
-                assemblable.assemble(context);
+                assemblable.write(context);
             } catch (AssemblerException e) {
                 throw new AssemblerException("Assemblable: " + assemblable, e);
             }

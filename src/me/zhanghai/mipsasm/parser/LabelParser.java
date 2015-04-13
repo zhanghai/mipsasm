@@ -31,6 +31,6 @@ public class LabelParser {
             throw new IllegalLabelException("Label: " + labelString);
         }
 
-        context.addLabel(labelString);
+        context.setPendingLabel(labelString);
     }
 }

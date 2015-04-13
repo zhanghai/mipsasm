@@ -36,5 +36,6 @@ public class Parser {
             }
             ++lineNumber;
         }
+        context.finishAllocation();
     }
 }

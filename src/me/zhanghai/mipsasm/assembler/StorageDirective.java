@@ -24,13 +24,13 @@ public class StorageDirective extends Directive {
     }
 
     @Override
-    public void locate(AssemblyContext context) {
-        context.advanceByBits(value.length());
+    public void allocate(AssemblyContext context) {
+        context.allocateBits(value.length());
     }
 
     @Override
-    public void assemble(AssemblyContext context) throws AssemblerException {
-        context.appendAssembly(value);
+    public void write(AssemblyContext context) throws AssemblerException {
+        context.writeBytes(value);
     }
 
     @Override

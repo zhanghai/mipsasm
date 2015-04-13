@@ -5,7 +5,10 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.InternalException;
+import me.zhanghai.mipsasm.parser.MultiplePendingLabelException;
 import me.zhanghai.mipsasm.parser.ParserException;
+import me.zhanghai.mipsasm.parser.PendingLabelException;
 import me.zhanghai.mipsasm.util.BitArray;
 
 import java.util.ArrayList;
@@ -19,75 +22,39 @@ public class AssemblyContext {
     public static final int HALF_WORD_LENGTH = 16;
     public static final int WORD_LENGTH = 32;
     public static final int ADDRESS_LENGTH = WORD_LENGTH;
-    public static final int BYTES_IN_WORD = WORD_LENGTH / BYTE_LENGTH;
+    public static final int INSTRUCTION_LENGTH = WORD_LENGTH;
+    public static final int BYTES_PER_HALF_WORD = HALF_WORD_LENGTH / BYTE_LENGTH;
+    public static final int BYTES_PER_WORD = WORD_LENGTH / BYTE_LENGTH;
+    public static final int BYTES_PER_INSTRUCTION = INSTRUCTION_LENGTH / BYTE_LENGTH;
 
-    private int address = 0;
+    private static final BitArray ZERO_BYTE = BitArray.of(0, BYTE_LENGTH);
+    private static final BitArray ZERO_WORD = BitArray.of(0, WORD_LENGTH);
+
+    private String pendinglabel;
 
     private Map<String, Integer> labelAddressMap = new HashMap<>();
+
+    private int address = 0;
 
     private List<Assemblable> assemblableList = new ArrayList<>();
 
     private List<BitArray> assembly = new ArrayList<>();
 
-    public void resetAddress() {
-        address = 0;
-    }
-
-    public void advanceToAddress(int address) {
-        if (address < this.address) {
-            throw new BackwardAddressException("Current address: " + this.address + ", new address: " + address);
-        }
-        this.address = address;
-    }
-
-    public void advanceToAddress(WordImmediate address) {
-        advanceToAddress(address.getValue().value());
-    }
-
-    public void advanceByBits(int bits) {
-        if (bits % 8 != 0) {
-            throw new IllegalArgumentException("bits should be in bytes");
-        }
-        advanceByBytes(bits / 8);
-    }
-
-    public void advanceByBytes(int bytes) {
-        if (bytes < 0) {
-            throw new IllegalArgumentException("Cannot advance backward: " + bytes);
-        }
-        address += bytes;
-    }
-
-    public void advanceByByte() {
-        advanceByBytes(1);
-    }
-
-    public void advanceByHalfWords(int halfWords) {
-        advanceByBytes(2);
-    }
-
-    public void advanceByHalfWord() {
-        advanceByHalfWords(1);
-    }
-
-    public void advanceByWords(int words) {
-        advanceByBytes(4 * words);
-    }
-
-    public void advanceByWord() {
-        advanceByWords(1);
-    }
-
-    public int getAddress() {
-        return address;
-    }
-
-    public void addLabel(String name) throws ParserException {
-        if (labelAddressMap.containsKey(name)) {
-            throw new LabelAlreadyDefinedException("Label name: " + name + ", old address: " + labelAddressMap.get(name)
+    public void setPendingLabel(String label) throws ParserException {
+        if (labelAddressMap.containsKey(label)) {
+            throw new LabelAlreadyDefinedException("Label: " + label + ", old address: " + labelAddressMap.get(label)
                     + ", new address: " + address);
         }
-        labelAddressMap.put(name, address);
+        if (pendinglabel != null) {
+            throw new MultiplePendingLabelException("Pending label: " + pendinglabel + ", new label: " + label);
+        }
+        pendinglabel = label;
+    }
+
+    private void addPendingLabelIfHas() {
+        if (pendinglabel != null) {
+            labelAddressMap.put(pendinglabel, address);
+        }
     }
 
     public int getLabelAddress(String name) throws UndefinedLabelException {
@@ -101,107 +68,136 @@ public class AssemblyContext {
         return getLabelAddress(label.getName());
     }
 
+    public int getAddress() {
+        return address;
+    }
+
+    private void allocateZero(int bytes) {
+        address += bytes;
+    }
+
+    public void allocateSpace(int bytes) {
+        addPendingLabelIfHas();
+        allocateZero(bytes);
+    }
+
+    private int computePaddingForBytes(int bytes) {
+        return address % bytes;
+    }
+
+    private void allocatePaddingForBytes(int bytes) {
+        allocateZero(computePaddingForBytes(bytes));
+    }
+
+    public void allocateBytes(int bytes) {
+        if (bytes <= 0) {
+            throw new InternalException(new IllegalArgumentException("bytes <= 0: " + bytes));
+        } else if (bytes > BYTES_PER_WORD) {
+            throw new InternalException(new IllegalArgumentException("bytes > word: " + bytes));
+        }
+        allocatePaddingForBytes(bytes);
+        addPendingLabelIfHas();
+        address += bytes;
+    }
+
+    public void allocateByte() {
+        allocateBytes(1);
+    }
+
+    public void allocateHalfWords(int halfWords) {
+        allocateBytes(2 * halfWords);
+    }
+
+    public void allocateHalfWord() {
+        allocateHalfWords(1);
+    }
+
+    public void allocateWords(int words) {
+        allocateBytes(4 * words);
+    }
+
+    public void allocateWord() {
+        allocateWords(1);
+    }
+
+    public void allocateBits(int bits) {
+        if (bits % BYTE_LENGTH != 0) {
+            throw new InternalException(new IllegalArgumentException("bits should be in bytes"));
+        }
+        allocateBytes(bits / BYTE_LENGTH);
+    }
+
+    private void checkBackwardAddress(int address) {
+        if (address < this.address) {
+            throw new BackwardAddressException("Current address: " + this.address + ", new address: " + address);
+        }
+    }
+
+    public void allocateToAddress(int address) {
+        checkBackwardAddress(address);
+        allocateZero(address - this.address);
+    }
+
+    public void allocateToAddress(WordImmediate address) {
+        allocateToAddress(address.getValue().value());
+    }
+
+    public void finishAllocation() throws ParserException {
+        if (pendinglabel != null) {
+            throw new PendingLabelException("Label: " + pendinglabel);
+        }
+        // Reset address for use in the next pass.
+        address = 0;
+    }
+
     public void appendAssemblable(Assemblable assemblable) {
         assemblableList.add(assemblable);
-        assemblable.locate(this);
+        assemblable.allocate(this);
     }
 
     public List<Assemblable> getAssemblableList() {
         return assemblableList;
     }
 
-    // NOTE: address is automatically advanced.
-    public void appendAssemblyByByte(BitArray theByte) {
-        if (theByte.length() != BYTE_LENGTH) {
-            throw new IllegalArgumentException("bitArray is not a byte: " + theByte.length());
-        }
-        boolean appended = false;
-        if (assembly.size() > 0) {
-            BitArray last = assembly.get(assembly.size() - 1);
-            if (last.length() <= BYTE_LENGTH) {
-                last.setLength(2 * BYTE_LENGTH);
-                last.setTo(BYTE_LENGTH, theByte);
-                appended = true;
-            } else if (last.length() <= 2 * BYTE_LENGTH) {
-                last.setLength(3 * BYTE_LENGTH);
-                last.setTo(2 * BYTE_LENGTH, theByte);
-                appended = true;
-            } else if (last.length() <= 3 * BYTE_LENGTH) {
-                last.setLength(4 * BYTE_LENGTH);
-                last.setTo(3 * BYTE_LENGTH, theByte);
-                appended = true;
+    private void writeZero(int bytes) {
+        address += bytes;
+        while (bytes > 0) {
+            if (bytes > 4) {
+                assembly.add(ZERO_WORD);
+                bytes -= 4;
             } else {
-                last.setLength(WORD_LENGTH);
+                assembly.add(ZERO_BYTE);
+                --bytes;
             }
         }
-        if (!appended) {
-            assembly.add(BitArray.copyOf(theByte));
-        }
-        advanceByByte();
     }
 
-    // NOTE: offset is automatically incremented.
-    public void appendAssemblyByHalfWord(BitArray halfWord) {
-        if (halfWord.length() != HALF_WORD_LENGTH) {
-            throw new IllegalArgumentException("bitArray is not a half word: " + halfWord.length());
-        }
-        boolean appended = false;
-        if (assembly.size() > 0) {
-            BitArray last = assembly.get(assembly.size() - 1);
-            if (last.length() <= HALF_WORD_LENGTH) {
-                last.setLength(2 * HALF_WORD_LENGTH);
-                last.setTo(HALF_WORD_LENGTH, halfWord);
-                appended = true;
-            } else {
-                last.setLength(WORD_LENGTH);
-            }
-        }
-        if (!appended) {
-            assembly.add(BitArray.copyOf(halfWord));
-        }
-        advanceByHalfWord();
+    public void writeSpace(int bytes) {
+        writeZero(bytes);
     }
 
-    // NOTE: offset is automatically incremented.
-    public void appendAssemblyByWord(BitArray word) {
-        if (word.length() != 32) {
-            throw new IllegalArgumentException("bitArray is not a word: " + word.length());
-        }
-        if (assembly.size() > 0) {
-            assembly.get(assembly.size() - 1).setLength(WORD_LENGTH);
-        }
-        assembly.add(BitArray.copyOf(word));
-        advanceByWord();
+    private void writePaddingForBytes(int bytes) {
+        writeZero(computePaddingForBytes(bytes));
     }
 
-    public void appendAssembly(BitArray bitArray) {
-        switch (bitArray.length()) {
-            case BYTE_LENGTH:
-                appendAssemblyByByte(bitArray);
-                break;
-            case HALF_WORD_LENGTH:
-                appendAssemblyByHalfWord(bitArray);
-                break;
-            case WORD_LENGTH:
-                appendAssemblyByWord(bitArray);
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal assembly length: " + bitArray.length());
+    public void writeBytes(BitArray bitArray) {
+        if (bitArray.length() % BYTE_LENGTH != 0) {
+            throw new InternalException(new IllegalArgumentException("BitArray should be in bytes: " + bitArray));
         }
+        int bytes = bitArray.length() / BYTE_LENGTH;
+        writePaddingForBytes(bytes);
+        // Make a copy so it will not be changed accidentally.
+        // TODO: Is this necessary?
+        assembly.add(BitArray.copyOf(bitArray));
     }
 
-    public void appendAssemblyByZeroBytes(int bytes) {
-        for (; bytes > 0; --bytes) {
-            appendAssemblyByByte(BitArray.of(0, BYTE_LENGTH));
-        }
+    public void writeToAddress(int address) {
+        checkBackwardAddress(address);
+        writeZero(address - this.address);
     }
 
-    public void appendAssemblyByZeroToAddress(int address) {
-        appendAssemblyByZeroBytes(address - this.address);
-    }
-
-    public void appendAssemblyByZeroToAddress(WordImmediate address) {
-        appendAssemblyByZeroToAddress(address.getValue().value());
+    public void writeToAddress(WordImmediate address) {
+        writeToAddress(address.getValue().value());
     }
 
     public List<BitArray> getAssembly() {

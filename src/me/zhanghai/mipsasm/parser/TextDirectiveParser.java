@@ -31,6 +31,9 @@ public class TextDirectiveParser {
         } catch (IllegalArgumentException e) {
             throw new IllegalOperandException("Address: " + addressString, e);
         }
+        if (address.getValue().get(0) || address.getValue().get(1)) {
+            throw new IllegalOperandException("Address is not word aligned: " + addressString);
+        }
         try {
             context.appendAssemblable(TextDirective.of(address));
         } catch (BackwardAddressException e) {

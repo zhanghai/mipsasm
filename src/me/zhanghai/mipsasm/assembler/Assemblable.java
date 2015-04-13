@@ -7,7 +7,7 @@ package me.zhanghai.mipsasm.assembler;
 
 public interface Assemblable {
 
-    void locate(AssemblyContext context);
+    void allocate(AssemblyContext context);
 
-    void assemble(AssemblyContext context) throws AssemblerException;
+    void write(AssemblyContext context) throws AssemblerException;
 }

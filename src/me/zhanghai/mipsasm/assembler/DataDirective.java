@@ -22,12 +22,12 @@ public class DataDirective extends Directive {
     }
 
     @Override
-    public void locate(AssemblyContext context) {
-        context.advanceToAddress(address);
+    public void allocate(AssemblyContext context) {
+        context.allocateToAddress(address);
     }
 
     @Override
-    public void assemble(AssemblyContext context) throws AssemblerException {
-        context.appendAssemblyByZeroToAddress(address);
+    public void write(AssemblyContext context) throws AssemblerException {
+        context.writeToAddress(address);
     }
 }

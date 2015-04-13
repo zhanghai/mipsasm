@@ -53,11 +53,11 @@ public class Instruction implements Assemblable {
         return assembler;
     }
 
-    public void locate(AssemblyContext context) {
-        assembler.locate(this, context);
+    public void allocate(AssemblyContext context) {
+        assembler.allocate(this, context);
     }
 
-    public void assemble(AssemblyContext context) throws AssemblerException {
-        assembler.assemble(this, context);
+    public void write(AssemblyContext context) throws AssemblerException {
+        assembler.write(this, context);
     }
 }

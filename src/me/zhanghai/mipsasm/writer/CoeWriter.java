@@ -33,7 +33,7 @@ public class CoeWriter {
 
         boolean first = true;
         for (BitArray assembly : context.getAssembly()) {
-            String assemblyString = IoUtils.toHexString(assembly.value());
+            String assemblyString = IoUtils.wordToHexString(assembly.value());
             try {
                 if (first) {
                     first = false;

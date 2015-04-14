@@ -5,15 +5,14 @@
 
 package me.zhanghai.mipsasm.parser;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 
 public class ByteDirectiveParser {
 
-    private static final int LENGTH = 8;
-
     private ByteDirectiveParser() {}
 
     public static void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
-        StorageDirectiveParser.parse(operandStringList, context, LENGTH);
+        StorageDirectiveParser.parse(operandStringList, context, Constants.BYTE_LENGTH);
     }
 }

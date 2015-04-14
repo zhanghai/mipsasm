@@ -47,6 +47,7 @@ public class Main {
 
     @SuppressWarnings("AccessStaticViaInstance")
     private static final Option OPTION_HELP = OptionBuilder
+            .withDescription("Display this help and exit")
             .withLongOpt("help")
             .create("h");
 

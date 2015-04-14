@@ -126,11 +126,11 @@ public class IoUtils {
         }
     }
 
-    public static String toBinaryString(int integer) {
+    public static String wordToBinaryString(int integer) {
         return String.format("%32s", Integer.toBinaryString(integer)).replace(' ', '0');
     }
 
-    public static String toHexString(int integer) {
+    public static String wordToHexString(int integer) {
         return String.format("%08X", integer);
     }
 }

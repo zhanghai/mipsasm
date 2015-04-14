@@ -21,6 +21,10 @@ public class BitArray {
         this.length = length;
     }
 
+    public static BitArray ofEmpty() {
+        return new BitArray(0, 0);
+    }
+
     public static BitArray ofValue(int value) {
         return of(value, CAPACITY);
     }

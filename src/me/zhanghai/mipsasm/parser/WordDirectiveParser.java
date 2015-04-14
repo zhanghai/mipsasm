@@ -5,15 +5,14 @@
 
 package me.zhanghai.mipsasm.parser;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 
 public class WordDirectiveParser {
 
-    private static final int LENGTH = 32;
-
     private WordDirectiveParser() {}
 
     public static void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
-        StorageDirectiveParser.parse(operandStringList, context, LENGTH);
+        StorageDirectiveParser.parse(operandStringList, context, Constants.WORD_LENGTH);
     }
 }

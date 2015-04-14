@@ -17,5 +17,6 @@ public class Assembler {
                 throw new AssemblerException("Assemblable: " + assemblable, e);
             }
         }
+        context.packAssemblyToWords();
     }
 }

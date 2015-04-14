@@ -23,7 +23,9 @@ public class AssemblyContext {
     private static final BitArray ZERO_BYTE = BitArray.of(0, Constants.BYTE_LENGTH);
     private static final BitArray ZERO_WORD = BitArray.of(0, Constants.WORD_LENGTH);
 
-    private String pendinglabel;
+    private static final BitArray EMPTY_BIT_ARRAY = BitArray.ofEmpty();
+
+    private String pendingLabel;
 
     private Map<String, Integer> labelAddressMap = new HashMap<>();
 
@@ -38,16 +40,16 @@ public class AssemblyContext {
             throw new LabelAlreadyDefinedException("Label: " + label + ", old address: " + labelAddressMap.get(label)
                     + ", new address: " + address);
         }
-        if (pendinglabel != null) {
-            throw new MultiplePendingLabelException("Pending label: " + pendinglabel + ", new label: " + label);
+        if (pendingLabel != null) {
+            throw new MultiplePendingLabelException("Pending label: " + pendingLabel + ", new label: " + label);
         }
-        pendinglabel = label;
+        pendingLabel = label;
     }
 
     private void addPendingLabelIfHas() {
-        if (pendinglabel != null) {
-            labelAddressMap.put(pendinglabel, address);
-            pendinglabel = null;
+        if (pendingLabel != null) {
+            labelAddressMap.put(pendingLabel, address);
+            pendingLabel = null;
         }
     }
 
@@ -137,8 +139,8 @@ public class AssemblyContext {
     }
 
     public void finishAllocation() throws ParserException {
-        if (pendinglabel != null) {
-            throw new PendingLabelException("Label: " + pendinglabel);
+        if (pendingLabel != null) {
+            throw new PendingLabelException("Label: " + pendingLabel);
         }
         // Reset address for use in the next pass.
         address = 0;
@@ -156,7 +158,8 @@ public class AssemblyContext {
     private void writeZero(int bytes) {
         address += bytes;
         while (bytes > 0) {
-            if (bytes > 4) {
+            // For word alignment.
+            if (bytes >= 4 && address % Constants.BYTES_PER_WORD == 0) {
                 assembly.add(ZERO_WORD);
                 bytes -= 4;
             } else {
@@ -192,6 +195,29 @@ public class AssemblyContext {
 
     public void writeToAddress(WordImmediate address) {
         writeToAddress(address.getValue().value());
+    }
+
+    public void packAssemblyToWords() {
+        List<BitArray> packedAssembly = new ArrayList<>();
+        BitArray current = EMPTY_BIT_ARRAY;
+        for (BitArray bitArray : assembly) {
+            if (current.length() < Constants.WORD_LENGTH) {
+                current = BitArray.of(current, bitArray);
+            }
+            if (current.length() == Constants.WORD_LENGTH) {
+                packedAssembly.add(current);
+                current = EMPTY_BIT_ARRAY;
+            }
+            if (current.length() > Constants.WORD_LENGTH) {
+                throw new InternalException(new IllegalStateException("Word alignment failed"));
+            }
+        }
+        if (current.length() > 0) {
+            // Found remainder smaller than a word.
+            current = BitArray.of(current, BitArray.ofLength(Constants.WORD_LENGTH - current.length()));
+            packedAssembly.add(current);
+        }
+        assembly = packedAssembly;
     }
 
     public List<BitArray> getAssembly() {

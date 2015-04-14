@@ -25,13 +25,13 @@ public class DebugWriter {
 
         int address = 0;
         for (BitArray assembly : context.getAssembly()) {
-            String assemblyString = IoUtils.toBinaryString(assembly.value());
+            String assemblyString = IoUtils.wordToBinaryString(assembly.value());
             try {
                 if (address % Constants.BYTES_PER_WORD == 0) {
                     if (address != 0) {
                         writer.newLine();
                     }
-                    writer.write(IoUtils.toHexString(address));
+                    writer.write(IoUtils.wordToHexString(address));
                     writer.write(": ");
                 }
                 writer.write(assemblyString);

@@ -53,14 +53,15 @@ public class Ide {
 
         onCreateDisplay();
 
-        icons = new Image[6];
-        icons[0] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_256.png"));
-        icons[1] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_128.png"));
-        icons[2] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_64.png"));
-        icons[3] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_48.png"));
-        icons[4] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_32.png"));
-        icons[5] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_16.png"));
-        monospaceFont = new Font(display, "monospace", 12, SWT.NONE);
+        icons = new Image[7];
+        icons[0] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_512.png"));
+        icons[1] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_256.png"));
+        icons[2] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_128.png"));
+        icons[3] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_64.png"));
+        icons[4] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_48.png"));
+        icons[5] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_32.png"));
+        icons[6] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_16.png"));
+        monospaceFont = new Font(display, "monospace", 11, SWT.NONE);
 
         onCreateShell();
         shell.open();
@@ -108,7 +109,7 @@ public class Ide {
         editText.setMenu(StyledTextMenuHelper.createMenu(SWT.POP_UP, editText, undoRedoHelper, resourceBundle));
         DropTarget dropTarget = new DropTarget(editText, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE
                 | DND.DROP_LINK);
-        dropTarget.setTransfer(new Transfer[] {FileTransfer.getInstance()});
+        dropTarget.setTransfer(new Transfer[]{FileTransfer.getInstance()});
         dropTarget.addDropListener(new DropTargetAdapter() {
             @Override
             public void drop(DropTargetEvent dropTargetEvent) {
@@ -358,12 +359,12 @@ public class Ide {
     }
 
     private void onAssembleAll() {
-        onAssembleBinary();
-        onAssembleCoe();
+        assemble(Writer.BINARY, "bin");
+        assemble(Writer.COE, "coe", false);
     }
 
     private void onAbout() {
-        AboutDialog aboutDialog = new AboutDialog(shell, resourceBundle, icons[1]);
+        AboutDialog aboutDialog = new AboutDialog(shell, resourceBundle, icons[2]);
         aboutDialog.open();
     }
 
@@ -422,7 +423,7 @@ public class Ide {
         openFile(new File(filename));
     }
 
-    private void assemble(Writer writer, String extension) {
+    private void assemble(Writer writer, String extension, boolean shouldClearMessage) {
 
         if (file == null || shell.getModified()) {
             onSave();
@@ -431,7 +432,9 @@ public class Ide {
             }
         }
 
-        clearMessage();
+        if (shouldClearMessage) {
+            clearMessage();
+        }
         try {
             AssemblyContext context = new AssemblyContext();
             Parser.parse(new FileInputStream(file), context);
@@ -445,6 +448,10 @@ public class Ide {
             showMessageNewLine();
             showMessage(e);
         }
+    }
+
+    private void assemble(Writer writer, String extension) {
+        assemble(writer, extension, true);
     }
 
     private void showMessage(String error) {

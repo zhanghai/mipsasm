@@ -32,9 +32,9 @@ public class InstructionParser {
         }
 
         String operationName = matcher.group(1);
-        Operation operation;
+        OperationInformation operationInformation;
         try {
-            operation = Operation.valueOf(operationName.toUpperCase());
+            operationInformation = OperationInformation.valueOf(operationName.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new NoSuchOperationException(operationName);
         }
@@ -42,11 +42,10 @@ public class InstructionParser {
         String operandListString = matcher.group(2);
         String[] operandStringList = operandListString != null ?
                 StringUtils.splitAndTrim(operandListString, Tokens.OPERAND_SEPARATOR_REGEX) : new String[0];
-        OperationInformation operationInformation = OperationInformation.ofOperation(operation);
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
                 operationInformation.getOperandListPrototype());
 
-        context.appendAssemblable(Instruction.of(operation, operandInstances,
+        context.appendAssemblable(Instruction.of(operationInformation.getOperation(), operandInstances,
                 operationInformation.getInstructionAssembler()));
     }
 }

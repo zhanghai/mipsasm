@@ -78,6 +78,14 @@ public class AssemblyContext {
     }
 
     private int computePaddingForBytes(int bytes) {
+        if (bytes > Constants.BYTES_PER_WORD) {
+            if (bytes % Constants.BYTES_PER_WORD == 0) {
+                return 0;
+            } else {
+                throw new InternalException(new IllegalArgumentException("bytes > word and not word aligned, bytes: "
+                        + bytes));
+            }
+        }
         return address % bytes;
     }
 
@@ -88,8 +96,6 @@ public class AssemblyContext {
     public void allocateBytes(int bytes) {
         if (bytes <= 0) {
             throw new InternalException(new IllegalArgumentException("bytes <= 0: " + bytes));
-        } else if (bytes > Constants.BYTES_PER_WORD) {
-            throw new InternalException(new IllegalArgumentException("bytes > word: " + bytes));
         }
         allocatePaddingForBytes(bytes);
         addPendingLabelIfHas();

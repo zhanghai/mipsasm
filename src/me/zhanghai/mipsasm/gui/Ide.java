@@ -16,6 +16,7 @@ import me.zhanghai.mipsasm.writer.Writer;
 import me.zhanghai.mipsasm.writer.WriterException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -105,6 +106,21 @@ public class Ide {
         editText.setKeyBinding(SWT.MOD1 | 'A', ST.SELECT_ALL);
         undoRedoHelper = new StyledTextUndoRedoHelper(editText);
         editText.setMenu(StyledTextMenuHelper.createMenu(SWT.POP_UP, editText, undoRedoHelper, resourceBundle));
+        DropTarget dropTarget = new DropTarget(editText, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE
+                | DND.DROP_LINK);
+        dropTarget.setTransfer(new Transfer[] {FileTransfer.getInstance()});
+        dropTarget.addDropListener(new DropTargetAdapter() {
+            @Override
+            public void drop(DropTargetEvent dropTargetEvent) {
+                FileTransfer fileTransfer = FileTransfer.getInstance();
+                if (fileTransfer.isSupportedType(dropTargetEvent.currentDataType)) {
+                    String filename = ((String[]) dropTargetEvent.data)[0];
+                    if (confirmOpen()) {
+                        openFile(filename);
+                    }
+                }
+            }
+        });
 
         messageText = new StyledText(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
         messageText.setAlwaysShowScrollBars(false);
@@ -273,12 +289,8 @@ public class Ide {
     }
 
     private void onOpen() {
-        if (shell.getModified()) {
-            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.OK | SWT.CANCEL);
-            messageBox.setMessage(resourceBundle.getString("file.open_without_saving"));
-            if (messageBox.open() != SWT.OK) {
-                return;
-            }
+        if (!confirmOpen()) {
+            return;
         }
         FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
         fileDialog.setFilterNames(resourceBundle.getString("menu.file.open.filter_names").split("\\|"));
@@ -291,17 +303,7 @@ public class Ide {
         if (filename == null) {
             return;
         }
-        clearMessage();
-        try {
-            File newFile = new File(filename);
-            String text = IoUtils.readFile(newFile);
-            editText.setText(text);
-            // Override modified set by onTextChange().
-            setModified(false);
-            setFile(newFile);
-        } catch (IOException e) {
-            showMessage(e);
-        }
+        openFile(filename);
     }
 
     private void onSave() {
@@ -391,6 +393,33 @@ public class Ide {
             title = title + " *";
         }
         shell.setText(title);
+    }
+
+    private boolean confirmOpen() {
+        if (shell.getModified()) {
+            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.OK | SWT.CANCEL);
+            messageBox.setMessage(resourceBundle.getString("file.open_without_saving"));
+            return messageBox.open() == SWT.OK;
+        } else {
+            return true;
+        }
+    }
+
+    private void openFile(File file) {
+        clearMessage();
+        try {
+            String text = IoUtils.readFile(file);
+            editText.setText(text);
+            // Override modified set by onTextChange().
+            setModified(false);
+            setFile(file);
+        } catch (IOException e) {
+            showMessage(e);
+        }
+    }
+
+    private void openFile(String filename) {
+        openFile(new File(filename));
     }
 
     private void assemble(Writer writer, String extension) {

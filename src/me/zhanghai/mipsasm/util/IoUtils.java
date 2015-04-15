@@ -5,9 +5,20 @@
 
 package me.zhanghai.mipsasm.util;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 public class IoUtils {
 
+    private static final int BUFFER_SIZE = 4 * 1024;
+
     private IoUtils() {}
+
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
+    }
 
     // Parse an integer, result can be either signed or unsigned, the only limitation being the length of int.
     public static int parseSignedInteger(String string) {
@@ -123,6 +134,35 @@ public class IoUtils {
             return Integer.parseInt("-" + string.substring(index), radix);
         } else {
             return UnsignedCompat.parseUnsignedInt(string.substring(index), radix);
+        }
+    }
+
+    public static String readFile(File file) throws IOException {
+        char[] buffer = new char[BUFFER_SIZE];
+        StringBuilder builder = new StringBuilder();
+        int length;
+        try (FileReader reader = new FileReader(file)) {
+            while ((length = reader.read(buffer)) != -1) {
+                builder.append(buffer, 0, length);
+            }
+        }
+        return builder.toString();
+    }
+
+    public static File replaceFileExtension(File file, String extension) {
+        String name = file.getName();
+        int dotIndex = name.lastIndexOf('.');
+        if (dotIndex == -1) {
+            name += '.' + extension;
+        } else {
+            name = name.substring(0, dotIndex + 1) + extension;
+        }
+        return new File(file.getParentFile(), name);
+    }
+
+    public static void writeFile(File file, String data) throws IOException {
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(data);
         }
     }
 

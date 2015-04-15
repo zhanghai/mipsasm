@@ -28,7 +28,7 @@ public class InstructionParser {
 
         Matcher matcher = MATCHER.get().reset(instructionString);
         if (!matcher.matches()) {
-            throw new IllegalInstructionException("Instruction: " + instructionString);
+            throw new IllegalInstructionException(instructionString);
         }
 
         String operationName = matcher.group(1);
@@ -36,7 +36,7 @@ public class InstructionParser {
         try {
             operation = Operation.valueOf(operationName.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new NoSuchOperationException("Operation: " + operationName);
+            throw new NoSuchOperationException(operationName);
         }
 
         String operandListString = matcher.group(2);

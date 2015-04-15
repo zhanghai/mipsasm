@@ -11,6 +11,14 @@ public class StringUtils {
 
     private StringUtils() {}
 
+    public static String camelCaseToPhrase(String camelCase) {
+        if (isEmpty(camelCase)) {
+            return "";
+        }
+        String camelCaseSpaced = camelCase.replaceAll("([^A-Z])([A-Z])", "$1 $2");
+        return camelCaseSpaced.charAt(0) + camelCaseSpaced.substring(1).toLowerCase();
+    }
+
     public static boolean isEmpty(String string) {
         return string == null || string.isEmpty();
     }

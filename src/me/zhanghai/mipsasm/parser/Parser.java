@@ -24,7 +24,7 @@ public class Parser {
             try {
                 line = reader.readLine();
             } catch (IOException e) {
-                throw new ParserException("Line: " + lineNumber, e);
+                throw new ParserException("Line " + lineNumber, e);
             }
             if (line == null) {
                 break;
@@ -32,7 +32,7 @@ public class Parser {
             try {
                 LineParser.parse(line, context);
             } catch (ParserException e) {
-                throw new ParserException("Line: " + lineNumber + ", " + line, e);
+                throw new ParserException("Line " + lineNumber + ": " + line, e);
             }
             ++lineNumber;
         }

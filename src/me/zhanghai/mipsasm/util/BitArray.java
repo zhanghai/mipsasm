@@ -94,11 +94,11 @@ public class BitArray {
 
     public static BitArray ofInteger(int value, int length) {
         if (value >= 0 && lengthOf(value) > length) {
-            throw new IllegalArgumentException("value length: " + lengthOf(value) + ">= specified length: " + length
-                    + ", with value: " + value);
-        } else if (value < 0 && lengthOf(~value) > length){
-            throw new IllegalArgumentException("value length: " + lengthOf(~value) + ">= specified length: " + length
-                    + ", with value: " + value);
+            throw new IllegalArgumentException("value length > specified length, value: " + value + ", value length: "
+                    + lengthOf(value) + ", specified length: " + length);
+        } else if (value < 0 && lengthOf(~value) + 1 > length){
+            throw new IllegalArgumentException("value length > specified length, value: " + value + ", value length: "
+                    + (lengthOf(~value) + 1) + ", specified length: " + length);
         }
         value &= makeBitRange(length);
         return of(value, length);

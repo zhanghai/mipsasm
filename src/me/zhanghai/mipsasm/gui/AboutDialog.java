@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.gui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -20,14 +21,18 @@ public class AboutDialog extends Dialog {
 
     private ResourceBundle resourceBundle;
 
-    public AboutDialog(Shell shell, ResourceBundle resourceBundle) {
+    private Image icon;
+
+    public AboutDialog(Shell shell, ResourceBundle resourceBundle, Image icon) {
         super(shell);
         this.resourceBundle = resourceBundle;
+        this.icon = icon;
     }
 
-    public AboutDialog(Shell shell, int style, ResourceBundle resourceBundle) {
+    public AboutDialog(Shell shell, int style, ResourceBundle resourceBundle, Image icon) {
         super(shell, style);
         this.resourceBundle = resourceBundle;
+        this.icon = icon;
     }
 
     public void open() {
@@ -55,6 +60,9 @@ public class AboutDialog extends Dialog {
         rowLayout.spacing = 12;
         rowLayout.type = SWT.VERTICAL;
         shell.setLayout(rowLayout);
+
+        Label iconLabel = new Label(shell, SWT.NONE);
+        iconLabel.setImage(icon);
 
         Label nameLabel = new Label(shell, SWT.NONE);
         nameLabel.setText(Display.getAppName());

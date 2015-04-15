@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
@@ -32,6 +33,7 @@ public class Ide {
     private ResourceBundle resourceBundle;
 
     private Display display;
+    private Image[] icons;
     private Font monospaceFont;
 
     private Shell shell;
@@ -46,10 +48,17 @@ public class Ide {
 
     public void run() {
 
-        resourceBundle = ResourceBundle.getBundle("mipside", new Utf8Control());
+        resourceBundle = ResourceBundle.getBundle("res/string/mipside", new Utf8Control());
 
         onCreateDisplay();
 
+        icons = new Image[6];
+        icons[0] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_256.png"));
+        icons[1] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_128.png"));
+        icons[2] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_64.png"));
+        icons[3] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_48.png"));
+        icons[4] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_32.png"));
+        icons[5] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_16.png"));
         monospaceFont = new Font(display, "monospace", 12, SWT.NONE);
 
         onCreateShell();
@@ -61,6 +70,9 @@ public class Ide {
             }
         }
 
+        for (Image icon : icons) {
+            icon.dispose();
+        }
         monospaceFont.dispose();
         display.dispose();
     }
@@ -74,6 +86,8 @@ public class Ide {
     private void onCreateShell() {
 
         shell = new Shell(display, SWT.SHELL_TRIM);
+
+        shell.setImages(icons);
 
         shell.setLayout(new FillLayout());
 
@@ -347,7 +361,7 @@ public class Ide {
     }
 
     private void onAbout() {
-        AboutDialog aboutDialog = new AboutDialog(shell, resourceBundle);
+        AboutDialog aboutDialog = new AboutDialog(shell, resourceBundle, icons[1]);
         aboutDialog.open();
     }
 

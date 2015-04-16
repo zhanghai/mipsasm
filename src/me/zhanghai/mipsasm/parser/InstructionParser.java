@@ -5,7 +5,10 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.assembler.*;
+import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.assembler.Instruction;
+import me.zhanghai.mipsasm.assembler.OperandInstance;
+import me.zhanghai.mipsasm.assembler.OperationInformation;
 import me.zhanghai.mipsasm.util.StringUtils;
 
 import java.util.regex.Matcher;

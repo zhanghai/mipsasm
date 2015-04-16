@@ -15,10 +15,16 @@ import me.zhanghai.mipsasm.util.StringUtils;
 import me.zhanghai.mipsasm.writer.Writer;
 import me.zhanghai.mipsasm.writer.WriterException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.printing.PrintDialog;
@@ -26,7 +32,10 @@ import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 public class Ide {
@@ -53,19 +62,23 @@ public class Ide {
 
         onCreateDisplay();
 
-        icons = new Image[7];
-        icons[0] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_512.png"));
-        icons[1] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_256.png"));
-        icons[2] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_128.png"));
-        icons[3] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_64.png"));
-        icons[4] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_48.png"));
-        icons[5] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_32.png"));
-        icons[6] = new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_16.png"));
-        monospaceFont = new Font(display, "monospace", 11, SWT.NONE);
+        icons = new Image[] {
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_512.png")),
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_256.png")),
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_128.png")),
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_64.png")),
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_48.png")),
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_32.png")),
+            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_16.png"))
+        };
+        monospaceFont = new Font(display, new FontData[] {
+                new FontDataBuilder().setName("Source Code Pro").setHeight(11).build(),
+                new FontDataBuilder().setName("monospace").setHeight(11).build(),
+        });
 
         onCreateShell();
-        shell.open();
 
+        shell.open();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) {
                 display.sleep();

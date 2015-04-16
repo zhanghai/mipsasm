@@ -6,7 +6,6 @@
 package me.zhanghai.mipsasm.util;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class IoUtils {
 

@@ -5,14 +5,14 @@
 
 package me.zhanghai.mipsasm.gui;
 
-import java.util.Stack;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+
+import java.util.Stack;
 
 /**
  * Adds the Undo-Redo functionality (working Ctrl+Z and Ctrl+Y) to an instance of {@link StyledText}.

@@ -12,37 +12,65 @@ import org.eclipse.swt.widgets.MenuItem;
 
 public class MenuItemBuilder {
 
-    private MenuItem menuItem;
+    private Menu parentMenu;
+    private int style;
 
-    public MenuItemBuilder(Menu menu, int style) {
-        menuItem = new MenuItem(menu, style);
+    private boolean selectionListenerSet;
+    private SelectionListener selectionListener;
+    private boolean acceleratorSet;
+    private int accelerator;
+    private boolean menuSet;
+    private Menu menu;
+    private boolean textSet;
+    private String text;
+
+    public MenuItemBuilder(Menu parentMenu, int style) {
+        this.parentMenu = parentMenu;
+        this.style = style;
     }
 
-    public MenuItemBuilder(Menu menu) {
-        this(menu, SWT.NULL);
+    public MenuItemBuilder(Menu parentMenu) {
+        this(parentMenu, SWT.NULL);
     }
 
-    public MenuItemBuilder addSelectionListener(SelectionListener listener) {
-        menuItem.addSelectionListener(listener);
+    public MenuItemBuilder addSelectionListener(SelectionListener selectionListener) {
+        this.selectionListener = selectionListener;
+        selectionListenerSet = true;
         return this;
     }
 
     public MenuItemBuilder setAccelerator(int accelerator) {
-        menuItem.setAccelerator(accelerator);
+        this.accelerator = accelerator;
+        acceleratorSet = true;
         return this;
     }
 
     public MenuItemBuilder setMenu(Menu menu) {
-        menuItem.setMenu(menu);
+        this.menu = menu;
+        menuSet = true;
         return this;
     }
 
     public MenuItemBuilder setText(String text) {
-        menuItem.setText(text);
+        this.text = text;
+        textSet = true;
         return this;
     }
 
     public MenuItem build() {
+        MenuItem menuItem = new MenuItem(parentMenu, style);
+        if (selectionListenerSet) {
+            menuItem.addSelectionListener(selectionListener);
+        }
+        if (acceleratorSet) {
+            menuItem.setAccelerator(accelerator);
+        }
+        if (menuSet) {
+            menuItem.setMenu(menu);
+        }
+        if (textSet) {
+            menuItem.setText(text);
+        }
         return menuItem;
     }
 }

@@ -36,20 +36,39 @@ public class StyledTextStyleHelper {
     private static final StyleRangeTemplate STATEMENT_SEPARATOR_STYLE = new StyleRangeTemplate(
             new Color(Display.getCurrent(), 0xF9, 0x26, 0x72));
 
-    private static final List<String> INSTRUCTION_NAME;
+    private static final String[] PUNCTUATION_REGEXS = new String [] {
+            ":",
+            ",",
+            "\\(",
+            "\\)"
+    };
+
+    private static final StyleRangeTemplate PUNCTUATION_STYLE = STATEMENT_SEPARATOR_STYLE;
+
+    private static final String TOKEN_SEPARATOR_REGEX;
     static {
-        INSTRUCTION_NAME = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        for (String punctuationRegex : PUNCTUATION_REGEXS) {
+            builder.append("(\\s*")
+                    .append(punctuationRegex)
+                    .append("\\s*)|");
+        }
+        builder.append("(\\s+)");
+        TOKEN_SEPARATOR_REGEX = builder.toString();
+    }
+
+    private static final List<String> KEYWORD;
+    static {
+        KEYWORD = new ArrayList<>();
         for (OperationInformation operationInformation : OperationInformation.values()) {
-            INSTRUCTION_NAME.add(operationInformation.name());
+            KEYWORD.add(operationInformation.name());
         }
         for (DirectiveInformation directiveInformation : DirectiveInformation.values()) {
-            INSTRUCTION_NAME.add("." + directiveInformation.name());
+            KEYWORD.add("." + directiveInformation.name());
         }
     }
-    private static final StyleRangeTemplate INSTRUCTION_NAME_STYLE = new StyleRangeTemplate(
+    private static final StyleRangeTemplate KEYWORD_STYLE = new StyleRangeTemplate(
             new Color(Display.getCurrent(), 0xA6, 0xE2, 0x2E), SWT.BOLD);
-
-    private static final StyleRangeTemplate OPERAND_SEPARATOR_STYLE = STATEMENT_SEPARATOR_STYLE;
 
     private static final List<String> REGISTERS;
     static {
@@ -126,52 +145,56 @@ public class StyledTextStyleHelper {
     }
 
     private static void addStyleForStatement(String statement, int offset, List<StyleRange> styleRangeList) {
-
-        for (String keyword : INSTRUCTION_NAME) {
-            int keywordStart = 0;
-            while ((keywordStart = statement.indexOf(keyword, keywordStart)) != -1) {
-                styleRangeList.add(INSTRUCTION_NAME_STYLE.forRange(offset + keywordStart, keyword.length()));
-                keywordStart += keyword.length();
-            }
-        }
-
-        Matcher operandSeparatorMatcher = Pattern.compile(Tokens.OPERAND_SEPARATOR_REGEX).matcher(statement);
-        int operandStart = 0;
+        Matcher tokenSeparatorMatcher = Pattern.compile(TOKEN_SEPARATOR_REGEX).matcher(statement);
+        int tokenStart = 0;
         while (true) {
-            boolean operandSeparatorFound = operandSeparatorMatcher.find();
-            String operand;
-            if (operandSeparatorFound) {
-                operand = statement.substring(operandStart, operandSeparatorMatcher.start());
+            boolean tokenSeparatorFound = tokenSeparatorMatcher.find();
+            String token;
+            if (tokenSeparatorFound) {
+                token = statement.substring(tokenStart, tokenSeparatorMatcher.start());
             } else {
-                operand = statement.substring(operandStart, statement.length());
+                token = statement.substring(tokenStart, statement.length());
             }
-            addStyleForOperand(operand, offset + operandStart, styleRangeList);
-            if (operandSeparatorFound) {
-                styleRangeList.add(OPERAND_SEPARATOR_STYLE.forRange(
-                        offset + operandSeparatorMatcher.start(),
-                        operandSeparatorMatcher.end() - operandSeparatorMatcher.start()));
-                operandStart = operandSeparatorMatcher.end();
+            addStyleForToken(token, offset + tokenStart, styleRangeList);
+            if (tokenSeparatorFound) {
+                addStyleForPunctuation(tokenSeparatorMatcher.group(), offset + tokenSeparatorMatcher.start(),
+                        styleRangeList);
+                tokenStart = tokenSeparatorMatcher.end();
             } else {
                 break;
             }
         }
     }
 
-    private static void addStyleForOperand(String operand, int offset, List<StyleRange> styleRangeList) {
+    private static void addStyleForToken(String token, int offset, List<StyleRange> styleRangeList) {
+
+        for (String keyword : KEYWORD) {
+            if (token.equals(keyword)) {
+                styleRangeList.add(KEYWORD_STYLE.forRange(offset, token.length()));
+            }
+        }
 
         for (String register : REGISTERS) {
-            int registerStart = operand.indexOf(register);
-            if (registerStart != -1) {
-                styleRangeList.add(REGISTER_STYLE.forRange(offset + registerStart, register.length()));
+            if (token.equals(register)) {
+                styleRangeList.add(REGISTER_STYLE.forRange(offset, token.length()));
                 return;
             }
         }
 
         Matcher numberLiteralMatcher = Pattern.compile("(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})")
-                .matcher(operand);
-        if (numberLiteralMatcher.find()) {
-            styleRangeList.add(IMMEDIATE_STYLE.forRange(offset + numberLiteralMatcher.start(),
-                    numberLiteralMatcher.end() - numberLiteralMatcher.start()));
+                .matcher(token);
+        if (numberLiteralMatcher.matches()) {
+            styleRangeList.add(IMMEDIATE_STYLE.forRange(offset, token.length()));
+        }
+    }
+
+    private static void addStyleForPunctuation(String tokenSeparator, int offset, List<StyleRange> styleRangeList) {
+        for (String punctuationRegex : PUNCTUATION_REGEXS) {
+            Matcher punctuationMatcher = Pattern.compile(punctuationRegex).matcher(tokenSeparator);
+            while (punctuationMatcher.find()) {
+                styleRangeList.add(PUNCTUATION_STYLE.forRange(offset + punctuationMatcher.start(),
+                        punctuationMatcher.end() - punctuationMatcher.start()));
+            }
         }
     }
 

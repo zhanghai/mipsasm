@@ -118,6 +118,7 @@ public class Ide {
             }
         });
         editText.setKeyBinding(SWT.MOD1 | 'A', ST.SELECT_ALL);
+        StyledTextStyleHelper.setup(editText);
         undoRedoHelper = new StyledTextUndoRedoHelper(editText);
         editText.setMenu(StyledTextMenuHelper.createMenu(SWT.POP_UP, editText, undoRedoHelper, resourceBundle));
         DropTarget dropTarget = new DropTarget(editText, DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_MOVE
@@ -484,7 +485,13 @@ public class Ide {
         if (throwable instanceof ParserException || throwable instanceof AssemblerException
                 || throwable instanceof WriterException) {
             StringBuilder builder = new StringBuilder();
+            boolean first = true;
             do {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append('\t');
+                }
                 String cause = StringUtils.camelCaseToPhrase(throwable.getClass().getSimpleName()
                         .replaceFirst("Exception$", ""));
                 builder.append(cause)

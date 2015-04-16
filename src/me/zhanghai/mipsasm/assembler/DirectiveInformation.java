@@ -16,10 +16,6 @@ public enum  DirectiveInformation {
     WORD,
     SPACE;
 
-    public String getName() {
-        return name();
-    }
-
     public void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
         switch (this) {
             case TEXT:

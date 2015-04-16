@@ -55,7 +55,7 @@ public class AboutDialog extends Dialog {
         shell.setText(resourceBundle.getString("about.title"));
 
         RowLayout rowLayout = new RowLayout();
-        rowLayout.marginWidth = rowLayout.marginHeight = 7;
+        rowLayout.marginWidth = rowLayout.marginHeight = 12;
         rowLayout.center = true;
         rowLayout.spacing = 12;
         rowLayout.type = SWT.VERTICAL;

@@ -128,6 +128,7 @@ public class Ide {
         messageText.setEditable(false);
         messageText.setFont(monospaceFont);
         messageText.setKeyBinding(SWT.MOD1 | 'A', ST.SELECT_ALL);
+        messageText.setMenu(StyledTextMenuHelper.createMenu(SWT.POP_UP, messageText, resourceBundle));
 
         sashForm.setWeights(new int[]{8, 2});
 

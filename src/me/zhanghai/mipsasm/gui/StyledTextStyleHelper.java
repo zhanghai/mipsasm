@@ -167,8 +167,8 @@ public class StyledTextStyleHelper {
             }
         }
 
-        Matcher numberLiteralMatcher = Pattern.compile("(0X\\d{1,8})|(0\\d{1,11})|(0B\\d{1,32})|(\\d{1,10})").matcher(
-                operand);
+        Matcher numberLiteralMatcher = Pattern.compile("(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})")
+                .matcher(operand);
         if (numberLiteralMatcher.find()) {
             styleRangeList.add(IMMEDIATE_STYLE.forRange(offset + numberLiteralMatcher.start(),
                     numberLiteralMatcher.end() - numberLiteralMatcher.start()));

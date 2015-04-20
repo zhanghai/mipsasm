@@ -11,16 +11,14 @@ public class Instruction implements Assemblable {
 
     private Operation operation;
     private OperandInstance[] operandListInstance;
-    private InstructionAssembler assembler;
 
-    private Instruction(Operation operation, OperandInstance[] operandListInstance, InstructionAssembler assembler) {
+    private Instruction(Operation operation, OperandInstance[] operandListInstance) {
         this.operation = operation;
         this.operandListInstance = operandListInstance;
-        this.assembler = assembler;
     }
 
-    public static Instruction of(Operation operation, OperandInstance[] operandListInstance, InstructionAssembler compiler) {
-        return new Instruction(operation, operandListInstance, compiler);
+    public static Instruction of(Operation operation, OperandInstance[] operandListInstance) {
+        return new Instruction(operation, operandListInstance);
     }
 
     public Operation getOperation() {
@@ -49,15 +47,15 @@ public class Instruction implements Assemblable {
         return getOperand(operandPrototype.getName());
     }
 
-    public InstructionAssembler getAssembler() {
-        return assembler;
+    private InstructionAssembler getAssembler() {
+        return OperationInformation.of(operation).getInstructionAssembler();
     }
 
     public void allocate(AssemblyContext context) {
-        assembler.allocate(this, context);
+        getAssembler().allocate(this, context);
     }
 
     public void write(AssemblyContext context) throws AssemblerException {
-        assembler.write(this, context);
+        getAssembler().write(this, context);
     }
 }

@@ -9,7 +9,7 @@ import me.zhanghai.mipsasm.util.BitArray;
 
 public class CoprocessorFunction implements Operand, AssemblyProvider {
 
-    private static final int LENGTH = 26;
+    private static final int LENGTH = 25;
 
     private BitArray value;
 
@@ -17,11 +17,14 @@ public class CoprocessorFunction implements Operand, AssemblyProvider {
         this.value = value;
     }
 
-    public static CoprocessorFunction of(int value) {
-        int length = BitArray.lengthOf(value);
-        if (length > LENGTH) {
-            throw new IllegalArgumentException("Coprocessor function length > " + LENGTH + ": " + length);
+    public static CoprocessorFunction of(BitArray value) {
+        if (value.length() != LENGTH) {
+            throw new IllegalArgumentException("Coprocessor function length != " + LENGTH + ": " + value.length());
         }
+        return new CoprocessorFunction(BitArray.copyOf(value));
+    }
+
+    public static CoprocessorFunction of(int value) {
         return new CoprocessorFunction(BitArray.of(value, LENGTH));
     }
 
@@ -31,5 +34,10 @@ public class CoprocessorFunction implements Operand, AssemblyProvider {
 
     public BitArray assemble(AssemblyContext context) {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 }

@@ -80,7 +80,7 @@ public class AssemblyContext {
     private int computePaddingForBytes(int bytes) {
         if (bytes > Constants.BYTES_PER_WORD) {
             if (bytes % Constants.BYTES_PER_WORD == 0) {
-                return 0;
+                bytes = Constants.BYTES_PER_WORD;
             } else {
                 throw new InternalException(new IllegalArgumentException("bytes > word and not word aligned, bytes: "
                         + bytes));

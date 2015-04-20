@@ -5,10 +5,7 @@
 
 package me.zhanghai.mipsasm.parser;
 
-import me.zhanghai.mipsasm.assembler.AssemblyContext;
-import me.zhanghai.mipsasm.assembler.Instruction;
-import me.zhanghai.mipsasm.assembler.OperandInstance;
-import me.zhanghai.mipsasm.assembler.OperationInformation;
+import me.zhanghai.mipsasm.assembler.*;
 import me.zhanghai.mipsasm.util.StringUtils;
 
 import java.util.regex.Matcher;
@@ -35,9 +32,9 @@ public class InstructionParser {
         }
 
         String operationName = matcher.group(1);
-        OperationInformation operationInformation;
+        Operation operation;
         try {
-            operationInformation = OperationInformation.valueOf(operationName.toUpperCase());
+            operation = Operation.valueOf(operationName.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new NoSuchOperationException(operationName);
         }
@@ -46,9 +43,8 @@ public class InstructionParser {
         String[] operandStringList = operandListString != null ?
                 StringUtils.splitAndTrim(operandListString, Tokens.OPERAND_SEPARATOR_REGEX) : new String[0];
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
-                operationInformation.getOperandListPrototype());
+                OperationInformation.of(operation).getOperandListPrototype());
 
-        context.appendAssemblable(Instruction.of(operationInformation.getOperation(), operandInstances,
-                operationInformation.getInstructionAssembler()));
+        context.appendAssemblable(Instruction.of(operation, operandInstances));
     }
 }

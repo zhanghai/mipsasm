@@ -51,4 +51,9 @@ public enum Register implements Operand, AssemblyProvider {
     public BitArray assemble(AssemblyContext context) {
         return BitArray.of(ordinal(), LENGTH);
     }
+
+    @Override
+    public String toString() {
+        return "$" + name().toLowerCase();
+    }
 }

@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class StorageDirective extends Directive {
@@ -15,8 +16,15 @@ public class StorageDirective extends Directive {
         this.value = value;
     }
 
+    public static StorageDirective of(BitArray value) {
+        if (value.length() % Constants.BYTE_LENGTH != 0) {
+            throw new IllegalArgumentException("Storage directive length not in bytes: " + value.length());
+        }
+        return new StorageDirective(BitArray.copyOf(value));
+    }
+
     public static StorageDirective of(int value, int length) {
-        return new StorageDirective(BitArray.of(value, length));
+        return of(BitArray.of(value, length));
     }
 
     public BitArray getValue() {

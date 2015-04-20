@@ -305,6 +305,18 @@ public class BitArray {
         return builder.toString();
     }
 
+    public String toOctalString() {
+        return "0" + Integer.toOctalString(value);
+    }
+
+    public String toDecimalString() {
+        return Integer.toString(value);
+    }
+
+    public String toHexString() {
+        return "0x" + Integer.toHexString(value).toUpperCase();
+    }
+
     public static int lengthOf(int value) {
         int length = 0;
         do {

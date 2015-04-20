@@ -52,6 +52,6 @@ public class WordImmediate implements Operand {
 
     @Override
     public String toString() {
-        return "WordImmediate {" + "value=" + value + '}';
+        return value.toHexString();
     }
 }

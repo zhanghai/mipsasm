@@ -97,25 +97,25 @@ public class InstructionAssemblers {
         }
     };
 
-    public static InstructionAssembler SOURCE_OFFSET(final Register destination) {
-        return new BaseInstructionAssembler() {
-            @Override
-            public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-                context.writeBytes(BitArray.of(
-                        instruction.getOperation().getCode(),
-                        getSource(instruction).assemble(context),
-                        destination.assemble(context),
-                        getOffset(instruction).assemble(context)
-                ));
-            }
-        };
-    }
+    public static InstructionAssembler SOURCE_OFFSET = new BaseInstructionAssembler() {
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            Operation operation = instruction.getOperation();
+            context.writeBytes(BitArray.of(
+                    operation.getCode(),
+                    getSource(instruction).assemble(context),
+                    operation.getSource2(),
+                    getOffset(instruction).assemble(context)
+            ));
+        }
+    };
 
     public static final InstructionAssembler COPROCESSOR_FUNCTION = new BaseInstructionAssembler() {
         @Override
         public void write(Instruction instruction, AssemblyContext context) {
             context.writeBytes(BitArray.of(
                     instruction.getOperation().getCode(),
+                    BitArray.of(0b1, 1),
                     getCoprocessorFunction(instruction).assemble(context)
             ));
         }
@@ -133,35 +133,6 @@ public class InstructionAssemblers {
                     ShiftAmount.ZERO.assemble(context),
                     operation.getFunction()
             ));
-        }
-    };
-
-    public static final InstructionAssembler DESTINATION_SOURCE2_SHIFT_AMOUNT = new BaseInstructionAssembler() {
-        @Override
-        public void write(Instruction instruction, AssemblyContext context) {
-            Operation operation = instruction.getOperation();
-            context.writeBytes(BitArray.of(
-                    operation.getCode(),
-                    Register.ZERO.assemble(context),
-                    getSource2(instruction).assemble(context),
-                    getDestination(instruction).assemble(context),
-                    getShiftAmount(instruction).assemble(context),
-                    operation.getFunction()
-            ));
-        }
-    };
-
-    public static final InstructionAssembler DESTINATION_SOURCE2_SOURCE = new BaseInstructionAssembler() {
-        @Override
-        public void write(Instruction instruction, AssemblyContext context) {
-            Operation operation = instruction.getOperation();
-            context.writeBytes(BitArray.of(
-                    operation.getCode(),
-                    getSource(instruction).assemble(context),
-                    getSource2(instruction).assemble(context),
-                    getDestination(instruction).assemble(context),
-                    ShiftAmount.ZERO.assemble(context),
-                    operation.getFunction()));
         }
     };
 
@@ -258,6 +229,35 @@ public class InstructionAssemblers {
         }
     };
 
+    public static final InstructionAssembler DESTINATION_SOURCE2_SHIFT_AMOUNT = new BaseInstructionAssembler() {
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) {
+            Operation operation = instruction.getOperation();
+            context.writeBytes(BitArray.of(
+                    operation.getCode(),
+                    Register.ZERO.assemble(context),
+                    getSource2(instruction).assemble(context),
+                    getDestination(instruction).assemble(context),
+                    getShiftAmount(instruction).assemble(context),
+                    operation.getFunction()
+            ));
+        }
+    };
+
+    public static final InstructionAssembler DESTINATION_SOURCE2_SOURCE = new BaseInstructionAssembler() {
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) {
+            Operation operation = instruction.getOperation();
+            context.writeBytes(BitArray.of(
+                    operation.getCode(),
+                    getSource(instruction).assemble(context),
+                    getSource2(instruction).assemble(context),
+                    getDestination(instruction).assemble(context),
+                    ShiftAmount.ZERO.assemble(context),
+                    operation.getFunction()));
+        }
+    };
+
     public static final InstructionAssembler LI = new InstructionAssembler() {
         @Override
         public void allocate(Instruction instruction, AssemblyContext context) {
@@ -271,13 +271,13 @@ public class InstructionAssemblers {
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, source2),
                     OperandInstance.fromPrototype(OperandPrototypes.IMMEDIATE,
                             Immediate.of(wordImmediate.getUpper().value()))
-            }, SOURCE2_IMMEDIATE).write(context);
+            }).write(context);
             Instruction.of(Operation.ORI, new OperandInstance[] {
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, source2),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE, source2),
                     OperandInstance.fromPrototype(OperandPrototypes.IMMEDIATE,
                             Immediate.of(wordImmediate.getLower().value()))
-            }, SOURCE2_SOURCE_IMMEDIATE).write(context);
+            }).write(context);
         }
     };
 
@@ -289,11 +289,11 @@ public class InstructionAssemblers {
         }
         @Override
         public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-            Instruction.of(Operation.INVALID, new OperandInstance[] {
+            Instruction.of(Operation.LI, new OperandInstance[] {
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, getSource2(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.WORD_IMMEDIATE,
                             WordImmediate.of(context.getLabelAddress(getLabel(instruction))))
-            }, LI).write(context);
+            }).write(context);
         }
     };
 
@@ -308,7 +308,7 @@ public class InstructionAssemblers {
                     OperandInstance.fromPrototype(OperandPrototypes.DESTINATION, getDestination(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE, getSource(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, Register.ZERO)
-            }, DESTINATION_SOURCE_SOURCE2).write(context);
+            }).write(context);
         }
     };
 

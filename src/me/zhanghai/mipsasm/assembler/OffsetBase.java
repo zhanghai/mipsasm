@@ -26,4 +26,9 @@ public class OffsetBase implements Operand {
     public Immediate getOffset() {
         return offset;
     }
+
+    @Override
+    public String toString() {
+        return offset.toString() + "(" + base.toString() + ")";
+    }
 }

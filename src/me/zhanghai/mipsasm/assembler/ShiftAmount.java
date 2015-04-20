@@ -11,12 +11,19 @@ public class ShiftAmount implements Operand, AssemblyProvider {
 
     private static final int LENGTH = 5;
 
-    public static final ShiftAmount ZERO = ShiftAmount.of(0b00000);
+    public static final ShiftAmount ZERO = ShiftAmount.of(0);
 
     private BitArray value;
 
     private ShiftAmount(BitArray value) {
         this.value = value;
+    }
+
+    public static ShiftAmount of(BitArray value) {
+        if (value.length() != LENGTH) {
+            throw new IllegalArgumentException("Shift amount length != " + LENGTH + ": " + value.length());
+        }
+        return new ShiftAmount(BitArray.copyOf(value));
     }
 
     public static ShiftAmount of(int value) {
@@ -25,5 +32,10 @@ public class ShiftAmount implements Operand, AssemblyProvider {
 
     public BitArray assemble(AssemblyContext context) {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toDecimalString();
     }
 }

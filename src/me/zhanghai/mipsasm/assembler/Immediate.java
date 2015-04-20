@@ -29,4 +29,9 @@ public class Immediate implements Operand, AssemblyProvider {
     public BitArray assemble(AssemblyContext context) {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return value.toDecimalString();
+    }
 }

@@ -55,4 +55,9 @@ public class Offset implements Operand, AssemblyProvider {
             return immediate.assemble(context);
         }
     }
+
+    @Override
+    public String toString() {
+        return isLabel ? label.toString() : immediate.toString();
+    }
 }

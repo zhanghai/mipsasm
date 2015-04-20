@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="swt-4.4.2-debug">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-debug.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-debug.jar!/" />
+    </NATIVE>
+    <SOURCES />
+  </library>
+</component>

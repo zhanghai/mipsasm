@@ -55,4 +55,9 @@ public class Target implements Operand, AssemblyProvider {
             return instructionIndex.assemble(context);
         }
     }
+
+    @Override
+    public String toString() {
+        return isLabel ? label.toString() : instructionIndex.toString();
+    }
 }

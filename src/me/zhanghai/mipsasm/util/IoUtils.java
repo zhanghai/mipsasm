@@ -136,6 +136,24 @@ public class IoUtils {
         }
     }
 
+    public static BitArray readBitArray(InputStream inputStream) throws IOException {
+        int char1 = inputStream.read();
+        int char2 = inputStream.read();
+        int char3 = inputStream.read();
+        int char4 = inputStream.read();
+        if (char1 == -1) {
+            return null;
+        } else if (char2 == -1) {
+            return BitArray.of(char1, 8);
+        } else if (char3 == -1) {
+            return BitArray.of((char1 << 8) | char2, 16);
+        } else if (char4 == -1) {
+            return BitArray.of((char1 << 16) | (char2 << 8) | char3, 24);
+        } else {
+            return BitArray.of((char1 << 24) | (char2 << 16) | (char3 << 8) | char4, 32);
+        }
+    }
+
     public static String readFile(File file) throws IOException {
         char[] buffer = new char[BUFFER_SIZE];
         StringBuilder builder = new StringBuilder();

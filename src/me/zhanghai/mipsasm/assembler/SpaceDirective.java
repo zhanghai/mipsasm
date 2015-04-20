@@ -48,4 +48,9 @@ public class SpaceDirective extends Directive {
     public int hashCode() {
         return length;
     }
+
+    @Override
+    public String toString() {
+        return "." + DirectiveInformation.SPACE.name().toLowerCase() + " " + length;
+    }
 }

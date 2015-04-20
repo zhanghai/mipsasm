@@ -30,7 +30,7 @@ public class Disassembler {
             if (bitArray.length() == Constants.WORD_LENGTH) {
                 WordDisassembler.disassemble(bitArray, context);
             } else {
-                DirectiveDisassembler.disassemble(bitArray, context);
+                StorageDirectiveDisassembler.disassemble(bitArray, context);
             }
         }
     }

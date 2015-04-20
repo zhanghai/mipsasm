@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.Constants;
+import me.zhanghai.mipsasm.InternalException;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class StorageDirective extends Directive {
@@ -61,6 +62,22 @@ public class StorageDirective extends Directive {
 
     @Override
     public String toString() {
-        return "Storage {" + "value=" + value + '}';
+        StringBuilder builder = new StringBuilder(".");
+        switch (value.length()) {
+            case Constants.BYTE_LENGTH:
+                builder.append(DirectiveInformation.BYTE.name().toLowerCase());
+                break;
+            case Constants.HALF_WORD_LENGTH:
+                builder.append(DirectiveInformation.HALF.name().toLowerCase());
+                break;
+            case Constants.WORD_LENGTH:
+                builder.append(DirectiveInformation.WORD.name().toLowerCase());
+                break;
+            default:
+                throw new InternalException("Illegal storage directive length: " + value.length());
+        }
+        builder.append(" ")
+                .append(value.toHexString());
+        return builder.toString();
     }
 }

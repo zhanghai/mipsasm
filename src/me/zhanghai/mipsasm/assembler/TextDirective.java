@@ -30,4 +30,9 @@ public class TextDirective extends Directive {
     public void write(AssemblyContext context) throws AssemblerException {
         context.writeToAddress(address);
     }
+
+    @Override
+    public String toString() {
+        return "." + DirectiveInformation.TEXT.name().toLowerCase() + " " + address;
+    }
 }

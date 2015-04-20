@@ -5,15 +5,16 @@
 
 package me.zhanghai.mipsasm.disassembler;
 
+import me.zhanghai.mipsasm.assembler.StorageDirective;
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class WordDisassembler {
+public class StorageDirectiveDisassembler {
 
     public static void disassemble(BitArray bitArray, DisassemblyContext context) throws DisassemblerException {
         try {
-            InstructionWordDisassembler.disassemble(bitArray, context);
-        } catch (DisassemblerException e) {
-            StorageDirectiveDisassembler.disassemble(bitArray, context);
+            context.appendAssemblable(StorageDirective.of(bitArray));
+        } catch (IllegalArgumentException e) {
+            throw new DisassemblerException("Unable to parse binary as a storage directive: " + bitArray, e);
         }
     }
 }

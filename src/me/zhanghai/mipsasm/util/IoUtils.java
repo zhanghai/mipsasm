@@ -13,6 +13,20 @@ public class IoUtils {
 
     private IoUtils() {}
 
+    public static <T> String arrayToString(T[] array, Stringifier<T> stringifier, String delimiter) {
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (T object : array) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(delimiter);
+            }
+            builder.append(stringifier.stringify(object));
+        }
+        return builder.toString();
+    }
+
     public static String getStackTrace(Throwable throwable) {
         StringWriter stringWriter = new StringWriter();
         throwable.printStackTrace(new PrintWriter(stringWriter));
@@ -189,5 +203,9 @@ public class IoUtils {
 
     public static String wordToHexString(int integer) {
         return String.format("%08X", integer);
+    }
+
+    public interface Stringifier<T> {
+        public String stringify(T object);
     }
 }

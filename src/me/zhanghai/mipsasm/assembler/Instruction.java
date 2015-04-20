@@ -5,6 +5,8 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.util.IoUtils;
+
 import java.util.Arrays;
 
 public class Instruction implements Assemblable {
@@ -57,5 +59,16 @@ public class Instruction implements Assemblable {
 
     public void write(AssemblyContext context) throws AssemblerException {
         getAssembler().write(this, context);
+    }
+
+    @Override
+    public String toString() {
+        return operation.name().toLowerCase() + " " + IoUtils.arrayToString(operandListInstance,
+                new IoUtils.Stringifier<OperandInstance>() {
+                    @Override
+                    public String stringify(OperandInstance operandInstance) {
+                        return operandInstance.getOperand().toString();
+                    }
+                }, ", ");
     }
 }

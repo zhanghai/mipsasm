@@ -32,6 +32,12 @@ public class InstructionWordDisassembler {
         }
 
         OperationInformation operationInformation = OperationInformation.of(operation);
-        operationInformation.getInstructionDisassembler().disassemble(operationInformation, bitArray, context);
+        InstructionDisassembler instructionDisassembler;
+        try {
+            instructionDisassembler = operationInformation.getInstructionDisassembler();
+        } catch (InternalException e) {
+            throw new DisassemblerException("Operation has no instruction disassembler: " + operation, e);
+        }
+        instructionDisassembler.disassemble(operationInformation, bitArray, context);
     }
 }

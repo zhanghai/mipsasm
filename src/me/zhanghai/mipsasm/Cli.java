@@ -8,17 +8,24 @@ package me.zhanghai.mipsasm;
 import me.zhanghai.mipsasm.assembler.Assembler;
 import me.zhanghai.mipsasm.assembler.AssemblerException;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.disassembler.Disassembler;
+import me.zhanghai.mipsasm.disassembler.DisassemblerException;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
+import me.zhanghai.mipsasm.util.IoUtils;
 import me.zhanghai.mipsasm.writer.Writer;
 import me.zhanghai.mipsasm.writer.WriterException;
 import org.apache.commons.cli.*;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 
 public class Cli {
+
+    @SuppressWarnings("AccessStaticViaInstance")
+    private static final Option OPTION_GRAPHICAL = OptionBuilder
+            .withDescription("Launch graphical user interface")
+            .withLongOpt("graphical")
+            .create("g");
 
     @SuppressWarnings("AccessStaticViaInstance")
     private static final Option OPTION_INPUT = OptionBuilder
@@ -37,6 +44,13 @@ public class Cli {
             .create("o");
 
     @SuppressWarnings("AccessStaticViaInstance")
+    private static final Option OPTION_DISASSEMBLE = OptionBuilder
+            .hasArg()
+            .withDescription("Disassemble input")
+            .withLongOpt("disassemble")
+            .create("d");
+
+    @SuppressWarnings("AccessStaticViaInstance")
     private static final Option OPTION_WRITER = OptionBuilder
             .hasArg()
             .withArgName("TYPE")
@@ -52,43 +66,77 @@ public class Cli {
             .create("h");
 
     private static final Options OPTIONS = new Options()
+            .addOption(OPTION_GRAPHICAL)
             .addOption(OPTION_INPUT)
             .addOption(OPTION_OUTPUT)
             .addOption(OPTION_WRITER)
             .addOption(OPTION_HELP);
 
-    public static void run(String[] args) {
+    public static CommandLine parseCommandLine(String[] args) throws ParseException {
+        org.apache.commons.cli.Parser commandLineParser = new GnuParser();
+        return commandLineParser.parse(OPTIONS, args);
+    }
 
-        Writer writer;
-        try {
-            org.apache.commons.cli.Parser commandLineParser = new GnuParser();
-            CommandLine commandLine = commandLineParser.parse(OPTIONS, args);
-            if (commandLine.hasOption(OPTION_HELP.getOpt())) {
-                new HelpFormatter().printHelp("mipsasm [OPTION]...", OPTIONS);
-                return;
-            }
-            if (commandLine.hasOption(OPTION_INPUT.getOpt())) {
-                System.setIn(new FileInputStream(commandLine.getOptionValue(OPTION_INPUT.getOpt())));
-            }
-            if (commandLine.hasOption(OPTION_OUTPUT.getOpt())) {
-                System.setOut(new PrintStream(commandLine.getOptionValue(OPTION_OUTPUT.getOpt())));
-            }
-            writer = Writer.valueOf(commandLine.getOptionValue(OPTION_WRITER.getOpt(), OPTION_WRITER_ARGUMENT_DEFAULT)
-                    .toUpperCase());
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            System.exit(1);
+    public static boolean hasGraphicalOption(CommandLine commandLine) {
+        return commandLine.hasOption(OPTION_GRAPHICAL.getOpt());
+    }
+
+    public static void run(CommandLine commandLine) {
+
+        if (commandLine.hasOption(OPTION_HELP.getOpt())) {
+            new HelpFormatter().printHelp("mipsasm [OPTION]...", OPTIONS);
             return;
         }
-
+        InputStream inputStream;
+        OutputStream outputStream;
         try {
-            AssemblyContext context = new AssemblyContext();
-            Parser.parse(System.in, context);
-            Assembler.assemble(context);
-            writer.write(System.out, context);
-        } catch (ParserException | AssemblerException | WriterException | InternalException e) {
+            if (commandLine.hasOption(OPTION_INPUT.getOpt())) {
+                inputStream = new FileInputStream(commandLine.getOptionValue(OPTION_INPUT.getOpt()));
+            } else {
+                inputStream = System.in;
+            }
+            if (commandLine.hasOption(OPTION_OUTPUT.getOpt())) {
+                outputStream = new PrintStream(commandLine.getOptionValue(OPTION_OUTPUT.getOpt()));
+            } else {
+                outputStream = System.out;
+            }
+        } catch (IOException e) {
             e.printStackTrace();
-            System.exit(1);
+            return;
+        }
+        boolean disassemble = commandLine.hasOption(OPTION_DISASSEMBLE.getOpt());
+        Writer writer = Writer.valueOf(commandLine.getOptionValue(OPTION_WRITER.getOpt(),
+                OPTION_WRITER_ARGUMENT_DEFAULT).toUpperCase());
+
+        if (disassemble) {
+            try {
+                Disassembler.disassemble(inputStream, outputStream);
+            } catch (DisassemblerException e) {
+                e.printStackTrace();
+            } finally {
+                if (inputStream != System.in) {
+                    IoUtils.close(inputStream);
+                }
+                if (outputStream != System.out) {
+                    IoUtils.close(outputStream);
+                }
+            }
+        } else {
+            try {
+                AssemblyContext context = new AssemblyContext();
+                Parser.parse(inputStream, context);
+                Assembler.assemble(context);
+                writer.write(outputStream, context);
+            } catch (ParserException | AssemblerException | WriterException | InternalException e) {
+                e.printStackTrace();
+            } finally {
+                if (inputStream != System.in) {
+                    IoUtils.close(inputStream);
+                }
+                if (outputStream != System.out) {
+                    IoUtils.close(outputStream);
+                }
+            }
         }
     }
 }

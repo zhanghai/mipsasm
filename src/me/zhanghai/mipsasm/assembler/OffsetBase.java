@@ -29,6 +29,6 @@ public class OffsetBase implements Operand {
 
     @Override
     public String toString() {
-        return offset.toString() + "(" + base.toString() + ")";
+        return (offset.getValue().isZero() ? "" : offset.toString()) + "(" + base.toString() + ")";
     }
 }

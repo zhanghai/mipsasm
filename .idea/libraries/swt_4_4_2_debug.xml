@@ -7,6 +7,8 @@
     <NATIVE>
       <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-debug.jar!/" />
     </NATIVE>
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-src.zip!/" />
+    </SOURCES>
   </library>
 </component>

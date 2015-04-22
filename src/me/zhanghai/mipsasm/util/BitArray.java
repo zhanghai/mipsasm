@@ -116,6 +116,14 @@ public class BitArray {
         return value;
     }
 
+    public int integerValue() {
+        if (get(length - 1)) {
+            return makeBitRange(length, CAPACITY) | value;
+        } else {
+            return value;
+        }
+    }
+
     /**
      * Get the length of this {@code BitArray}.
      * @return The length of this {@code BitArray}
@@ -127,6 +135,7 @@ public class BitArray {
     /**
      * Set the length of this {@code BitArray}. Will truncate the value if length is shorten.
      * @param length The desired length
+     * @return this, for chaining.
      */
     public BitArray setLength(int length) {
         if (length < 0) {
@@ -238,6 +247,7 @@ public class BitArray {
     /**
      * Set the value as {@param value}. The length of this {@code BitArray} will not change.
      * @param value The value
+     * @return this, for chaining.
      */
     public BitArray setTo(int value) {
         if (lengthOf(value) > length) {
@@ -254,6 +264,7 @@ public class BitArray {
     /**
      * Set the value as {@param bitArray}. The length of this {@code BitArray} will not change.
      * @param bitArray The bit array for value
+     * @return this, for chaining.
      */
     public BitArray setTo(BitArray bitArray) {
         return setTo(bitArray.value());

@@ -27,10 +27,39 @@ public class IoUtils {
         return builder.toString();
     }
 
+    public static void close(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getFileExtension(File file) {
+        String name = file.getName();
+        int dotIndex = name.lastIndexOf('.');
+        if (dotIndex == -1) {
+            return "";
+        } else {
+            return name.substring(dotIndex + 1).toLowerCase();
+        }
+    }
+
     public static String getStackTrace(Throwable throwable) {
         StringWriter stringWriter = new StringWriter();
         throwable.printStackTrace(new PrintWriter(stringWriter));
         return stringWriter.toString();
+    }
+
+    public static String inputStreamToString(InputStream inputStream) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        char[] buffer = new char[BUFFER_SIZE];
+        int length;
+        while ((length = reader.read(buffer)) != -1) {
+            builder.append(buffer, 0, length);
+        }
+        return builder.toString();
     }
 
     // Parse an integer, result can be either signed or unsigned, the only limitation being the length of int.

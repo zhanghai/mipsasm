@@ -221,7 +221,8 @@ public enum OperationInformation {
     public InstructionDisassembler getInstructionDisassembler() {
         if (instructionDisassembler == null) {
             throw new InternalException(new IllegalStateException(
-                    "getInstructionDisassembler() called on an Operation without a source2"));
+                    "getInstructionDisassembler() called on an Operation without an instruction disassembler: "
+                            + operation));
         }
         return instructionDisassembler;
     }

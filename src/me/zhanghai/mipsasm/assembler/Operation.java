@@ -140,7 +140,7 @@ public enum Operation {
 
     public static Operation of(BitArray code, BitArray function, BitArray source2) {
         for (Operation operation : values()) {
-            if ((operation.code == null || operation.code.equals(code))
+            if ((operation.code != null && operation.code.equals(code))
                     && (operation.function == null || operation.function.equals(function))
                     && (operation.source2 == null || operation.source2.equals(source2))) {
                 return operation;

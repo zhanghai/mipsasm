@@ -8,6 +8,9 @@ package me.zhanghai.mipsasm.gui;
 import me.zhanghai.mipsasm.assembler.Assembler;
 import me.zhanghai.mipsasm.assembler.AssemblerException;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.disassembler.CoeReader;
+import me.zhanghai.mipsasm.disassembler.CoeReaderException;
+import me.zhanghai.mipsasm.disassembler.Disassembler;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
 import me.zhanghai.mipsasm.util.IoUtils;
@@ -26,17 +29,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.internal.Library;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ResourceBundle;
 
 public class Ide {
@@ -177,6 +176,16 @@ public class Ide {
                 })
                 .build();
         new MenuItemBuilder(fileMenu)
+                .setText(resourceBundle.getString("menu.file.disassemble"))
+                .setAccelerator(SWT.MOD1 + SWT.SHIFT + 'O')
+                .addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent selectionEvent) {
+                        onDisassemble();
+                    }
+                })
+                .build();
+        new MenuItemBuilder(fileMenu)
                 .setText(resourceBundle.getString("menu.file.save"))
                 .setAccelerator(SWT.MOD1 + 'S')
                 .addSelectionListener(new SelectionAdapter() {
@@ -251,11 +260,21 @@ public class Ide {
                     }
                 })
                 .build();
+        final MenuItem assembleDebugMenuItem = new MenuItemBuilder(assembleMenu)
+                .setText(resourceBundle.getString("menu.assemble.debug"))
+                .setAccelerator(SWT.F11)
+                .addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent selectionEvent) {
+                        onAssembleDebug();
+                    }
+                })
+                .build();
         new MenuItemBuilder(assembleMenu, SWT.SEPARATOR)
                 .build();
         final MenuItem assembleAllMenuItem = new MenuItemBuilder(assembleMenu)
                 .setText(resourceBundle.getString("menu.assemble.all"))
-                .setAccelerator(SWT.F11)
+                .setAccelerator(SWT.F12)
                 .addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent selectionEvent) {
@@ -273,6 +292,7 @@ public class Ide {
                 boolean hasText = !StringUtils.isEmpty(editText.getText());
                 assembleBinaryMenuItem.setEnabled(hasText);
                 assembleCoeMenuItem.setEnabled(hasText);
+                assembleDebugMenuItem.setEnabled(hasText);
                 assembleAllMenuItem.setEnabled(hasText);
             }
         };
@@ -321,6 +341,25 @@ public class Ide {
             return;
         }
         openFile(filename);
+    }
+
+    private void onDisassemble() {
+        if (!confirmOpen()) {
+            return;
+        }
+        FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+        fileDialog.setFilterNames(resourceBundle.getString("menu.file.disassemble.filter_names").split("\\|"));
+        fileDialog.setFilterExtensions(new String[]{
+                "*.bin;*.coe",
+                "*.bin",
+                "*.coe",
+                "*.*"
+        });
+        String filename = fileDialog.open();
+        if (filename == null) {
+            return;
+        }
+        disassemble(filename);
     }
 
     private void onSave() {
@@ -374,9 +413,14 @@ public class Ide {
         assemble(Writer.COE, "coe");
     }
 
+    private void onAssembleDebug() {
+        assemble(Writer.DEBUG, "txt");
+    }
+
     private void onAssembleAll() {
         assemble(Writer.BINARY, "bin");
         assemble(Writer.COE, "coe", false);
+        assemble(Writer.DEBUG, "txt", false);
     }
 
     private void onAbout() {
@@ -437,6 +481,45 @@ public class Ide {
 
     private void openFile(String filename) {
         openFile(new File(filename));
+    }
+
+    private void disassemble(File file) {
+        clearMessage();
+        InputStream inputStream;
+        try {
+            inputStream = new FileInputStream(file);
+        } catch (IOException e) {
+            showMessage(e);
+            return;
+        }
+        if (IoUtils.getFileExtension(file).equals("coe")) {
+            InputStream fileInputStream = inputStream;
+            try {
+                inputStream = CoeReader.coeToBytes(fileInputStream);
+            } catch (IOException | CoeReaderException e) {
+                showMessage(e);
+                return;
+            } finally {
+                IoUtils.close(fileInputStream);
+            }
+        }
+        OutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            Disassembler.disassemble(inputStream, outputStream);
+            String disassembly = outputStream.toString();
+            editText.setText(disassembly);
+            // Modified has been set by onTextChange().
+            setFile(null);
+        } catch (Exception e) {
+            showMessage(e);
+        } finally {
+            IoUtils.close(inputStream);
+            IoUtils.close(outputStream);
+        }
+    }
+
+    private void disassemble(String filename) {
+        disassemble(new File(filename));
     }
 
     private void assemble(Writer writer, String extension, boolean shouldClearMessage) {

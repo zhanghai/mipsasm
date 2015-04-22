@@ -189,6 +189,7 @@ public class AssemblyContext {
         }
         int bytes = bitArray.length() / Constants.BYTE_LENGTH;
         writePaddingForBytes(bytes);
+        address += bytes;
         // Make a copy so it will not be changed accidentally.
         // TODO: Is this necessary?
         assembly.add(BitArray.copyOf(bitArray));

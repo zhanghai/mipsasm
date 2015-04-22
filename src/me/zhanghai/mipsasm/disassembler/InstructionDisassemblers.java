@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.disassembler;
 
+import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.assembler.*;
 import me.zhanghai.mipsasm.util.BitArray;
 
@@ -30,8 +31,10 @@ public class InstructionDisassemblers {
     }
 
     private static OperandInstance getOffset(BitArray bitArray, DisassemblyContext context) {
+        int address = context.getAddress() + Constants.BYTES_PER_INSTRUCTION
+                + bitArray.subArray(0, 16).integerValue() * Constants.BYTES_PER_INSTRUCTION;
         return OperandInstance.fromPrototype(OperandPrototypes.OFFSET,
-                Offset.of(OffsetLabel.of(context.addLabel(bitArray.subArray(0, 16).value()))));
+                Offset.of(OffsetLabel.of(context.addLabel(address))));
     }
 
     private static OperandInstance getCoprocessorFunction(BitArray bitArray) {
@@ -40,8 +43,13 @@ public class InstructionDisassemblers {
     }
 
     private static OperandInstance getTarget(BitArray bitArray, DisassemblyContext context) {
+        int address = BitArray.of(
+                BitArray.of(context.getAddress() + Constants.BYTES_PER_INSTRUCTION, Constants.ADDRESS_LENGTH)
+                        .subArray(28, Constants.ADDRESS_LENGTH),
+                bitArray.subArray(0, 26).setLength(28).leftShift(2)
+        ).value();
         return OperandInstance.fromPrototype(OperandPrototypes.TARGET,
-                Target.of(TargetLabel.of(context.addLabel(bitArray.subArray(0, 26).value()))));
+                Target.of(TargetLabel.of(context.addLabel(address))));
     }
 
     private static OperandInstance getOffsetBase(BitArray bitArray) {
@@ -59,169 +67,181 @@ public class InstructionDisassemblers {
                 ShiftAmount.of(bitArray.subArray(6, 11).value()));
     }
 
-    public static final InstructionDisassembler DESTINATION_SOURCE_SOURCE2 = new InstructionDisassembler() {
+    public static final InstructionDisassembler DESTINATION_SOURCE_SOURCE2 = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource(bitArray),
                     getSource2(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE2_SOURCE_IMMEDIATE = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE2_SOURCE_IMMEDIATE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource2(bitArray),
                     getSource(bitArray),
                     getImmediate(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE_SOURCE2_OFFSET = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE_SOURCE2_OFFSET = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource(bitArray),
                     getSource2(bitArray),
                     getOffset(bitArray, context)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE_OFFSET = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE_OFFSET = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource(bitArray),
                     getOffset(bitArray, context)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler COPROCESSOR_FUNCTION = new InstructionDisassembler() {
+    public static final InstructionDisassembler COPROCESSOR_FUNCTION = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getCoprocessorFunction(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE_SOURCE2 = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE_SOURCE2 = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource(bitArray),
                     getSource2(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler TARGET = new InstructionDisassembler() {
+    public static final InstructionDisassembler TARGET = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getTarget(bitArray, context),
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler DESTINATION_SOURCE = new InstructionDisassembler() {
+    public static final InstructionDisassembler DESTINATION_SOURCE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE2_OFFSET_BASE = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE2_OFFSET_BASE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource2(bitArray),
                     getOffsetBase(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler SOURCE2_IMMEDIATE = new InstructionDisassembler() {
+    public static final InstructionDisassembler SOURCE2_IMMEDIATE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getSource2(bitArray),
                     getImmediate(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler DESTINATION = new InstructionDisassembler() {
+    public static final InstructionDisassembler DESTINATION = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getDestination(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler HINT_OFFSET_BASE = new InstructionDisassembler() {
+    public static final InstructionDisassembler HINT_OFFSET_BASE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getHint(bitArray),
                     getOffsetBase(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler DESTINATION_SOURCE2_SHIFT_AMOUNT = new InstructionDisassembler() {
+    public static final InstructionDisassembler DESTINATION_SOURCE2_SHIFT_AMOUNT = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
                                 DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource2(bitArray),
                     getShiftAmount(bitArray)
-            }));
+            });
         }
     };
 
-    public static final InstructionDisassembler DESTINATION_SOURCE2_SOURCE = new InstructionDisassembler() {
+    public static final InstructionDisassembler DESTINATION_SOURCE2_SOURCE = new BaseInstructionDisassembler() {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
-                                DisassemblyContext context) {
-            context.appendAssemblable(Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+                                          DisassemblyContext context) {
+            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource2(bitArray),
                     getSource(bitArray)
-            }));
+            });
         }
     };
+
+    private static abstract class BaseInstructionDisassembler implements InstructionDisassembler {
+        @Override
+        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
+                                DisassemblyContext context) {
+            context.appendAssemblable(getInstruction(operationInformation, bitArray, context),
+                    Constants.BYTES_PER_INSTRUCTION);
+        }
+
+        protected abstract Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+                                                      DisassemblyContext context);
+    }
 }

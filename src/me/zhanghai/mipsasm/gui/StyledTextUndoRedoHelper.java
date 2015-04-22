@@ -56,8 +56,17 @@ public class StyledTextUndoRedoHelper implements KeyListener, ExtendedModifyList
             return redo.pop();
         }
 
+        public void clearUndo() {
+            undo.clear();
+        }
+
         public void clearRedo() {
             redo.clear();
+        }
+
+        public void clear() {
+            clearUndo();
+            clearRedo();
         }
 
         public boolean hasUndo() {
@@ -171,6 +180,10 @@ public class StyledTextUndoRedoHelper implements KeyListener, ExtendedModifyList
             revertEvent(stack.popRedo());
             isRedo = false;
         }
+    }
+
+    public void clear() {
+        stack.clear();
     }
 
     /**

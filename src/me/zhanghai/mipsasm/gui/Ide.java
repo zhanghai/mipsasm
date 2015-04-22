@@ -473,6 +473,7 @@ public class Ide {
             editText.setText(text);
             // Override modified set by onTextChange().
             setModified(false);
+            undoRedoHelper.clear();
             setFile(file);
         } catch (IOException e) {
             showMessage(e);
@@ -508,7 +509,8 @@ public class Ide {
             Disassembler.disassemble(inputStream, outputStream);
             String disassembly = outputStream.toString();
             editText.setText(disassembly);
-            // Modified has been set by onTextChange().
+            // Modified has been set by onTextChange(), no need to set again.
+            undoRedoHelper.clear();
             setFile(null);
         } catch (Exception e) {
             showMessage(e);

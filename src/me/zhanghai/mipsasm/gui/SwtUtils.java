@@ -12,9 +12,22 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
 public class SwtUtils {
 
     private SwtUtils() {}
+
+    public static void loadFont(String resourceName) throws IOException {
+        File file = File.createTempFile(SwtUtils.class.getPackage().getName() + ".", null);
+        try (InputStream resourceInputStream  = SwtUtils.class.getResourceAsStream(resourceName)) {
+            Files.copy(resourceInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        file.deleteOnExit();
+        Display.getDefault().loadFont(file.getPath());
+    }
 
     public static void setFontStyle(Control control, int style) {
         Font oldFont = control.getFont();

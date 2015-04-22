@@ -44,7 +44,7 @@ public class Ide {
 
     private Display display;
     private Image[] icons;
-    private Font monospaceFont;
+    private Font editFont;
 
     private Shell shell;
     private Menu menu;
@@ -62,16 +62,34 @@ public class Ide {
 
         onCreateDisplay();
 
-        icons = new Image[] {
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_512.png")),
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_256.png")),
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_128.png")),
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_64.png")),
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_48.png")),
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_32.png")),
-            new Image(display, getClass().getResourceAsStream("/res/drawable/mipside_16.png"))
+        InputStream[] iconStreams = new InputStream[] {
+                Ide.class.getResourceAsStream("/res/drawable/mipside_512.png"),
+                Ide.class.getResourceAsStream("/res/drawable/mipside_256.png"),
+                Ide.class.getResourceAsStream("/res/drawable/mipside_128.png"),
+                Ide.class.getResourceAsStream("/res/drawable/mipside_64.png"),
+                Ide.class.getResourceAsStream("/res/drawable/mipside_48.png"),
+                Ide.class.getResourceAsStream("/res/drawable/mipside_32.png"),
+                Ide.class.getResourceAsStream("/res/drawable/mipside_16.png")
         };
-        monospaceFont = new Font(display, new FontData[] {
+        icons = new Image[] {
+            new Image(display, iconStreams[0]),
+            new Image(display, iconStreams[1]),
+            new Image(display, iconStreams[2]),
+            new Image(display, iconStreams[3]),
+            new Image(display, iconStreams[4]),
+            new Image(display, iconStreams[5]),
+            new Image(display, iconStreams[6])
+        };
+        for (InputStream iconStream : iconStreams) {
+            IoUtils.close(iconStream);
+        }
+        try {
+            SwtUtils.loadFont("/res/font/SourceCodePro-Regular.ttf");
+            SwtUtils.loadFont("/res/font/SourceCodePro-Bold.ttf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        editFont = new Font(display, new FontData[] {
                 new FontDataBuilder().setName("Source Code Pro").setHeight(11).build(),
                 new FontDataBuilder().setName("monospace").setHeight(11).build(),
         });
@@ -88,7 +106,7 @@ public class Ide {
         for (Image icon : icons) {
             icon.dispose();
         }
-        monospaceFont.dispose();
+        editFont.dispose();
         display.dispose();
     }
 
@@ -110,7 +128,7 @@ public class Ide {
 
         editText = new StyledText(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
         editText.setAlwaysShowScrollBars(false);
-        editText.setFont(monospaceFont);
+        editText.setFont(editFont);
         editText.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent modifyEvent) {
@@ -140,7 +158,7 @@ public class Ide {
         messageText = new StyledText(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
         messageText.setAlwaysShowScrollBars(false);
         messageText.setEditable(false);
-        messageText.setFont(monospaceFont);
+        messageText.setFont(editFont);
         messageText.setKeyBinding(SWT.MOD1 | 'A', ST.SELECT_ALL);
         messageText.setMenu(StyledTextMenuHelper.createMenu(SWT.POP_UP, messageText, resourceBundle));
 

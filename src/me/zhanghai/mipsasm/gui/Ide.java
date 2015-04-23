@@ -12,8 +12,10 @@ import me.zhanghai.mipsasm.disassembler.CoeReader;
 import me.zhanghai.mipsasm.disassembler.CoeReaderException;
 import me.zhanghai.mipsasm.disassembler.Disassembler;
 import me.zhanghai.mipsasm.disassembler.DisassemblerException;
+import me.zhanghai.mipsasm.parser.MigratorException;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
+import me.zhanghai.mipsasm.parser.SqsMigrator;
 import me.zhanghai.mipsasm.util.IoUtils;
 import me.zhanghai.mipsasm.util.StringUtils;
 import me.zhanghai.mipsasm.writer.Writer;
@@ -34,6 +36,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 
 import java.io.*;
@@ -185,6 +188,16 @@ public class Ide {
                 })
                 .build();
         new MenuItemBuilder(fileMenu)
+                .setText(resourceBundle.getString("menu.file.import"))
+                .setAccelerator(SWT.MOD1 + SWT.ALT + 'O')
+                .addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent selectionEvent) {
+                        onImport();
+                    }
+                })
+                .build();
+        new MenuItemBuilder(fileMenu)
                 .setText(resourceBundle.getString("menu.file.disassemble"))
                 .setAccelerator(SWT.MOD1 + SWT.SHIFT + 'O')
                 .addSelectionListener(new SelectionAdapter() {
@@ -291,6 +304,18 @@ public class Ide {
                     }
                 })
                 .build();
+        new MenuItemBuilder(assembleMenu, SWT.SEPARATOR)
+                .build();
+        new MenuItemBuilder(assembleMenu)
+                .setText(resourceBundle.getString("menu.assemble.open_directory"))
+                .setAccelerator(SWT.F8)
+                .addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent selectionEvent) {
+                        onOpenAssembleDirectory();
+                    }
+                })
+                .build();
         new MenuItemBuilder(menu, SWT.CASCADE)
                 .setText(resourceBundle.getString("menu.assemble"))
                 .setMenu(assembleMenu)
@@ -350,6 +375,24 @@ public class Ide {
             return;
         }
         openFile(filename);
+    }
+
+    private void onImport() {
+        if (!confirmOpen()) {
+            return;
+        }
+        FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+        fileDialog.setFilterNames(resourceBundle.getString("menu.file.open.filter_names").split("\\|"));
+        fileDialog.setFilterExtensions(new String[]{
+                "*.s;*.asm",
+                "*.txt",
+                "*.*"
+        });
+        String filename = fileDialog.open();
+        if (filename == null) {
+            return;
+        }
+        importFile(filename);
     }
 
     private void onDisassemble() {
@@ -432,6 +475,18 @@ public class Ide {
         assemble(Writer.DEBUG, "txt", false);
     }
 
+    private void onOpenAssembleDirectory() {
+
+        if (file == null || shell.getModified()) {
+            onSave();
+            if (file == null || shell.getModified()) {
+                return;
+            }
+        }
+
+        Program.launch(file.getParent());
+    }
+
     private void onAbout() {
         AboutDialog aboutDialog = new AboutDialog(shell, resourceBundle, icons[2]);
         aboutDialog.open();
@@ -450,6 +505,16 @@ public class Ide {
     private void setModified(boolean modified) {
         shell.setModified(modified);
         updateTitle();
+    }
+
+    private void setDocument(File file, String text, boolean modified) {
+        editText.setText(text);
+        if (!modified) {
+            // Override modified set by onTextChange().
+            setModified(false);
+        }
+        undoRedoHelper.clear();
+        setFile(file);
     }
 
     private void updateTitle() {
@@ -479,11 +544,7 @@ public class Ide {
         clearMessage();
         try {
             String text = IoUtils.readFile(file);
-            editText.setText(text);
-            // Override modified set by onTextChange().
-            setModified(false);
-            undoRedoHelper.clear();
-            setFile(file);
+            setDocument(file, text, false);
         } catch (IOException e) {
             showMessage(e);
         }
@@ -491,6 +552,21 @@ public class Ide {
 
     private void openFile(String filename) {
         openFile(new File(filename));
+    }
+
+    private void importFile(File file) {
+        clearMessage();
+        try {
+            String text = IoUtils.readFile(file);
+            text = SqsMigrator.migrate(text);
+            setDocument(file, text, true);
+        } catch (MigratorException | IOException e) {
+            showMessage(e);
+        }
+    }
+
+    private void importFile(String filename) {
+        importFile(new File(filename));
     }
 
     private void disassemble(File file) {
@@ -517,10 +593,7 @@ public class Ide {
         try {
             Disassembler.disassemble(inputStream, outputStream);
             String disassembly = outputStream.toString();
-            editText.setText(disassembly);
-            // Modified has been set by onTextChange(), no need to set again.
-            undoRedoHelper.clear();
-            setFile(null);
+            setDocument(null, disassembly, true);
         } catch (Exception e) {
             showMessage(e);
         } finally {
@@ -577,9 +650,9 @@ public class Ide {
     }
 
     private String throwableToMessage(Throwable throwable) {
-        if (throwable instanceof ParserException || throwable instanceof AssemblerException
-                || throwable instanceof WriterException || throwable instanceof CoeReaderException
-                || throwable instanceof DisassemblerException) {
+        if (throwable instanceof ParserException || throwable instanceof MigratorException
+                || throwable instanceof AssemblerException || throwable instanceof WriterException
+                || throwable instanceof CoeReaderException || throwable instanceof DisassemblerException) {
             StringBuilder builder = new StringBuilder();
             boolean first = true;
             do {

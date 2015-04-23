@@ -62,38 +62,6 @@ public class Ide {
 
         onCreateDisplay();
 
-        InputStream[] iconStreams = new InputStream[] {
-                Ide.class.getResourceAsStream("/res/drawable/mipside_512.png"),
-                Ide.class.getResourceAsStream("/res/drawable/mipside_256.png"),
-                Ide.class.getResourceAsStream("/res/drawable/mipside_128.png"),
-                Ide.class.getResourceAsStream("/res/drawable/mipside_64.png"),
-                Ide.class.getResourceAsStream("/res/drawable/mipside_48.png"),
-                Ide.class.getResourceAsStream("/res/drawable/mipside_32.png"),
-                Ide.class.getResourceAsStream("/res/drawable/mipside_16.png")
-        };
-        icons = new Image[] {
-            new Image(display, iconStreams[0]),
-            new Image(display, iconStreams[1]),
-            new Image(display, iconStreams[2]),
-            new Image(display, iconStreams[3]),
-            new Image(display, iconStreams[4]),
-            new Image(display, iconStreams[5]),
-            new Image(display, iconStreams[6])
-        };
-        for (InputStream iconStream : iconStreams) {
-            IoUtils.close(iconStream);
-        }
-        try {
-            SwtUtils.loadFont("/res/font/SourceCodePro-Regular.ttf");
-            SwtUtils.loadFont("/res/font/SourceCodePro-Bold.ttf");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        editFont = new Font(display, new FontData[] {
-                new FontDataBuilder().setName("Source Code Pro").setHeight(11).build(),
-                new FontDataBuilder().setName("monospace").setHeight(11).build(),
-        });
-
         onCreateShell();
 
         shell.open();
@@ -111,9 +79,31 @@ public class Ide {
     }
 
     private void onCreateDisplay() {
+
         Display.setAppName(resourceBundle.getString("app_name"));
         Display.setAppVersion("1.0.0");
         display = new Display();
+
+        icons = SwtUtils.loadImageArray(new String[] {
+                "/res/drawable/mipside_512.png",
+                "/res/drawable/mipside_256.png",
+                "/res/drawable/mipside_128.png",
+                "/res/drawable/mipside_64.png",
+                "/res/drawable/mipside_48.png",
+                "/res/drawable/mipside_32.png",
+                "/res/drawable/mipside_16.png"
+        });
+        try {
+            SwtUtils.loadFont("/res/font/SourceCodePro-Regular.ttf");
+            SwtUtils.loadFont("/res/font/SourceCodePro-Bold.ttf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        editFont = new Font(display, new FontData[] {
+                new FontDataBuilder().setName("Source Code Pro").setHeight(11).build(),
+                new FontDataBuilder().setName("monospace").setHeight(11).build(),
+        });
+
     }
 
     private void onCreateShell() {
@@ -397,8 +387,8 @@ public class Ide {
     private void onSaveAs() {
         FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
         if (file != null) {
-            fileDialog.setFilterPath(file.getParent());
             fileDialog.setFileName(file.getName());
+            fileDialog.setFilterPath(file.getParent());
         }
         String filename = fileDialog.open();
         if (filename == null) {

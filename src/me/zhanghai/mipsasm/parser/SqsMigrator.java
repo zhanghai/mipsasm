@@ -21,7 +21,7 @@ public class SqsMigrator {
             new ColonedDirectiveMigrator("DD", "word"),
             new ColonedDirectiveMigrator("RESB", "space"),
             new MultiplyingColonedDirectiveMigrator("RESW", "space", 2),
-            new MultiplyingColonedDirectiveMigrator("RESD", "sapce", 4),
+            new MultiplyingColonedDirectiveMigrator("RESD", "space", 4),
             new RegexMigrator(" *, *", ", "),
             new RegexMigrator("\\s+$", "")
     };

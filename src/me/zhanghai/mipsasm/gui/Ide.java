@@ -326,7 +326,7 @@ public class Ide {
 
     private boolean onClose() {
         if (shell.getModified()) {
-            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.OK | SWT.CANCEL);
+            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
             messageBox.setMessage(resourceBundle.getString("file.exit_without_saving"));
             return messageBox.open() == SWT.OK;
         } else {
@@ -467,7 +467,7 @@ public class Ide {
 
     private boolean confirmOpen() {
         if (shell.getModified()) {
-            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.OK | SWT.CANCEL);
+            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
             messageBox.setMessage(resourceBundle.getString("file.open_without_saving"));
             return messageBox.open() == SWT.OK;
         } else {
@@ -569,7 +569,7 @@ public class Ide {
     }
 
     private void showMessageNewLine() {
-        showMessage("\n");
+        showMessage(System.lineSeparator());
     }
 
     private void showMessage(Throwable throwable) {
@@ -593,7 +593,7 @@ public class Ide {
                 builder.append(cause)
                         .append(": ")
                         .append(throwable.getMessage())
-                        .append('\n');
+                        .append(System.lineSeparator());
                 throwable = throwable.getCause();
             } while (throwable != null);
             return builder.toString();

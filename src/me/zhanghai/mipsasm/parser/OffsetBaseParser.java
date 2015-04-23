@@ -9,21 +9,14 @@ import me.zhanghai.mipsasm.assembler.Immediate;
 import me.zhanghai.mipsasm.assembler.OffsetBase;
 import me.zhanghai.mipsasm.assembler.Register;
 import me.zhanghai.mipsasm.util.IoUtils;
+import me.zhanghai.mipsasm.util.RegexUtils;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class OffsetBaseParser {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\S*)\\s*\\(\\s*(\\S+)\\s*\\)");
-
-    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return PATTERN.matcher("");
-        }
-    };
-
+    private static final ThreadLocal<Matcher> MATCHER =
+            RegexUtils.makeThreadLocalMatcher("(\\S*)\\s*\\(\\s*(\\S+)\\s*\\)");
 
     private OffsetBaseParser() {}
 

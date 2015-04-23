@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.disassembler;
 
 import me.zhanghai.mipsasm.util.IoUtils;
+import me.zhanghai.mipsasm.util.RegexUtils;
 import me.zhanghai.mipsasm.util.UnsignedCompat;
 
 import java.io.ByteArrayInputStream;
@@ -17,32 +18,14 @@ import java.util.regex.Pattern;
 public class CoeReader {
 
     private static String GROUP_RADIX = "radix";
-    private static Pattern RADIX_PATTERN = Pattern.compile(
-            "memory_initialization_radix\\s*=\\s*(?<" + GROUP_RADIX + ">.*?)\\s*;");
-    private static ThreadLocal<Matcher> RADIX_MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return RADIX_PATTERN.matcher("");
-        }
-    };
+    private static ThreadLocal<Matcher> RADIX_MATCHER =
+            RegexUtils.makeThreadLocalMatcher("memory_initialization_radix\\s*=\\s*(?<" + GROUP_RADIX + ">.*?)\\s*;");
 
     private static String GROUP_VECTOR = "vector";
-    private static Pattern VECTOR_PATTERN = Pattern.compile(
+    private static ThreadLocal<Matcher> VECTOR_MATCHER = RegexUtils.makeThreadLocalMatcher(
             "memory_initialization_vector\\s*=\\s*(?<" + GROUP_VECTOR + ">.*?)\\s*;", Pattern.DOTALL);
-    private static ThreadLocal<Matcher> VECTOR_MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return VECTOR_PATTERN.matcher("");
-        }
-    };
 
-    private static Pattern VECTOR_IGNORE_PATTERN = Pattern.compile("[,\\s]+");
-    private static ThreadLocal<Matcher> VECTOR_IGNORE_MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return VECTOR_IGNORE_PATTERN.matcher("");
-        }
-    };
+    private static ThreadLocal<Matcher> VECTOR_IGNORE_MATCHER = RegexUtils.makeThreadLocalMatcher("[,\\s]+");
 
     public static ByteArrayInputStream coeToBytes(InputStream inputStream) throws IOException, CoeReaderException {
 

@@ -6,21 +6,14 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.*;
+import me.zhanghai.mipsasm.util.RegexUtils;
 import me.zhanghai.mipsasm.util.StringUtils;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class InstructionParser {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\S+)(?:\\s+(.*))?");
-
-    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return PATTERN.matcher("");
-        }
-    };
+    private static final ThreadLocal<Matcher> MATCHER = RegexUtils.makeThreadLocalMatcher("(\\S+)(?:\\s+(.*))?");
 
     private InstructionParser() {}
 

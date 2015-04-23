@@ -9,6 +9,7 @@ import me.zhanghai.mipsasm.assembler.DirectiveInformation;
 import me.zhanghai.mipsasm.assembler.OperationInformation;
 import me.zhanghai.mipsasm.assembler.Register;
 import me.zhanghai.mipsasm.parser.Tokens;
+import me.zhanghai.mipsasm.util.RegexUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Display;
 
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class StyledTextStyleHelper {
 
@@ -78,12 +78,27 @@ public class StyledTextStyleHelper {
         THEME_SOLARIZED.put(StyleType.IMMEDIATE, new StyleRangeTemplate(ORANGE));
     }
 
+    private static final ThreadLocal<Matcher> TRAILING_WHITESPACE_MATCHER = RegexUtils.makeThreadLocalMatcher("\\s+$");
+
+    private static final ThreadLocal<Matcher> COMMENT_MATCHER = RegexUtils.makeThreadLocalMatcher(Tokens.COMMENT_REGEX);
+
+    private static final ThreadLocal<Matcher> STATEMENT_SEPARATOR_MATCHER =
+            RegexUtils.makeThreadLocalMatcher(Tokens.STATEMENT_SEPARATOR_REGEX);
+
     private static final String[] PUNCTUATION_REGEXS = new String [] {
             ":",
             ",",
             "\\(",
             "\\)"
     };
+    private static final ThreadLocal<Matcher>[] PUNCTUATION_MATCHERS;
+    static {
+        //noinspection unchecked
+        PUNCTUATION_MATCHERS = new ThreadLocal[PUNCTUATION_REGEXS.length];
+        for (int i = 0; i < PUNCTUATION_REGEXS.length; ++i) {
+            PUNCTUATION_MATCHERS[i] = RegexUtils.makeThreadLocalMatcher(PUNCTUATION_REGEXS[i]);
+        }
+    }
 
     private static final String TOKEN_SEPARATOR_REGEX;
     static {
@@ -96,6 +111,9 @@ public class StyledTextStyleHelper {
         builder.append("(\\s+)");
         TOKEN_SEPARATOR_REGEX = builder.toString();
     }
+    private static final ThreadLocal<Matcher> TOKEN_SEPARATOR_MATCHER =
+            RegexUtils.makeThreadLocalMatcher(TOKEN_SEPARATOR_REGEX);
+
 
     private static final List<String> KEYWORD;
     static {
@@ -116,6 +134,9 @@ public class StyledTextStyleHelper {
             REGISTERS.add("$" + register.name());
         }
     }
+
+    private static final ThreadLocal<Matcher> IMMEDIATE_MATCHER =
+            RegexUtils.makeThreadLocalMatcher("(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})");
 
     private static boolean isDarkTheme() {
         Color widgetBackground = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
@@ -141,21 +162,21 @@ public class StyledTextStyleHelper {
         // Workaround case for String.indexOf().
         String line = event.lineText.toUpperCase();
 
-        Matcher trailingSpaceMatcher = Pattern.compile("\\s+$").matcher(line);
+        Matcher trailingSpaceMatcher = TRAILING_WHITESPACE_MATCHER.get().reset(line);
         if (trailingSpaceMatcher.find()) {
             styleRangeList.add(theme.get(StyleType.ERROR).forRange(event.lineOffset + trailingSpaceMatcher.start(),
                     trailingSpaceMatcher.end() - trailingSpaceMatcher.start()));
             line = line.substring(0, trailingSpaceMatcher.start());
         }
 
-        Matcher commentMatcher = Pattern.compile(Tokens.COMMENT_REGEX).matcher(line);
+        Matcher commentMatcher = COMMENT_MATCHER.get().reset(line);
         if (commentMatcher.find()) {
             styleRangeList.add(theme.get(StyleType.COMMENT).forRange(event.lineOffset + commentMatcher.start(),
                     commentMatcher.end() - commentMatcher.start()));
             line = line.substring(0, commentMatcher.start());
         }
 
-        Matcher statementSeparatorMatcher = Pattern.compile(Tokens.STATEMENT_SEPARATOR_REGEX).matcher(line);
+        Matcher statementSeparatorMatcher = STATEMENT_SEPARATOR_MATCHER.get().reset(line);
         int statementStart = 0;
         while (true) {
             boolean statementSeparatorFound = statementSeparatorMatcher.find();
@@ -185,7 +206,7 @@ public class StyledTextStyleHelper {
 
     private static void addStyleForStatement(String statement, int offset, List<StyleRange> styleRangeList,
                                              Map<StyleType, StyleRangeTemplate> theme) {
-        Matcher tokenSeparatorMatcher = Pattern.compile(TOKEN_SEPARATOR_REGEX).matcher(statement);
+        Matcher tokenSeparatorMatcher = TOKEN_SEPARATOR_MATCHER.get().reset(statement);
         int tokenStart = 0;
         while (true) {
             boolean tokenSeparatorFound = tokenSeparatorMatcher.find();
@@ -222,8 +243,7 @@ public class StyledTextStyleHelper {
             }
         }
 
-        Matcher immediateMatcher = Pattern.compile("(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})")
-                .matcher(token);
+        Matcher immediateMatcher = IMMEDIATE_MATCHER.get().reset(token);
         if (immediateMatcher.matches()) {
             styleRangeList.add(theme.get(StyleType.IMMEDIATE).forRange(offset, token.length()));
         }
@@ -231,8 +251,8 @@ public class StyledTextStyleHelper {
 
     private static void addStyleForPunctuation(String tokenSeparator, int offset, List<StyleRange> styleRangeList,
                                                Map<StyleType, StyleRangeTemplate> theme) {
-        for (String punctuationRegex : PUNCTUATION_REGEXS) {
-            Matcher punctuationMatcher = Pattern.compile(punctuationRegex).matcher(tokenSeparator);
+        for (ThreadLocal<Matcher> punctuationMatcherThreadLocal : PUNCTUATION_MATCHERS) {
+            Matcher punctuationMatcher = punctuationMatcherThreadLocal.get().reset(tokenSeparator);
             while (punctuationMatcher.find()) {
                 styleRangeList.add(theme.get(StyleType.PUNCTUATION).forRange(offset + punctuationMatcher.start(),
                         punctuationMatcher.end() - punctuationMatcher.start()));

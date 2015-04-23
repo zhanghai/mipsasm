@@ -6,25 +6,18 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
+import me.zhanghai.mipsasm.util.RegexUtils;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class StatementParser {
 
     private static final String GROUP_LABEL = "label";
     private static final String GROUP_DIRECTIVE_OR_INSTRUCTION = "directiveOrInstruction";
-    private static final Pattern PATTERN = Pattern.compile(
+    private static final ThreadLocal<Matcher> MATCHER = RegexUtils.makeThreadLocalMatcher(
             "(?:(?<" + GROUP_LABEL + ">\\S+):)?\\s*(?<" + GROUP_DIRECTIVE_OR_INSTRUCTION + ">.+)?");
-    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return PATTERN.matcher("");
-        }
-    };
 
     private static final String DIRECTIVE_PREFIX = ".";
-
 
     private StatementParser() {}
 

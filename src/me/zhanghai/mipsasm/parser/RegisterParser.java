@@ -6,22 +6,13 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.Register;
+import me.zhanghai.mipsasm.util.RegexUtils;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterParser {
 
-    private static final Pattern PATTERN = Pattern.compile(
-            "\\$(\\S+)");
-
-    private static final ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return PATTERN.matcher("");
-        }
-    };
-
+    private static final ThreadLocal<Matcher> MATCHER = RegexUtils.makeThreadLocalMatcher("\\$(\\S+)");
 
     private RegisterParser() {}
 

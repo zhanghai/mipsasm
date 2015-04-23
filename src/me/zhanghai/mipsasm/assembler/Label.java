@@ -6,19 +6,13 @@
 package me.zhanghai.mipsasm.assembler;
 
 import me.zhanghai.mipsasm.parser.Tokens;
+import me.zhanghai.mipsasm.util.RegexUtils;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Label implements Operand {
 
-    private static final Pattern PATTERN = Pattern.compile(Tokens.IDENTIFIER_REGEX);
-    private static ThreadLocal<Matcher> MATCHER = new ThreadLocal<Matcher>() {
-        @Override
-        protected Matcher initialValue() {
-            return PATTERN.matcher("");
-        }
-    };
+    private static ThreadLocal<Matcher> MATCHER = RegexUtils.makeThreadLocalMatcher(Tokens.IDENTIFIER_REGEX);
 
     private String name;
 

@@ -22,7 +22,8 @@ public class DisassemblyContext {
 
     private NavigableMap<Integer, String> addressLabelMap = new TreeMap<>();
 
-    // TODO: Check for max address.
+    // WONTFIX: Maximum address can be checked when addLabel() is called, however this adds the overhead of knowing the
+    // length of the input stream during the first pass.
     private Integer address = 0;
 
     private NavigableMap<Integer, Assemblable> addressAssemblableMap = new TreeMap<>();

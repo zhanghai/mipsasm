@@ -7,6 +7,14 @@ package me.zhanghai.mipsasm.util;
 
 public class UnsignedCompat {
 
+    public static byte parseUnsignedByte(String s, int radix) {
+        short sh = Short.parseShort(s, radix);
+        if (sh > (Byte.MAX_VALUE - Byte.MIN_VALUE)) {
+            throw new NumberFormatException(String.format("String value %s exceeds range of unsigned byte.", s));
+        }
+        return (byte) sh;
+    }
+
     /**
      * Parses the string argument as an unsigned integer in the radix
      * specified by the second argument.  An unsigned integer maps the
@@ -70,8 +78,8 @@ public class UnsignedCompat {
                     if ((ell & 0xffff_ffff_0000_0000L) == 0) {
                         return (int) ell;
                     } else {
-                        throw new NumberFormatException(String.format("String value %s exceeds "
-                                + "range of unsigned int.", s));
+                        throw new NumberFormatException(String.format("String value %s exceeds range of unsigned int.",
+                                s));
                     }
                 }
             }
@@ -190,8 +198,7 @@ public class UnsignedCompat {
         if (len > 0) {
             char firstChar = s.charAt(0);
             if (firstChar == '-') {
-                throw new NumberFormatException(String.format("Illegal leading minus sign " + "on unsigned string %s.",
-                        s));
+                throw new NumberFormatException(String.format("Illegal leading minus sign on unsigned string %s.", s));
             } else {
                 if (len <= 12 || // Long.MAX_VALUE in Character.MAX_RADIX is 13 digits
                         (radix == 10 && len <= 18) ) { // Long.MAX_VALUE in base 10 is 19 digits
@@ -221,8 +228,8 @@ public class UnsignedCompat {
                      * incorporating the contribution of the final
                      * digit.
                      */
-                    throw new NumberFormatException(String.format("String value %s exceeds " +
-                            "range of unsigned long.", s));
+                    throw new NumberFormatException(String.format("String value %s exceeds range of unsigned long.",
+                            s));
                 }
                 return result;
             }

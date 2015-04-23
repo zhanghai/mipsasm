@@ -18,6 +18,7 @@ import me.zhanghai.mipsasm.writer.WriterException;
 import org.apache.commons.cli.*;
 
 import java.io.*;
+import java.util.List;
 
 public class Cli {
 
@@ -26,6 +27,12 @@ public class Cli {
             .withDescription("Launch graphical user interface")
             .withLongOpt("graphical")
             .create("g");
+
+    @SuppressWarnings("AccessStaticViaInstance")
+    private static final Option OPTION_TERMINAL = OptionBuilder
+            .withDescription("Launch in terminal mode")
+            .withLongOpt("terminal")
+            .create("t");
 
     @SuppressWarnings("AccessStaticViaInstance")
     private static final Option OPTION_INPUT = OptionBuilder
@@ -67,6 +74,7 @@ public class Cli {
 
     private static final Options OPTIONS = new Options()
             .addOption(OPTION_GRAPHICAL)
+            .addOption(OPTION_TERMINAL)
             .addOption(OPTION_INPUT)
             .addOption(OPTION_OUTPUT)
             .addOption(OPTION_WRITER)
@@ -77,14 +85,38 @@ public class Cli {
         return commandLineParser.parse(OPTIONS, args);
     }
 
+    public static boolean checkCommandLine(CommandLine commandLine) {
+        @SuppressWarnings("unchecked")
+        List<String> args = (List<String>) commandLine.getArgList();
+        if (!args.isEmpty()) {
+            System.err.println("Unknown argument: " + args);
+            printHelp();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean hasOption(CommandLine commandLine) {
+        return commandLine.iterator().hasNext();
+    }
+
     public static boolean hasGraphicalOption(CommandLine commandLine) {
         return commandLine.hasOption(OPTION_GRAPHICAL.getOpt());
+    }
+
+    public static boolean hasTerminalOption(CommandLine commandLine) {
+        return commandLine.hasOption(OPTION_TERMINAL.getOpt());
+    }
+
+    public static void printHelp() {
+        new HelpFormatter().printHelp("mipsasm [OPTION]...", OPTIONS);
     }
 
     public static void run(CommandLine commandLine) {
 
         if (commandLine.hasOption(OPTION_HELP.getOpt())) {
-            new HelpFormatter().printHelp("mipsasm [OPTION]...", OPTIONS);
+            printHelp();
             return;
         }
         InputStream inputStream;

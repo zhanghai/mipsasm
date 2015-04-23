@@ -11,6 +11,7 @@ import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.disassembler.CoeReader;
 import me.zhanghai.mipsasm.disassembler.CoeReaderException;
 import me.zhanghai.mipsasm.disassembler.Disassembler;
+import me.zhanghai.mipsasm.disassembler.DisassemblerException;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
 import me.zhanghai.mipsasm.util.IoUtils;
@@ -505,7 +506,7 @@ public class Ide {
             InputStream fileInputStream = inputStream;
             try {
                 inputStream = CoeReader.coeToBytes(fileInputStream);
-            } catch (IOException | CoeReaderException e) {
+            } catch (Exception e) {
                 showMessage(e);
                 return;
             } finally {
@@ -577,7 +578,8 @@ public class Ide {
 
     private String throwableToMessage(Throwable throwable) {
         if (throwable instanceof ParserException || throwable instanceof AssemblerException
-                || throwable instanceof WriterException) {
+                || throwable instanceof WriterException || throwable instanceof CoeReaderException
+                || throwable instanceof DisassemblerException) {
             StringBuilder builder = new StringBuilder();
             boolean first = true;
             do {

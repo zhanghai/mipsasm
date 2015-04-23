@@ -20,8 +20,12 @@ public class Main {
             e.printStackTrace();
             return;
         }
+        if (!Cli.checkCommandLine(commandLine)) {
+            return;
+        }
 
-        if (System.console() == null || Cli.hasGraphicalOption(commandLine)) {
+        // If OPTION_TERMINAL is present, then there will be an option.
+        if (Cli.hasGraphicalOption(commandLine) || !Cli.hasOption(commandLine)) {
             new Ide().run();
         } else {
             Cli.run(commandLine);

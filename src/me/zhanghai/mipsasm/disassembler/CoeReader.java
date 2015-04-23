@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.disassembler;
 
 import me.zhanghai.mipsasm.util.IoUtils;
+import me.zhanghai.mipsasm.util.UnsignedCompat;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class CoeReader {
 
     private static String GROUP_VECTOR = "vector";
     private static Pattern VECTOR_PATTERN = Pattern.compile(
-            "memory_initialization_vector\\s*=\\s*(?<" + GROUP_VECTOR + ">.*?)\\s*;");
+            "memory_initialization_vector\\s*=\\s*(?<" + GROUP_VECTOR + ">.*?)\\s*;", Pattern.DOTALL);
     private static ThreadLocal<Matcher> VECTOR_MATCHER = new ThreadLocal<Matcher>() {
         @Override
         protected Matcher initialValue() {
@@ -72,7 +73,7 @@ public class CoeReader {
                     if (k > vector.length()) {
                         k = vector.length();
                     }
-                    bytes[i] = Byte.parseByte(vector.substring(j, k));
+                    bytes[i] = UnsignedCompat.parseUnsignedByte(vector.substring(j, k), radix);
                 }
                 break;
             case 16:
@@ -81,7 +82,7 @@ public class CoeReader {
                     if (k > vector.length()) {
                         k = vector.length();
                     }
-                    bytes[i] = Byte.parseByte(vector.substring(j, k));
+                    bytes[i] = UnsignedCompat.parseUnsignedByte(vector.substring(j, k), radix);
                 }
                 break;
             default:

@@ -23,6 +23,7 @@ public class SqsMigrator {
             new RegexMigrator("\\bRESW\\b", ".space 2 *"),
             new RegexMigrator("\\bRESD\\b", ".space 4 *"),
             new MultiplicationMigrator(),
+            new RegexMigrator("r(?=\\d{1,2})", "\\$"),
             new RegexMigrator(" *, *", ", "),
             new RegexMigrator(":(?=\\S)", ": "),
             new RegexMigrator(";(?=\\S)", "; "),

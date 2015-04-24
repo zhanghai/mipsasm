@@ -567,7 +567,7 @@ public class Ide {
             String text = IoUtils.readFile(file);
             text = SqsMigrator.migrate(text);
             setDocument(file, text, true);
-        } catch (MigratorException | IOException e) {
+        } catch (Exception e) {
             showMessage(e);
         }
     }

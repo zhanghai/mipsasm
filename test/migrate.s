@@ -1,6 +1,7 @@
 #baseAddr 0000 
     j start;// 0	 
-    add $zero, $zero, $zero; //4
+    add r0, r31, r15; //4
+//    add $zero, $zero, $zero;//4
     add $zero, $zero, $zero;//8
     add $zero, $zero, $zero; // C
     add $zero, $zero, $zero; // 10

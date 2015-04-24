@@ -7,6 +7,8 @@ package me.zhanghai.mipsasm.assembler;
 
 public class OperandListPrototypes {
 
+    public static final OperandPrototype[] EMPTY = new OperandPrototype[] {};
+
     public static final OperandPrototype[] DESTINATION_SOURCE_SOURCE2 = new OperandPrototype[] {
             OperandPrototypes.DESTINATION,
             OperandPrototypes.SOURCE,

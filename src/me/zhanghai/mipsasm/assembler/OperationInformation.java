@@ -114,7 +114,7 @@ public enum OperationInformation {
             InstructionDisassemblers.SOURCE_SOURCE2),
     MULTU(Operation.MULTU, OperandListPrototypes.SOURCE_SOURCE2, InstructionAssemblers.SOURCE_SOURCE2,
             InstructionDisassemblers.SOURCE_SOURCE2),
-    //TODO: NOP
+    NOP(Operation.NOP, OperandListPrototypes.EMPTY, InstructionAssemblers.NOP, null),
     NOR(Operation.NOR, OperandListPrototypes.DESTINATION_SOURCE_SOURCE2,
             InstructionAssemblers.DESTINATION_SOURCE_SOURCE2, InstructionDisassemblers.DESTINATION_SOURCE_SOURCE2),
     OR(Operation.OR, OperandListPrototypes.DESTINATION_SOURCE_SOURCE2, InstructionAssemblers.DESTINATION_SOURCE_SOURCE2,

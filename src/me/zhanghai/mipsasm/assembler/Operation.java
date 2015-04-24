@@ -10,38 +10,38 @@ import me.zhanghai.mipsasm.util.BitArray;
 
 public enum Operation {
 
-    ADD(0b000000, 0b100000),
+    ADD(Codes.SPECIAL, 0b100000),
     ADDI(0b001000),
     ADDIU(0b001001),
-    ADDU(0b000000, 0b100001),
-    AND(0b000000, 0b100100),
+    ADDU(Codes.SPECIAL, 0b100001),
+    AND(Codes.SPECIAL, 0b100100),
     ANDI(0b001100),
     // B, BAL, BC1F, BC1FL, ... , BC2TL
     BEQ(0b000100),
     BEQL(0b010100),
-    BGEZ(0b000001, 0b00001, true),
-    BGEZAL(0b000001, 0b10001, true),
-    BGEZALL(0b000001, 0b10011, true),
-    BGEZL(0b000001, 0b00011, true),
+    BGEZ(Codes.REGIMM, 0b00001, true),
+    BGEZAL(Codes.REGIMM, 0b10001, true),
+    BGEZALL(Codes.REGIMM, 0b10011, true),
+    BGEZL(Codes.REGIMM, 0b00011, true),
     BGTZ(0b000111, 0b00000, true),
     BGTZL(0b010111, 0b00000, true),
     BLEZ(0b000110, 0b00000, true),
     BLEZL(0b010110, 0b00000, true),
-    BLTZ(0b000001, 0b00000, true),
-    BLTZAL(0b000001, 0b10000, true),
-    BLTZALL(0b000001, 0b10010, true),
-    BLTZL(0b000001, 0b00010, true),
+    BLTZ(Codes.REGIMM, 0b00000, true),
+    BLTZAL(Codes.REGIMM, 0b10000, true),
+    BLTZALL(Codes.REGIMM, 0b10010, true),
+    BLTZL(Codes.REGIMM, 0b00010, true),
     BNE(0b000101),
     BNEL(0b010101),
     // BREAK, C, ... , CLZ
-    COP2(0b010010),
+    COP2(Codes.COP2),
     // CTC, ... , DERET
-    DIV(0b000000, 0b011010),
-    DIVU(0b000000, 0b011011),
+    DIV(Codes.SPECIAL, 0b011010),
+    DIVU(Codes.SPECIAL, 0b011011),
     J(0b000010),
     JAL(0b000011),
-    JALR(0b000000, 0b001001),
-    JR(0b000000, 0b001000),
+    JALR(Codes.SPECIAL, 0b001001),
+    JR(Codes.SPECIAL, 0b001000),
     LA,
     LB(0b100000),
     LBU(0b100100),
@@ -59,21 +59,21 @@ public enum Operation {
     LWL(0b100010),
     LWR(0b100110),
     // MADD, ... MFC2
-    MFHI(0b000000, 0b010000),
-    MFLO(0b000000, 0b010010),
+    MFHI(Codes.SPECIAL, 0b010000),
+    MFLO(Codes.SPECIAL, 0b010010),
     MOVE,
-    MOVN(0b000000, 0b001011),
+    MOVN(Codes.SPECIAL, 0b001011),
     // MOVT
-    MOVZ(0b000000, 0b001010),
+    MOVZ(Codes.SPECIAL, 0b001010),
     // MSUB, ... ,MTC2
-    MTHI(0b000000, 0b010001),
-    MTLO(0b000000, 0b010011),
+    MTHI(Codes.SPECIAL, 0b010001),
+    MTLO(Codes.SPECIAL, 0b010011),
     // MUL
-    MULT(0b000000, 0b011000),
-    MULTU(0b000000, 0b011001),
-    NOR(0b000000, 0b100111),
-    //TODO: NOOP(0b000000, 0b000000),
-    OR(0b000000, 0b100101),
+    MULT(Codes.SPECIAL, 0b011000),
+    MULTU(Codes.SPECIAL, 0b011001),
+    NOR(Codes.SPECIAL, 0b100111),
+    NOP(),
+    OR(Codes.SPECIAL, 0b100101),
     ORI(0b001101),
     PREF(0b110011),
     SB(0b101000),
@@ -84,19 +84,19 @@ public enum Operation {
 //    SDL(0b101100),
 //    SDR(0b101101),
     SH(0b101001),
-    SLL(0b000000, 0b000000),
-    SLLV(0b000000, 0b000100),
-    SLT(0b000000, 0b101010),
+    SLL(Codes.SPECIAL, 0b000000),
+    SLLV(Codes.SPECIAL, 0b000100),
+    SLT(Codes.SPECIAL, 0b101010),
     SLTI(0b001010),
     SLTIU(0b001011),
-    SLTU(0b000000, 0b101011),
-    SRA(0b000000, 0b000011),
-    SRAV(0b000000, 0b000111),
-    SRL(0b000000, 0b000010),
-    SRLV(0b000000, 0b000110),
+    SLTU(Codes.SPECIAL, 0b101011),
+    SRA(Codes.SPECIAL, 0b000011),
+    SRAV(Codes.SPECIAL, 0b000111),
+    SRL(Codes.SPECIAL, 0b000010),
+    SRLV(Codes.SPECIAL, 0b000110),
     // SSNOP
-    SUB(0b000000, 0b100010),
-    SUBU(0b000000, 0b100011),
+    SUB(Codes.SPECIAL, 0b100010),
+    SUBU(Codes.SPECIAL, 0b100011),
     SW(0b101011),
     SWC1(0b111001),
     SWC2(0b111010),
@@ -104,8 +104,8 @@ public enum Operation {
     SWL(0b101010),
     SWR(0b101110),
     // TEQ, ... , TNEI
-    // TODO: SYSCALL(0b000000, 0b001100),
-    XOR(0b000000, 0b100110),
+    // TODO: SYSCALL(Codes.SPECIAL, 0b001100),
+    XOR(Codes.SPECIAL, 0b100110),
     XORI(0b001110);
 
     private static final int CODE_LENGTH = 6;
@@ -115,6 +115,13 @@ public enum Operation {
     private BitArray code;
     private BitArray function;
     private BitArray source2;
+
+    private interface Codes {
+        int SPECIAL = 0b000000;
+        int REGIMM = 0b000001;
+        int COP1 = 0b010001;
+        int COP2 = 0b010010;
+    }
 
     Operation(BitArray code, BitArray function, BitArray source2) {
         this.code = code;

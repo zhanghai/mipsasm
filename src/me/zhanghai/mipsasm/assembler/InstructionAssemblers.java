@@ -297,17 +297,24 @@ public class InstructionAssemblers {
         }
     };
 
-    public static final InstructionAssembler MOVE = new InstructionAssembler() {
-        @Override
-        public void allocate(Instruction instruction, AssemblyContext context) {
-            context.allocateWord();
-        }
+    public static final InstructionAssembler MOVE = new BaseInstructionAssembler() {
         @Override
         public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
             Instruction.of(Operation.ADD, new OperandInstance[] {
                     OperandInstance.fromPrototype(OperandPrototypes.DESTINATION, getDestination(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE, getSource(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, Register.ZERO)
+            }).write(context);
+        }
+    };
+
+    public static final InstructionAssembler NOP = new BaseInstructionAssembler() {
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            Instruction.of(Operation.SLL, new OperandInstance[] {
+                    OperandInstance.fromPrototype(OperandPrototypes.DESTINATION, Register.ZERO),
+                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, Register.ZERO),
+                    OperandInstance.fromPrototype(OperandPrototypes.SHIFT_AMOUNT, ShiftAmount.ZERO)
             }).write(context);
         }
     };

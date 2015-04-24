@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 public class SqsMigrator {
 
+    // RegexMigrator is case insensitive.
     private static final Migrator[] MIGRATORS = new Migrator[] {
             new RegexMigrator("#baseAddr", ".text"),
             new ColonedDirectiveMigrator("#DataAddre", "data"),
@@ -23,10 +24,12 @@ public class SqsMigrator {
             new RegexMigrator("\\bRESW\\b", ".space 2 *"),
             new RegexMigrator("\\bRESD\\b", ".space 4 *"),
             new MultiplicationMigrator(),
-            new RegexMigrator("r(?=\\d{1,2})", "\\$"),
+            new RegexMigrator("(?<!(?://.{0,255})|(?:\\$))(?=\\b[0-9a-f]+\\b)", "0x"),
+            new RegexMigrator("(?<!(?://.{0,255})|(?:\\$))0x(?=add\\b)", ""),
+            new RegexMigrator("\\$?r(?=\\d{1,2})", "\\$"),
             new RegexMigrator(" *, *", ", "),
-            new RegexMigrator(":(?=\\S)", ": "),
-            new RegexMigrator(";(?=\\S)", "; "),
+            new RegexMigrator(":(?=\\S)", ":\t"),
+            new RegexMigrator(";(?=\\S)", ";\t"),
             new RegexMigrator(";(\\s*)//", "$1//"),
             new RegexMigrator("//(?=\\S)", "// "),
             new RegexMigrator("(?m);$", ""),
@@ -93,7 +96,8 @@ public class SqsMigrator {
     private static class MultiplicationMigrator implements Migrator {
         @Override
         public String migrate(String text) throws MigratorException {
-            Matcher matcher = Pattern.compile("\\b(\\S+?)\\s*\\*\\s*(\\S+?)\\b").matcher(text);
+            // HACK: For ignoring comment.
+            Matcher matcher = Pattern.compile("(?<!//.{0,255})\\b(\\S+?)\\s*\\*\\s*(\\S+?)\\b").matcher(text);
             while (matcher.find()) {
                 String original = matcher.group();
                 String multiplicand = matcher.group(1);

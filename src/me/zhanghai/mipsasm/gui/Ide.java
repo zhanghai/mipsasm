@@ -123,6 +123,7 @@ public class Ide {
         editText = new StyledText(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
         editText.setAlwaysShowScrollBars(false);
         editText.setFont(editFont);
+        editText.setTabs(8);
         editText.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent modifyEvent) {

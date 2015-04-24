@@ -14,29 +14,34 @@ import java.util.regex.Pattern;
 public class SqsMigrator {
 
     private static final Migrator[] MIGRATORS = new Migrator[] {
-            new ColonedDirectiveMigrator("BaseAddre", "text"),
-            new ColonedDirectiveMigrator("DataAddre", "data"),
-            new ColonedDirectiveMigrator("DB", "byte"),
-            new ColonedDirectiveMigrator("DW", "half"),
-            new ColonedDirectiveMigrator("DD", "word"),
-            new ColonedDirectiveMigrator("RESB", "space"),
-            new MultiplyingColonedDirectiveMigrator("RESW", "space", 2),
-            new MultiplyingColonedDirectiveMigrator("RESD", "space", 4),
+            new RegexMigrator("#baseAddr", ".text"),
+            new ColonedDirectiveMigrator("#DataAddre", "data"),
+            new RegexMigrator("\\bdb\\b", ".byte"),
+            new RegexMigrator("\\bdw\\b", ".half"),
+            new RegexMigrator("\\bdd\\b", ".word"),
+            new RegexMigrator("\\bresb\\b", ".space"),
+            new RegexMigrator("\\bRESW\\b", ".space 2 *"),
+            new RegexMigrator("\\bRESD\\b", ".space 4 *"),
+            new MultiplicationMigrator(),
             new RegexMigrator(" *, *", ", "),
-            new RegexMigrator("\\s+$", "")
+            new RegexMigrator(":(?=\\S)", ": "),
+            new RegexMigrator(";(?=\\S)", "; "),
+            new RegexMigrator(";(\\s*)//", "$1//"),
+            new RegexMigrator("//(?=\\S)", "// "),
+            new RegexMigrator("(?m);$", ""),
+            new RegexMigrator("(?m)[ \t]+$", ""),
+            new RegexMigrator("\\s+$", System.lineSeparator())
     };
 
     public static String migrate(String text) throws MigratorException {
         for (Migrator migrator : MIGRATORS) {
             text = migrator.migrate(text);
         }
-        // FIXME: Newlines at EOF is replace to nothing, don't know why, but fixing by this.
-        text = text + System.lineSeparator();
         return text;
     }
 
     private interface Migrator {
-        String migrate(String content) throws MigratorException;
+        String migrate(String text) throws MigratorException;
     }
 
     private static class RegexMigrator implements Migrator {
@@ -45,7 +50,7 @@ public class SqsMigrator {
         private String replacement;
 
         public RegexMigrator(String regex, String replacement) {
-            this.matcher = RegexUtils.makeThreadLocalMatcher(regex);
+            this.matcher = RegexUtils.makeThreadLocalMatcher(regex, Pattern.CASE_INSENSITIVE);
             this.replacement = replacement;
         }
 
@@ -65,8 +70,8 @@ public class SqsMigrator {
         }
 
         public ColonedDirectiveMigrator(String colonedDirective, String directive) {
-            migrator1 = new RegexMigrator(colonedDirective + ":(?=\\S)", "\\." + directive + " ");
-            migrator2 = new RegexMigrator(colonedDirective + ":", "\\." + directive);
+            migrator1 = new RegexMigrator(colonedDirective + ":(?=\\S)", "." + directive + " ");
+            migrator2 = new RegexMigrator(colonedDirective + ":", "." + directive);
         }
 
         @Override
@@ -79,14 +84,15 @@ public class SqsMigrator {
     private static class MultiplyingColonedDirectiveMigrator extends ColonedDirectiveMigrator {
 
         public MultiplyingColonedDirectiveMigrator(String colonedDirective, String directive, int multiplier) {
-            super(new RegexMigrator(colonedDirective + ":(\\s+)", "\\." + directive + "$1" + multiplier + " * "),
-                    new RegexMigrator(colonedDirective + ":", "\\." + directive + multiplier + " * "));
+            super(new RegexMigrator(colonedDirective + ":(\\s+)", "." + directive + "$1" + multiplier + " * "),
+                    new RegexMigrator(colonedDirective + ":", "." + directive + multiplier + " * "));
         }
+    }
 
+    private static class MultiplicationMigrator implements Migrator {
         @Override
         public String migrate(String text) throws MigratorException {
-            text = super.migrate(text);
-            Matcher matcher = Pattern.compile("(?<=\\s*)(\\S+?)\\s*\\*\\s*(\\S+?)(?=\\s*)").matcher(text);
+            Matcher matcher = Pattern.compile("\\b(\\S+?)\\s*\\*\\s*(\\S+?)\\b").matcher(text);
             while (matcher.find()) {
                 String original = matcher.group();
                 String multiplicand = matcher.group(1);
@@ -97,7 +103,7 @@ public class SqsMigrator {
                 } catch (NumberFormatException e) {
                     throw new MigratorException("Error parsing " + original, e);
                 }
-                text = text.replaceAll(original, Integer.toString(result));
+                text = Pattern.compile(original, Pattern.LITERAL).matcher(text).replaceAll(Integer.toString(result));
             }
             return text;
         }

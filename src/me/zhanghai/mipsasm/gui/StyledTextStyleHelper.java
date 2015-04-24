@@ -136,26 +136,19 @@ public class StyledTextStyleHelper {
     }
 
     private static final ThreadLocal<Matcher> IMMEDIATE_MATCHER =
-            RegexUtils.makeThreadLocalMatcher("(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})");
+            RegexUtils.makeThreadLocalMatcher("[+-]?(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})");
 
-    private static boolean isDarkTheme() {
-        Color widgetBackground = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-        int meanComponent = (widgetBackground.getRed() + widgetBackground.getGreen() + widgetBackground.getBlue()) / 3;
-        return meanComponent < 0x7F;
-    }
-
-    public static void setup(final StyledText styledText) {
-        final Map<StyleType, StyleRangeTemplate> theme = isDarkTheme() ? THEME_MONOKAI : THEME_SOLARIZED;
+    public static void setup(StyledText styledText) {
+        final Map<StyleType, StyleRangeTemplate> theme = SwtUtils.isDarkTheme() ? THEME_MONOKAI : THEME_SOLARIZED;
         styledText.addLineStyleListener(new LineStyleListener() {
             @Override
             public void lineGetStyle(LineStyleEvent event) {
-                setStyleRangeListForEvent(event, styledText, theme);
+                setStyleRangeListForEvent(event, theme);
             }
         });
     }
 
-    private static void setStyleRangeListForEvent(LineStyleEvent event, StyledText styledText,
-                                                  Map<StyleType, StyleRangeTemplate> theme) {
+    private static void setStyleRangeListForEvent(LineStyleEvent event, Map<StyleType, StyleRangeTemplate> theme) {
 
         List<StyleRange> styleRangeList = new ArrayList<>();
 

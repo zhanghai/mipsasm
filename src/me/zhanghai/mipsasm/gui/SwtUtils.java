@@ -6,8 +6,10 @@
 package me.zhanghai.mipsasm.gui;
 
 import me.zhanghai.mipsasm.util.IoUtils;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -23,6 +25,12 @@ import java.nio.file.StandardCopyOption;
 public class SwtUtils {
 
     private SwtUtils() {}
+
+    public static boolean isDarkTheme() {
+        Color widgetBackground = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+        int meanComponent = (widgetBackground.getRed() + widgetBackground.getGreen() + widgetBackground.getBlue()) / 3;
+        return meanComponent < 0x7F;
+    }
 
     public static void loadFont(String resourceName) throws IOException {
         File file = File.createTempFile(SwtUtils.class.getPackage().getName() + ".", null);

@@ -11,11 +11,11 @@ import me.zhanghai.mipsasm.assembler.Register;
 import me.zhanghai.mipsasm.parser.Tokens;
 import me.zhanghai.mipsasm.util.RegexUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.LineStyleEvent;
-import org.eclipse.swt.custom.LineStyleListener;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.widgets.Display;
 
 import java.util.*;
@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 public class StyledTextStyleHelper {
 
     private enum StyleType {
+        LINE_NUMBER,
         ERROR,
         COMMENT,
         PUNCTUATION,
@@ -34,19 +35,21 @@ public class StyledTextStyleHelper {
 
     private static final EnumMap<StyleType, StyleRangeTemplate> THEME_MONOKAI;
     static {
+        Display display = Display.getCurrent();
         THEME_MONOKAI = new EnumMap<>(StyleType.class);
+        THEME_MONOKAI.put(StyleType.LINE_NUMBER, new StyleRangeTemplate(new Color(display, 0x86, 0x86, 0x86)));
         THEME_MONOKAI.put(StyleType.ERROR, new StyleRangeTemplate(
-                new StyleRangeTemplate.UnderlineStyle(new Color(Display.getCurrent(), 0xF9, 0x26, 0x72),
+                new StyleRangeTemplate.UnderlineStyle(new Color(display, 0xF9, 0x26, 0x72),
                         SWT.UNDERLINE_SQUIGGLE)));
-        THEME_MONOKAI.put(StyleType.COMMENT, new StyleRangeTemplate(new Color(Display.getCurrent(), 0x75, 0x71, 0x51)));
+        THEME_MONOKAI.put(StyleType.COMMENT, new StyleRangeTemplate(new Color(display, 0x75, 0x71, 0x51)));
         THEME_MONOKAI.put(StyleType.PUNCTUATION, new StyleRangeTemplate(
-                new Color(Display.getCurrent(), 0xF9, 0x26, 0x72)));
-        THEME_MONOKAI.put(StyleType.KEYWORD, new StyleRangeTemplate(new Color(Display.getCurrent(), 0xA6, 0xE2, 0x2E),
+                new Color(display, 0xF9, 0x26, 0x72)));
+        THEME_MONOKAI.put(StyleType.KEYWORD, new StyleRangeTemplate(new Color(display, 0xA6, 0xE2, 0x2E),
                 SWT.BOLD));
         THEME_MONOKAI.put(StyleType.REGISTER, new StyleRangeTemplate(
-                new Color(Display.getCurrent(), 0xFD, 0x97, 0x1F)));
+                new Color(display, 0xFD, 0x97, 0x1F)));
         THEME_MONOKAI.put(StyleType.IMMEDIATE, new StyleRangeTemplate(
-                new Color(Display.getCurrent(), 0xAE, 0x81, 0xFF)));
+                new Color(display, 0xAE, 0x81, 0xFF)));
     }
 
     private static final EnumMap<StyleType, StyleRangeTemplate> THEME_SOLARIZED;
@@ -69,6 +72,7 @@ public class StyledTextStyleHelper {
         Color CYAN = new Color(display, 0x2A, 0xA1, 0x98);
         Color GREEN = new Color(display, 0x85, 0x99, 0x00);
         THEME_SOLARIZED = new EnumMap<>(StyleType.class);
+        THEME_SOLARIZED.put(StyleType.LINE_NUMBER, new StyleRangeTemplate(BASE1));
         THEME_SOLARIZED.put(StyleType.ERROR, new StyleRangeTemplate(
                 new StyleRangeTemplate.UnderlineStyle(RED, SWT.UNDERLINE_SQUIGGLE)));
         THEME_SOLARIZED.put(StyleType.COMMENT, new StyleRangeTemplate(BASE1));
@@ -138,17 +142,27 @@ public class StyledTextStyleHelper {
     private static final ThreadLocal<Matcher> IMMEDIATE_MATCHER =
             RegexUtils.makeThreadLocalMatcher("[+-]?(0X[0-9A-F]{1,8})|(0[0-7]{1,11})|(0B[01]{1,32})|(\\d{1,10})");
 
-    public static void setup(StyledText styledText) {
+    public static void setup(final StyledText styledText) {
         final Map<StyleType, StyleRangeTemplate> theme = SwtUtils.isDarkTheme() ? THEME_MONOKAI : THEME_SOLARIZED;
         styledText.addLineStyleListener(new LineStyleListener() {
             @Override
             public void lineGetStyle(LineStyleEvent event) {
-                setStyleRangeListForEvent(event, theme);
+                setStyleRangeListForEvent(styledText, event, theme);
+            }
+        });
+        styledText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                // For line number redrawing.
+                styledText.redraw();
             }
         });
     }
 
-    private static void setStyleRangeListForEvent(LineStyleEvent event, Map<StyleType, StyleRangeTemplate> theme) {
+    private static void setStyleRangeListForEvent(StyledText styledText, LineStyleEvent event,
+                                                  Map<StyleType, StyleRangeTemplate> theme) {
+
+        addBulletForLine(styledText, event, theme);
 
         List<StyleRange> styleRangeList = new ArrayList<>();
 
@@ -195,6 +209,22 @@ public class StyledTextStyleHelper {
 
         event.styles = new StyleRange[styleRangeList.size()];
         styleRangeList.toArray(event.styles);
+    }
+
+    private static void addBulletForLine(StyledText styledText, LineStyleEvent event,
+                                         Map<StyleType, StyleRangeTemplate> theme) {
+        // Using ST.BULLET_NUMBER sometimes results in weird alignment.
+        //event.bulletIndex = styledText.getLineAtOffset(event.lineOffset);
+        StyleRange styleRange = theme.get(StyleType.LINE_NUMBER).create();
+        int maxLine = styledText.getLineCount();
+        int bulletLength = Integer.toString(maxLine).length();
+        // Width of number character is half the height in monospaced font, add 1 character width for right padding.
+        int bulletWidth = (bulletLength + 1) * styledText.getLineHeight() / 2;
+        styleRange.metrics = new GlyphMetrics(0, 0, bulletWidth);
+        event.bullet = new Bullet(ST.BULLET_TEXT, styleRange);
+        // getLineAtOffset() returns a zero-based line index.
+        int bulletLine = styledText.getLineAtOffset(event.lineOffset) + 1;
+        event.bullet.text = String.format("%" + bulletLength + "s", bulletLine);
     }
 
     private static void addStyleForStatement(String statement, int offset, List<StyleRange> styleRangeList,
@@ -294,6 +324,15 @@ public class StyledTextStyleHelper {
 
         public StyleRange forRange(int start, int length) {
             StyleRange styleRange = new StyleRange(start, length, foreground, background, fontStyle);
+            underlineStyle.applyTo(styleRange);
+            return styleRange;
+        }
+
+        public StyleRange create() {
+            StyleRange styleRange = new StyleRange();
+            styleRange.foreground = foreground;
+            styleRange.background = background;
+            styleRange.fontStyle = fontStyle;
             underlineStyle.applyTo(styleRange);
             return styleRange;
         }

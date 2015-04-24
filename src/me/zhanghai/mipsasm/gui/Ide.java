@@ -433,6 +433,13 @@ public class Ide {
         if (file != null) {
             fileDialog.setFileName(file.getName());
             fileDialog.setFilterPath(file.getParent());
+            fileDialog.setFilterNames(resourceBundle.getString("menu.file.sava_as.filter_names").split("\\|"));
+            fileDialog.setFilterExtensions(new String[] {
+                    "*.s",
+                    "*.asm",
+                    "*.txt",
+                    "*.*"
+            });
         }
         String filename = fileDialog.open();
         if (filename == null) {

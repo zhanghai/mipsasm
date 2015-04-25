@@ -6,7 +6,6 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.*;
-import me.zhanghai.mipsasm.util.OperandSplitUtils;
 import me.zhanghai.mipsasm.util.RegexUtils;
 
 import java.util.regex.Matcher;
@@ -33,7 +32,7 @@ public class InstructionParser {
         }
 
         String operandListString = matcher.group(2);
-        String[] operandStringList = OperandSplitUtils.split(operandListString);
+        String[] operandStringList = ParserSplitUtils.splitOperands(operandListString);
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
                 InstructionInformation.ofOperation(operation).getOperandListPrototype());
 

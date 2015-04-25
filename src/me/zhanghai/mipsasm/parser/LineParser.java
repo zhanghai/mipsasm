@@ -20,11 +20,12 @@ public class LineParser {
 
         line = COMMENT_MATCHER.get().reset(line).replaceAll("");
 
-        for (String statementString : line.split(Tokens.STATEMENT_SEPARATOR_REGEX)) {
+        for (String statementString : ParserSplitUtils.splitStatements(line)) {
             statementString = statementString.trim();
-            if (!statementString.isEmpty()) {
-                StatementParser.parse(statementString, context);
+            if (statementString.isEmpty()) {
+                continue;
             }
+            StatementParser.parse(statementString, context);
         }
     }
 }

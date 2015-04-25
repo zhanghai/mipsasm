@@ -21,6 +21,10 @@ public class OperandListPrototypes {
             OperandPrototypes.IMMEDIATE
     };
 
+    public static final OperandPrototype[] OFFSET = new OperandPrototype[] {
+            OperandPrototypes.OFFSET
+    };
+
     public static final OperandPrototype[] SOURCE_SOURCE2_OFFSET = new OperandPrototype[] {
             OperandPrototypes.SOURCE,
             OperandPrototypes.SOURCE2,

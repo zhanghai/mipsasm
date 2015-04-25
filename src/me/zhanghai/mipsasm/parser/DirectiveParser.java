@@ -7,8 +7,8 @@ package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.DirectiveInformation;
+import me.zhanghai.mipsasm.util.OperandSplitUtils;
 import me.zhanghai.mipsasm.util.RegexUtils;
-import me.zhanghai.mipsasm.util.StringUtils;
 
 import java.util.regex.Matcher;
 
@@ -34,8 +34,7 @@ public class DirectiveParser {
         }
 
         String operandListString = matcher.group(2);
-        String[] operandStringList = operandListString != null ?
-                StringUtils.splitAndTrim(operandListString, Tokens.OPERAND_SEPARATOR_REGEX) : new String[0];
+        String[] operandStringList = OperandSplitUtils.split(operandListString);
         directiveInformation.parse(operandStringList, context);
     }
 }

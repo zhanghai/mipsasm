@@ -147,7 +147,7 @@ public class StringUtils {
         segmentList.add(pendingSegmentBuilder.toString());
 
         int resultSize = segmentList.size();
-        while (segmentList.size() > 0 && segmentList.get(segmentList.size() - 1).isEmpty()) {
+        while (resultSize > 0 && segmentList.get(resultSize - 1).isEmpty()) {
             --resultSize;
         }
         String result[] = new String[resultSize];

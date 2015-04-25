@@ -16,6 +16,8 @@ import java.io.OutputStreamWriter;
 
 public class CoeWriter {
 
+    private static final int WORD_PER_LINE = 8;
+
     private CoeWriter() {}
 
     public static void write(OutputStream outputStream, AssemblyContext context) throws WriterException {
@@ -31,17 +33,20 @@ public class CoeWriter {
             throw new WriterException("Error writing header", e);
         }
 
-        boolean first = true;
+        int wordIndex = 0;
         for (BitArray assembly : context.getAssembly()) {
             String assemblyString = IoUtils.wordToHexString(assembly.value());
             try {
-                if (first) {
-                    first = false;
-                } else {
-                    writer.write(",");
-                    writer.newLine();
+                if (wordIndex != 0) {
+                    if (wordIndex % WORD_PER_LINE == 0) {
+                        writer.write(",");
+                        writer.newLine();
+                    } else {
+                        writer.write(", ");
+                    }
                 }
                 writer.write(assemblyString);
+                ++wordIndex;
             } catch (IOException e) {
                 throw new WriterException("Error writing " + assemblyString, e);
             }

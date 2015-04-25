@@ -14,6 +14,7 @@ import java.util.Map;
 
 public enum InstructionInformation {
 
+    // TODO: MFC0, MTC0, BREAK, SYSCALL
     ADD(Operation.ADD, OperandListPrototypes.DESTINATION_SOURCE_SOURCE2,
             InstructionAssemblers.DESTINATION_SOURCE_SOURCE2, InstructionDisassemblers.DESTINATION_SOURCE_SOURCE2),
     ADDI(Operation.ADDI, OperandListPrototypes.SOURCE2_SOURCE_IMMEDIATE, InstructionAssemblers.SOURCE2_SOURCE_IMMEDIATE,
@@ -76,7 +77,6 @@ public enum InstructionInformation {
             InstructionDisassemblers.DESTINATION_SOURCE),
     JR(Operation.JR, OperandListPrototypes.SOURCE, InstructionAssemblers.SOURCE_DELAY_SLOT,
             InstructionDisassemblers.SOURCE),
-    // TODO: Should we use null intead?
     LA(Operation.LA, OperandListPrototypes.SOURCE2_LABEL, InstructionAssemblers.LA, null),
     LB(Operation.LB, OperandListPrototypes.SOURCE2_OFFSET_BASE, InstructionAssemblers.SOURCE2_OFFSET_BASE,
             InstructionDisassemblers.SOURCE2_OFFSET_BASE),
@@ -178,7 +178,6 @@ public enum InstructionInformation {
             InstructionDisassemblers.SOURCE2_OFFSET_BASE),
     SWR(Operation.SWR, OperandListPrototypes.SOURCE2_OFFSET_BASE, InstructionAssemblers.SOURCE2_OFFSET_BASE,
             InstructionDisassemblers.SOURCE2_OFFSET_BASE),
-    // TODO: SYSCALL,
     TLBP(Operation.TLBP, OperandListPrototypes.EMPTY, InstructionAssemblers.CO0, InstructionDisassemblers.CO0),
     TLBR(Operation.TLBR, OperandListPrototypes.EMPTY, InstructionAssemblers.CO0, InstructionDisassemblers.CO0),
     TLBWI(Operation.TLBWI, OperandListPrototypes.EMPTY, InstructionAssemblers.CO0, InstructionDisassemblers.CO0),

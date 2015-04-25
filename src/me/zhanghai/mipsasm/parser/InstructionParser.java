@@ -36,7 +36,7 @@ public class InstructionParser {
         String[] operandStringList = operandListString != null ?
                 StringUtils.splitAndTrim(operandListString, Tokens.OPERAND_SEPARATOR_REGEX) : new String[0];
         OperandInstance[] operandInstances = OperandListParser.parse(operandStringList,
-                OperationInformation.of(operation).getOperandListPrototype());
+                InstructionInformation.ofOperation(operation).getOperandListPrototype());
 
         context.appendAssemblable(Instruction.of(operation, operandInstances));
     }

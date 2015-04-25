@@ -6,7 +6,7 @@
 package me.zhanghai.mipsasm.gui;
 
 import me.zhanghai.mipsasm.assembler.DirectiveInformation;
-import me.zhanghai.mipsasm.assembler.OperationInformation;
+import me.zhanghai.mipsasm.assembler.InstructionInformation;
 import me.zhanghai.mipsasm.assembler.Register;
 import me.zhanghai.mipsasm.parser.Tokens;
 import me.zhanghai.mipsasm.util.RegexUtils;
@@ -122,8 +122,8 @@ public class StyledTextStyleHelper {
     private static final List<String> KEYWORD;
     static {
         KEYWORD = new ArrayList<>();
-        for (OperationInformation operationInformation : OperationInformation.values()) {
-            KEYWORD.add(operationInformation.name());
+        for (InstructionInformation instructionInformation : InstructionInformation.values()) {
+            KEYWORD.add(instructionInformation.name());
         }
         for (DirectiveInformation directiveInformation : DirectiveInformation.values()) {
             KEYWORD.add("." + directiveInformation.name());

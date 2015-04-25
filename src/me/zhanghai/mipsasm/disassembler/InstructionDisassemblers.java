@@ -69,9 +69,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler DESTINATION_SOURCE_SOURCE2 = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource(bitArray),
                     getSource2(bitArray)
@@ -81,9 +81,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE2_SOURCE_IMMEDIATE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource2(bitArray),
                     getSource(bitArray),
                     getImmediate(bitArray)
@@ -93,9 +93,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE_SOURCE2_OFFSET = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource(bitArray),
                     getSource2(bitArray),
                     getOffset(bitArray, context)
@@ -105,9 +105,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE_OFFSET = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource(bitArray),
                     getOffset(bitArray, context)
             });
@@ -116,9 +116,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler COPROCESSOR_FUNCTION = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getCoprocessorFunction(bitArray)
             });
         }
@@ -126,9 +126,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE_SOURCE2 = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource(bitArray),
                     getSource2(bitArray)
             });
@@ -137,9 +137,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler TARGET = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getTarget(bitArray, context),
             });
         }
@@ -147,9 +147,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler DESTINATION_SOURCE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource(bitArray)
             });
@@ -158,9 +158,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource(bitArray)
             });
         }
@@ -168,9 +168,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE2_OFFSET_BASE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource2(bitArray),
                     getOffsetBase(bitArray)
             });
@@ -179,9 +179,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler SOURCE2_IMMEDIATE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getSource2(bitArray),
                     getImmediate(bitArray)
             });
@@ -190,9 +190,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler DESTINATION = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getDestination(bitArray)
             });
         }
@@ -200,9 +200,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler HINT_OFFSET_BASE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getHint(bitArray),
                     getOffsetBase(bitArray)
             });
@@ -211,9 +211,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler DESTINATION_SOURCE2_SHIFT_AMOUNT = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                 DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource2(bitArray),
                     getShiftAmount(bitArray)
@@ -223,9 +223,9 @@ public class InstructionDisassemblers {
 
     public static final InstructionDisassembler DESTINATION_SOURCE2_SOURCE = new BaseInstructionDisassembler() {
         @Override
-        public Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                           DisassemblyContext context) {
-            return Instruction.of(operationInformation.getOperation(), new OperandInstance[] {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
                     getDestination(bitArray),
                     getSource2(bitArray),
                     getSource(bitArray)
@@ -235,13 +235,12 @@ public class InstructionDisassemblers {
 
     private static abstract class BaseInstructionDisassembler implements InstructionDisassembler {
         @Override
-        public void disassemble(OperationInformation operationInformation, BitArray bitArray,
-                                DisassemblyContext context) {
-            context.appendAssemblable(getInstruction(operationInformation, bitArray, context),
+        public void disassemble(InstructionInformation information, BitArray bitArray, DisassemblyContext context) {
+            context.appendAssemblable(getInstruction(information, bitArray, context),
                     Constants.BYTES_PER_INSTRUCTION);
         }
 
-        protected abstract Instruction getInstruction(OperationInformation operationInformation, BitArray bitArray,
+        protected abstract Instruction getInstruction(InstructionInformation information, BitArray bitArray,
                                                       DisassemblyContext context);
     }
 }

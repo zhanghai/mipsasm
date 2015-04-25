@@ -7,8 +7,8 @@ package me.zhanghai.mipsasm.disassembler;
 
 import me.zhanghai.mipsasm.Constants;
 import me.zhanghai.mipsasm.InternalException;
+import me.zhanghai.mipsasm.assembler.InstructionInformation;
 import me.zhanghai.mipsasm.assembler.Operation;
-import me.zhanghai.mipsasm.assembler.OperationInformation;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class InstructionWordDisassembler {
@@ -31,13 +31,13 @@ public class InstructionWordDisassembler {
                     e);
         }
 
-        OperationInformation operationInformation = OperationInformation.of(operation);
+        InstructionInformation instructionInformation = InstructionInformation.ofOperation(operation);
         InstructionDisassembler instructionDisassembler;
         try {
-            instructionDisassembler = operationInformation.getInstructionDisassembler();
+            instructionDisassembler = instructionInformation.getDisassembler();
         } catch (InternalException e) {
             throw new DisassemblerException("Operation has no instruction disassembler: " + operation, e);
         }
-        instructionDisassembler.disassemble(operationInformation, bitArray, context);
+        instructionDisassembler.disassemble(instructionInformation, bitArray, context);
     }
 }

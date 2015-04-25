@@ -12,7 +12,7 @@ import me.zhanghai.mipsasm.disassembler.InstructionDisassemblers;
 import java.util.EnumMap;
 import java.util.Map;
 
-public enum OperationInformation {
+public enum InstructionInformation {
 
     ADD(Operation.ADD, OperandListPrototypes.DESTINATION_SOURCE_SOURCE2,
             InstructionAssemblers.DESTINATION_SOURCE_SOURCE2, InstructionDisassemblers.DESTINATION_SOURCE_SOURCE2),
@@ -178,10 +178,10 @@ public enum OperationInformation {
     XORI(Operation.XORI, OperandListPrototypes.SOURCE2_SOURCE_IMMEDIATE, InstructionAssemblers.SOURCE2_SOURCE_IMMEDIATE,
             InstructionDisassemblers.SOURCE2_SOURCE_IMMEDIATE);
 
-    private static final Map<Operation, OperationInformation> OPERATION_MAP = new EnumMap<>(Operation.class);
+    private static final Map<Operation, InstructionInformation> OPERATION_MAP = new EnumMap<>(Operation.class);
     static {
-        for (OperationInformation operationInformation : values()) {
-            OPERATION_MAP.put(operationInformation.getOperation(), operationInformation);
+        for (InstructionInformation instructionInformation : values()) {
+            OPERATION_MAP.put(instructionInformation.getOperation(), instructionInformation);
         }
     }
 
@@ -190,20 +190,20 @@ public enum OperationInformation {
     private InstructionAssembler instructionAssembler;
     private InstructionDisassembler instructionDisassembler;
 
-    OperationInformation(Operation operation, OperandPrototype[] operandListPrototype,
-                         InstructionAssembler instructionAssembler, InstructionDisassembler instructionDisassembler) {
+    InstructionInformation(Operation operation, OperandPrototype[] operandListPrototype,
+                           InstructionAssembler instructionAssembler, InstructionDisassembler instructionDisassembler) {
         this.operation = operation;
         this.operandListPrototype = operandListPrototype;
         this.instructionAssembler = instructionAssembler;
         this.instructionDisassembler = instructionDisassembler;
     }
 
-    public static OperationInformation of(Operation operation) {
-        OperationInformation operationInformation = OPERATION_MAP.get(operation);
-        if (operationInformation == null) {
+    public static InstructionInformation ofOperation(Operation operation) {
+        InstructionInformation instructionInformation = OPERATION_MAP.get(operation);
+        if (instructionInformation == null) {
             throw new IllegalArgumentException("Operation not found: " + operation);
         }
-        return operationInformation;
+        return instructionInformation;
     }
 
     public Operation getOperation() {
@@ -214,14 +214,14 @@ public enum OperationInformation {
         return operandListPrototype;
     }
 
-    public InstructionAssembler getInstructionAssembler() {
+    public InstructionAssembler getAssembler() {
         return instructionAssembler;
     }
 
-    public InstructionDisassembler getInstructionDisassembler() {
+    public InstructionDisassembler getDisassembler() {
         if (instructionDisassembler == null) {
             throw new InternalException(new IllegalStateException(
-                    "getInstructionDisassembler() called on an Operation without an instruction disassembler: "
+                    "getDisassembler() called on an Operation without an instruction disassembler: "
                             + operation));
         }
         return instructionDisassembler;

@@ -50,7 +50,7 @@ public class Instruction implements Assemblable {
     }
 
     private InstructionAssembler getAssembler() {
-        return OperationInformation.of(operation).getInstructionAssembler();
+        return InstructionInformation.ofOperation(operation).getAssembler();
     }
 
     public void allocate(AssemblyContext context) {

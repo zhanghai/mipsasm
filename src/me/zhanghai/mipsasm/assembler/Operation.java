@@ -16,7 +16,8 @@ public enum Operation {
     ADDU(Codes.SPECIAL, 0b100001),
     AND(Codes.SPECIAL, 0b100100),
     ANDI(0b001100),
-    // B, BAL, BC1F, BC1FL, ... , BC2TL
+    B,
+    // BAL, BC1F, BC1FL, ... , BC2TL
     BEQ(0b000100),
     BEQL(0b010100),
     BGEZ(Codes.REGIMM, 0b00001, true),

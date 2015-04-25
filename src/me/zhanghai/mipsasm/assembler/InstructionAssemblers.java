@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.assembler;
 
+import me.zhanghai.mipsasm.InternalException;
 import me.zhanghai.mipsasm.util.BitArray;
 
 public class InstructionAssemblers {
@@ -97,6 +98,9 @@ public class InstructionAssemblers {
         }
     };
 
+    public static final InstructionAssembler SOURCE_SOURCE2_OFFSET_DELAY_SLOT =
+            new DelaySlotInstructionAssembler(SOURCE_SOURCE2_OFFSET);
+
     public static InstructionAssembler SOURCE_OFFSET = new BaseInstructionAssembler() {
         @Override
         public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
@@ -109,6 +113,9 @@ public class InstructionAssemblers {
             ));
         }
     };
+
+    public static final InstructionAssembler SOURCE_OFFSET_DELAY_SLOT =
+            new DelaySlotInstructionAssembler(SOURCE_OFFSET);
 
     public static final InstructionAssembler COPROCESSOR_FUNCTION = new BaseInstructionAssembler() {
         @Override
@@ -159,6 +166,8 @@ public class InstructionAssemblers {
         }
     };
 
+    public static final InstructionAssembler TARGET_DELAY_SLOT = new DelaySlotInstructionAssembler(TARGET);
+
     public static final InstructionAssembler DESTINATION_SOURCE = new BaseInstructionAssembler() {
         @Override
         public void write(Instruction instruction, AssemblyContext context) {
@@ -174,6 +183,9 @@ public class InstructionAssemblers {
         }
     };
 
+    public static final InstructionAssembler DESTINATION_SOURCE_DELAY_SLOT =
+            new DelaySlotInstructionAssembler(DESTINATION_SOURCE);
+
     public static final InstructionAssembler SOURCE = new BaseInstructionAssembler() {
         @Override
         public void write(Instruction instruction, AssemblyContext context) {
@@ -188,6 +200,8 @@ public class InstructionAssemblers {
             ));
         }
     };
+
+    public static final InstructionAssembler SOURCE_DELAY_SLOT = new DelaySlotInstructionAssembler(SOURCE);
 
     public static final InstructionAssembler SOURCE2_OFFSET_BASE = new BaseInstructionAssembler() {
         @Override
@@ -271,75 +285,148 @@ public class InstructionAssemblers {
         }
     };
 
-    // WAIT instruction is implementation-dependent.
-    public static final InstructionAssembler WAIT = CO0;
-
-    public static final InstructionAssembler LI = new InstructionAssembler() {
+    public static final InstructionAssembler B = new BaseTransformInstructionAssembler() {
         @Override
-        public void allocate(Instruction instruction, AssemblyContext context) {
-            context.allocateWords(2);
-        }
-        @Override
-        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-            Register source2 = getSource2(instruction);
-            WordImmediate wordImmediate = getWordImmediate(instruction);
-            Instruction.of(Operation.LUI, new OperandInstance[] {
-                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, source2),
-                    OperandInstance.fromPrototype(OperandPrototypes.IMMEDIATE,
-                            Immediate.of(wordImmediate.getUpper().value()))
-            }).write(context);
-            Instruction.of(Operation.ORI, new OperandInstance[] {
-                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, source2),
-                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE, source2),
-                    OperandInstance.fromPrototype(OperandPrototypes.IMMEDIATE,
-                            Immediate.of(wordImmediate.getLower().value()))
-            }).write(context);
+        protected Instruction transformInstruction(Instruction instruction, AssemblyContext context)
+                throws AssemblerException {
+            return Instruction.of(Operation.BEQ, new OperandInstance[]{
+                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE, Register.ZERO),
+                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, Register.ZERO),
+                    OperandInstance.fromPrototype(OperandPrototypes.OFFSET, getOffset(instruction))
+            });
         }
     };
 
-    public static final InstructionAssembler LA = new InstructionAssembler() {
+    public static final InstructionAssembler LI = new BaseMultipleTransformInstructionAssembler() {
+        @Override
+        protected Instruction[] transformInstruction(Instruction instruction, AssemblyContext context)
+                throws AssemblerException {
+            Register source2 = getSource2(instruction);
+            WordImmediate wordImmediate = getWordImmediate(instruction);
+            return new Instruction[] {
+                    Instruction.of(Operation.LUI, new OperandInstance[] {
+                            OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, source2),
+                            OperandInstance.fromPrototype(OperandPrototypes.IMMEDIATE,
+                                    Immediate.of(wordImmediate.getUpper().value()))
+                    }),
+                    Instruction.of(Operation.ORI, new OperandInstance[] {
+                            OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, source2),
+                            OperandInstance.fromPrototype(OperandPrototypes.SOURCE, source2),
+                            OperandInstance.fromPrototype(OperandPrototypes.IMMEDIATE,
+                                    Immediate.of(wordImmediate.getLower().value()))
+                    })
+            };
+        }
+    };
+
+    public static final InstructionAssembler LA = new BaseTransformInstructionAssembler() {
         @Override
         public void allocate(Instruction instruction, AssemblyContext context) {
-            // instruction is unused.
             LI.allocate(null, context);
         }
         @Override
-        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-            Instruction.of(Operation.LI, new OperandInstance[] {
+        protected Instruction transformInstruction(Instruction instruction, AssemblyContext context)
+                throws AssemblerException {
+            return Instruction.of(Operation.LI, new OperandInstance[] {
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, getSource2(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.WORD_IMMEDIATE,
                             WordImmediate.of(context.getLabelAddress(getLabel(instruction))))
-            }).write(context);
+            });
         }
     };
 
-    public static final InstructionAssembler MOVE = new BaseInstructionAssembler() {
+    public static final InstructionAssembler MOVE = new BaseTransformInstructionAssembler() {
         @Override
-        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-            Instruction.of(Operation.ADD, new OperandInstance[] {
+        protected Instruction transformInstruction(Instruction instruction, AssemblyContext context) {
+            return Instruction.of(Operation.ADD, new OperandInstance[] {
                     OperandInstance.fromPrototype(OperandPrototypes.DESTINATION, getDestination(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE, getSource(instruction)),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, Register.ZERO)
-            }).write(context);
+            });
         }
     };
 
-    public static final InstructionAssembler NOP = new BaseInstructionAssembler() {
+    public static final InstructionAssembler NOP = new BaseTransformInstructionAssembler() {
         @Override
-        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-            Instruction.of(Operation.SLL, new OperandInstance[] {
+        protected Instruction transformInstruction(Instruction instruction, AssemblyContext context) {
+            return Instruction.of(Operation.SLL, new OperandInstance[] {
                     OperandInstance.fromPrototype(OperandPrototypes.DESTINATION, Register.ZERO),
                     OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, Register.ZERO),
                     OperandInstance.fromPrototype(OperandPrototypes.SHIFT_AMOUNT, ShiftAmount.ZERO)
-            }).write(context);
+            });
         }
     };
+
+    // WAIT instruction is implementation-dependent.
+    public static final InstructionAssembler WAIT = CO0;
 
     public static abstract class BaseInstructionAssembler implements InstructionAssembler {
         @Override
         public void allocate(Instruction instruction, AssemblyContext context) {
             // Most instructions only offsets a word.
             context.allocateWord();
+        }
+    }
+
+    public static abstract class BaseTransformInstructionAssembler implements InstructionAssembler {
+        protected abstract Instruction transformInstruction(Instruction instruction, AssemblyContext context)
+                throws AssemblerException;
+        @Override
+        public void allocate(Instruction instruction, AssemblyContext context) {
+            try {
+                transformInstruction(instruction, context).allocate(context);
+            } catch (AssemblerException e) {
+                throw new InternalException(
+                        "Should override allocate() if transformInstruction() can throw an AssemblerException", e);
+            }
+        }
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            transformInstruction(instruction, context).write(context);
+        }
+    }
+
+    public static class DelaySlotInstructionAssembler extends BaseTransformInstructionAssembler {
+        private InstructionAssembler assembler;
+        public DelaySlotInstructionAssembler(InstructionAssembler assembler) {
+            this.assembler = assembler;
+        }
+        @Override
+        protected Instruction transformInstruction(Instruction instruction, AssemblyContext context)
+                throws AssemblerException {
+            return Instruction.of(Operation.NOP, new OperandInstance[] {});
+        }
+        @Override
+        public void allocate(Instruction instruction, AssemblyContext context) {
+            assembler.allocate(instruction, context);
+            super.allocate(null, context);
+        }
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            assembler.write(instruction, context);
+            super.write(null, context);
+        }
+    }
+
+    public static abstract class BaseMultipleTransformInstructionAssembler implements InstructionAssembler {
+        protected abstract Instruction[] transformInstruction(Instruction instruction, AssemblyContext context)
+                throws AssemblerException;
+        @Override
+        public void allocate(Instruction instruction, AssemblyContext context) {
+            try {
+                for (Instruction transformedInstruction : transformInstruction(instruction, context)) {
+                    transformInstruction(transformedInstruction, context);
+                }
+            } catch (AssemblerException e) {
+                throw new InternalException(
+                        "Should override allocate() if transformInstruction() can throw an AssemblerException", e);
+            }
+        }
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            for (Instruction transformedInstruction : transformInstruction(instruction, context)) {
+                transformedInstruction.write(context);
+            }
         }
     }
 }

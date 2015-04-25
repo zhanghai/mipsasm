@@ -36,8 +36,10 @@ public enum Operation {
     // BREAK, C, ... , CLZ
     COP2(Codes.COP2),
     // CTC, ... , DERET
+    DERET(Codes.COP0, 0b011111),
     DIV(Codes.SPECIAL, 0b011010),
     DIVU(Codes.SPECIAL, 0b011011),
+    ERET(Codes.COP0, 0b011000),
     J(0b000010),
     JAL(0b000011),
     JALR(Codes.SPECIAL, 0b001001),
@@ -103,8 +105,13 @@ public enum Operation {
     SWC3(0b111011),
     SWL(0b101010),
     SWR(0b101110),
+    TLBP(Codes.COP0, 0b001000),
+    TLBR(Codes.COP0, 0b000001),
+    TLBWI(Codes.COP0, 0b000010),
+    TLBWR(Codes.COP0, 0b000110),
     // TEQ, ... , TNEI
     // TODO: SYSCALL(Codes.SPECIAL, 0b001100),
+    WAIT(Codes.COP0, 0b100000),
     XOR(Codes.SPECIAL, 0b100110),
     XORI(0b001110);
 
@@ -119,6 +126,7 @@ public enum Operation {
     private interface Codes {
         int SPECIAL = 0b000000;
         int REGIMM = 0b000001;
+        int COP0 = 0b010000;
         int COP1 = 0b010001;
         int COP2 = 0b010010;
     }

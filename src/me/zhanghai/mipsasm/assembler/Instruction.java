@@ -63,12 +63,16 @@ public class Instruction implements Assemblable {
 
     @Override
     public String toString() {
-        return operation.name().toLowerCase() + " " + IoUtils.arrayToString(operandListInstance,
-                new IoUtils.Stringifier<OperandInstance>() {
-                    @Override
-                    public String stringify(OperandInstance operandInstance) {
-                        return operandInstance.getOperand().toString();
-                    }
-                }, ", ");
+        if (operandListInstance.length == 0) {
+            return operation.name().toLowerCase();
+        } else {
+            return operation.name().toLowerCase() + " " + IoUtils.arrayToString(operandListInstance,
+                    new IoUtils.Stringifier<OperandInstance>() {
+                        @Override
+                        public String stringify(OperandInstance operandInstance) {
+                            return operandInstance.getOperand().toString();
+                        }
+                    }, ", ");
+        }
     }
 }

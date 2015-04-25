@@ -136,6 +136,19 @@ public class InstructionAssemblers {
         }
     };
 
+    public static final InstructionAssembler CO0 = new BaseInstructionAssembler() {
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) {
+            Operation operation = instruction.getOperation();
+            context.writeBytes(BitArray.of(
+                    operation.getCode(),
+                    BitArray.of(0b1, 1),
+                    BitArray.of(0b0000000000000000000, 19),
+                    operation.getFunction()
+            ));
+        }
+    };
+
     public static final InstructionAssembler TARGET = new BaseInstructionAssembler() {
         @Override
         public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
@@ -257,6 +270,9 @@ public class InstructionAssemblers {
                     operation.getFunction()));
         }
     };
+
+    // WAIT instruction is implementation-dependent.
+    public static final InstructionAssembler WAIT = CO0;
 
     public static final InstructionAssembler LI = new InstructionAssembler() {
         @Override

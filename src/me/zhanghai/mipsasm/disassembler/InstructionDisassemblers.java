@@ -135,6 +135,14 @@ public class InstructionDisassemblers {
         }
     };
 
+    public static final InstructionDisassembler CO0 = new BaseInstructionDisassembler() {
+        @Override
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
+                                          DisassemblyContext context) {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {});
+        }
+    };
+
     public static final InstructionDisassembler TARGET = new BaseInstructionDisassembler() {
         @Override
         public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
@@ -232,6 +240,9 @@ public class InstructionDisassemblers {
             });
         }
     };
+
+    // WAIT instruction is implementation-dependent.
+    public static final InstructionDisassembler WAIT = CO0;
 
     private static abstract class BaseInstructionDisassembler implements InstructionDisassembler {
         @Override

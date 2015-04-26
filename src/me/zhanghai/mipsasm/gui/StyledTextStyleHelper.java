@@ -93,7 +93,8 @@ public class StyledTextStyleHelper {
             ":",
             ",",
             "\\(",
-            "\\)"
+            "\\)",
+            "\""
     };
     private static final ThreadLocal<Matcher>[] PUNCTUATION_MATCHERS;
     static {
@@ -256,6 +257,7 @@ public class StyledTextStyleHelper {
         for (String keyword : KEYWORD) {
             if (token.equals(keyword)) {
                 styleRangeList.add(theme.get(StyleType.KEYWORD).forRange(offset, token.length()));
+                return;
             }
         }
 

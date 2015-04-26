@@ -15,6 +15,10 @@ public class UnsignedCompat {
         return (byte) sh;
     }
 
+    public static int unsignedByteToInt(byte b) {
+        return b & (Byte.MAX_VALUE - Byte.MIN_VALUE);
+    }
+
     /**
      * Parses the string argument as an unsigned integer in the radix
      * specified by the second argument.  An unsigned integer maps the

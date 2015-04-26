@@ -24,7 +24,7 @@ public abstract class StorageDirectiveParser {
             try {
                 storage = StorageDirective.of(IoUtils.parseUnsignedInteger(operandString), length);
             } catch (IllegalArgumentException e) {
-                throw new IllegalOperandException("Storage: " + operandString, e);
+                throw new IllegalOperandException("Operand: " + operandString, e);
             }
             context.appendAssemblable(storage);
         }

@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="commons-cli:commons-cli:1.2" level="project" />
     <orderEntry type="library" name="swt-4.4.2-debug" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-lang3:3.4" level="project" />
   </component>
 </module>

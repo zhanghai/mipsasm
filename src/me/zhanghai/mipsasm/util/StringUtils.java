@@ -5,6 +5,11 @@
 
 package me.zhanghai.mipsasm.util;
 
+import org.apache.commons.lang3.text.translate.AggregateTranslator;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
+import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.apache.commons.lang3.text.translate.OctalUnescaper;
+
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -14,6 +19,23 @@ import java.util.regex.Pattern;
 
 public class StringUtils {
 
+    private static final CharSequenceTranslator UNESCAPE_MIPS = new AggregateTranslator(
+            new OctalUnescaper(),
+            new HexUnescaper(),
+            new LookupTranslator(new String[][] {
+                    {"\\a", "\u0007"},
+                    {"\\b", "\b"},
+                    {"\\f", "\f"},
+                    {"\\n", "\n"},
+                    {"\\r", "\r"},
+                    {"\\t", "\t"},
+                    {"\\v", "\u000B"},
+                    {"\\\\", "\\"},
+                    {"\\\"", "\""},
+                    {"\\\'", "\'"},
+            })
+    );
+
     private StringUtils() {}
 
     public static String camelCaseToPhrase(String camelCase) {
@@ -22,6 +44,10 @@ public class StringUtils {
         }
         String camelCaseSpaced = camelCase.replaceAll("([^A-Z])([A-Z])", "$1 $2");
         return camelCaseSpaced.charAt(0) + camelCaseSpaced.substring(1).toLowerCase();
+    }
+
+    public static String unescapeMips(String string) {
+        return UNESCAPE_MIPS.translate(string);
     }
 
     public static boolean isEmpty(String string) {

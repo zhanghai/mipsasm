@@ -11,6 +11,8 @@ public enum  DirectiveInformation {
 
     TEXT,
     DATA,
+    ASCII,
+    ASCIIZ,
     BYTE,
     HALF,
     WORD,
@@ -23,6 +25,12 @@ public enum  DirectiveInformation {
                 break;
             case DATA:
                 DataDirectiveParser.parse(operandStringList, context);
+                break;
+            case ASCII:
+                AsciiParser.parse(operandStringList, context);
+                break;
+            case ASCIIZ:
+                AsciizParser.parse(operandStringList, context);
                 break;
             case BYTE:
                 ByteDirectiveParser.parse(operandStringList, context);

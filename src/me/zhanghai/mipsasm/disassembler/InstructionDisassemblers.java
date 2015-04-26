@@ -67,6 +67,14 @@ public class InstructionDisassemblers {
                 ShiftAmount.of(bitArray.subArray(6, 11).value()));
     }
 
+    public static final InstructionDisassembler EMPTY = new BaseInstructionDisassembler() {
+        @Override
+        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
+                                          DisassemblyContext context) {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {});
+        }
+    };
+
     public static final InstructionDisassembler DESTINATION_SOURCE_SOURCE2 = new BaseInstructionDisassembler() {
         @Override
         public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
@@ -135,14 +143,6 @@ public class InstructionDisassemblers {
         }
     };
 
-    public static final InstructionDisassembler CO0 = new BaseInstructionDisassembler() {
-        @Override
-        public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
-                                          DisassemblyContext context) {
-            return Instruction.of(information.getOperation(), new OperandInstance[] {});
-        }
-    };
-
     public static final InstructionDisassembler TARGET = new BaseInstructionDisassembler() {
         @Override
         public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
@@ -196,6 +196,17 @@ public class InstructionDisassemblers {
         }
     };
 
+    public static final InstructionDisassembler SOURCE2_DESTINATION = new BaseInstructionDisassembler() {
+        @Override
+        protected Instruction getInstruction(InstructionInformation information, BitArray bitArray,
+                                             DisassemblyContext context) {
+            return Instruction.of(information.getOperation(), new OperandInstance[] {
+                    getSource2(bitArray),
+                    getDestination(bitArray)
+            });
+        }
+    };
+
     public static final InstructionDisassembler DESTINATION = new BaseInstructionDisassembler() {
         @Override
         public Instruction getInstruction(InstructionInformation information, BitArray bitArray,
@@ -242,7 +253,7 @@ public class InstructionDisassemblers {
     };
 
     // WAIT instruction is implementation-dependent.
-    public static final InstructionDisassembler WAIT = CO0;
+    public static final InstructionDisassembler WAIT = EMPTY;
 
     private static abstract class BaseInstructionDisassembler implements InstructionDisassembler {
         @Override

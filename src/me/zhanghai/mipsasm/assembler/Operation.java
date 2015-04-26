@@ -8,6 +8,8 @@ package me.zhanghai.mipsasm.assembler;
 import me.zhanghai.mipsasm.InternalException;
 import me.zhanghai.mipsasm.util.BitArray;
 
+// FIXME: In fact, Operation should not be abstracted like this. Due to some corner cases, we need dynamic abstractions,
+// like OperandPrototype and OperandInstance, and in this case template and instance.
 public enum Operation {
 
     ADD(Codes.SPECIAL, 0b100000),
@@ -34,7 +36,8 @@ public enum Operation {
     BLTZL(Codes.REGIMM, 0b00010, true),
     BNE(0b000101),
     BNEL(0b010101),
-    // BREAK, C, ... , CLZ
+    BREAK(Codes.SPECIAL, 0b001101),
+    // C, ... , CLZ
     COP2(Codes.COP2),
     // CTC, ... , DERET
     DERET(Codes.COP0, 0b011111),
@@ -62,6 +65,7 @@ public enum Operation {
     LWL(0b100010),
     LWR(0b100110),
     // MADD, ... MFC2
+    MFC0(Codes.COP0, 0b00000, false),
     MFHI(Codes.SPECIAL, 0b010000),
     MFLO(Codes.SPECIAL, 0b010010),
     MOVE,
@@ -69,6 +73,7 @@ public enum Operation {
     // MOVT
     MOVZ(Codes.SPECIAL, 0b001010),
     // MSUB, ... ,MTC2
+    MTC0(Codes.COP0, 0b00100, false),
     MTHI(Codes.SPECIAL, 0b010001),
     MTLO(Codes.SPECIAL, 0b010011),
     // MUL
@@ -111,17 +116,19 @@ public enum Operation {
     TLBWI(Codes.COP0, 0b000010),
     TLBWR(Codes.COP0, 0b000110),
     // TEQ, ... , TNEI
-    // TODO: SYSCALL(Codes.SPECIAL, 0b001100),
+    SYSCALL(Codes.SPECIAL, 0b001100),
     WAIT(Codes.COP0, 0b100000),
     XOR(Codes.SPECIAL, 0b100110),
     XORI(0b001110);
 
     private static final int CODE_LENGTH = 6;
     private static final int FUNCTION_LENGTH = 6;
+    private static final int SOURCE_LENGTH = 5;
     private static final int SOURCE2_LENGTH = 5;
 
     private BitArray code;
     private BitArray function;
+    private BitArray source;
     private BitArray source2;
 
     private interface Codes {
@@ -132,37 +139,41 @@ public enum Operation {
         int COP2 = 0b010010;
     }
 
-    Operation(BitArray code, BitArray function, BitArray source2) {
+    Operation(BitArray code, BitArray source, BitArray source2, BitArray function) {
         this.code = code;
         this.function = function;
+        this.source = source;
         this.source2 = source2;
     }
 
-    Operation(int code, int source2, boolean source2Dummy) {
-        this(BitArray.of(code, CODE_LENGTH), null, BitArray.of(source2, SOURCE2_LENGTH));
+    Operation(int code, int source, boolean isSource2) {
+        this(BitArray.of(code, CODE_LENGTH), isSource2 ? null : BitArray.of(source, SOURCE_LENGTH),
+                isSource2 ? BitArray.of(source, SOURCE2_LENGTH) : null, null);
     }
 
     Operation(int code, int function) {
-        this(BitArray.of(code, CODE_LENGTH), BitArray.of(function, FUNCTION_LENGTH), null);
+        this(BitArray.of(code, CODE_LENGTH), null, null, BitArray.of(function, FUNCTION_LENGTH));
     }
 
     Operation(int code) {
-        this(BitArray.of(code, CODE_LENGTH), null, null);
+        this(BitArray.of(code, CODE_LENGTH), null, null, null);
     }
 
     Operation() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
-    public static Operation of(BitArray code, BitArray function, BitArray source2) {
+    public static Operation of(BitArray code, BitArray source, BitArray source2, BitArray function) {
         for (Operation operation : values()) {
             if ((operation.code != null && operation.code.equals(code))
-                    && (operation.function == null || operation.function.equals(function))
-                    && (operation.source2 == null || operation.source2.equals(source2))) {
+                    && (operation.source == null || operation.source.equals(source))
+                    && (operation.source2 == null || operation.source2.equals(source2))
+                    && (operation.function == null || operation.function.equals(function))) {
                 return operation;
             }
         }
-        throw new IllegalArgumentException("Unknown operation, code: " + code + ", function: " + function);
+        throw new IllegalArgumentException("Unknown operation, code: " + code + ", source: " + source + ", source2: "
+                + source2 + ", function: " + function);
     }
 
     public BitArray getCode() {
@@ -172,12 +183,12 @@ public enum Operation {
         return code;
     }
 
-    public BitArray getFunction() {
-        if (function == null) {
+    public BitArray getSource() {
+        if (source == null) {
             throw new InternalException(new IllegalStateException(
-                    "getFunction() called on an Operation without a function"));
+                    "getSource() called on an Operation without a source"));
         }
-        return function;
+        return source;
     }
 
     public BitArray getSource2() {
@@ -186,5 +197,13 @@ public enum Operation {
                     "getSource2() called on an Operation without a source2"));
         }
         return source2;
+    }
+
+    public BitArray getFunction() {
+        if (function == null) {
+            throw new InternalException(new IllegalStateException(
+                    "getFunction() called on an Operation without a function"));
+        }
+        return function;
     }
 }

@@ -80,6 +80,11 @@ public class OperandListPrototypes {
             OperandPrototypes.IMMEDIATE
     };
 
+    public static final OperandPrototype[] SOURCE2_DESTINATION = new OperandPrototype[] {
+            OperandPrototypes.SOURCE2,
+            OperandPrototypes.DESTINATION
+    };
+
     public static final OperandPrototype[] DESTINATION = new OperandPrototype[] {
             OperandPrototypes.DESTINATION
     };

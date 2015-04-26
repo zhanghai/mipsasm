@@ -21,14 +21,14 @@ public class InstructionWordDisassembler {
         }
 
         BitArray operationCode = bitArray.subArray(26, 32);
-        BitArray operationFunction = bitArray.subArray(0, 6);
+        BitArray operationSource = bitArray.subArray(21, 26);
         BitArray operationSource2 = bitArray.subArray(16, 21);
+        BitArray operationFunction = bitArray.subArray(0, 6);
         Operation operation;
         try {
-            operation = Operation.of(operationCode, operationFunction, operationSource2);
+            operation = Operation.of(operationCode, operationSource, operationSource2, operationFunction);
         } catch (IllegalArgumentException e) {
-            throw new NoSuchOperationException("Operation code: " + operationCode + ", function: " + operationFunction,
-                    e);
+            throw new NoSuchOperationException("Instruction: " + bitArray, e);
         }
 
         InstructionInformation instructionInformation = InstructionInformation.ofOperation(operation);

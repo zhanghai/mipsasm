@@ -7,8 +7,8 @@ package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.SpaceDirective;
-import me.zhanghai.mipsasm.util.IoUtils;
 
+import javax.script.ScriptException;
 import java.util.Arrays;
 
 public class SpaceDirectiveParser {
@@ -25,8 +25,8 @@ public class SpaceDirectiveParser {
         String byteCountString = operandStringList[0];
         SpaceDirective space;
         try {
-            space = SpaceDirective.of(IoUtils.parseUnsignedInteger(byteCountString));
-        } catch (IllegalArgumentException e) {
+            space = SpaceDirective.of(IntegerParser.parseUnsignedInteger(byteCountString));
+        } catch (ScriptException | IllegalArgumentException e) {
             throw new IllegalOperandException("ByteCount: " + byteCountString, e);
         }
         context.appendAssemblable(space);

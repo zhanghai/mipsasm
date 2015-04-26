@@ -7,7 +7,8 @@ package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.StorageDirective;
-import me.zhanghai.mipsasm.util.IoUtils;
+
+import javax.script.ScriptException;
 
 public abstract class StorageDirectiveParser {
 
@@ -22,8 +23,8 @@ public abstract class StorageDirectiveParser {
         for (String operandString : operandStringList) {
             StorageDirective storage;
             try {
-                storage = StorageDirective.of(IoUtils.parseUnsignedInteger(operandString), length);
-            } catch (IllegalArgumentException e) {
+                storage = StorageDirective.of(IntegerParser.parseUnsignedInteger(operandString), length);
+            } catch (ScriptException | IllegalArgumentException e) {
                 throw new IllegalOperandException("Operand: " + operandString, e);
             }
             context.appendAssemblable(storage);

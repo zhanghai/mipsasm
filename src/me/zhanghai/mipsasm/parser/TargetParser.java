@@ -8,7 +8,8 @@ package me.zhanghai.mipsasm.parser;
 import me.zhanghai.mipsasm.assembler.InstructionIndex;
 import me.zhanghai.mipsasm.assembler.Target;
 import me.zhanghai.mipsasm.assembler.TargetLabel;
-import me.zhanghai.mipsasm.util.IoUtils;
+
+import javax.script.ScriptException;
 
 public class TargetParser {
 
@@ -16,8 +17,8 @@ public class TargetParser {
 
     public static Target parse(String targetString) throws ParserException {
         try {
-            return Target.of(InstructionIndex.of(IoUtils.parseUnsignedInteger(targetString)));
-        } catch (NumberFormatException e) {
+            return Target.of(InstructionIndex.of(IntegerParser.parseUnsignedInteger(targetString)));
+        } catch (ScriptException | NumberFormatException e) {
             try {
                 return Target.of(TargetLabel.of(targetString));
             } catch (IllegalArgumentException ex) {

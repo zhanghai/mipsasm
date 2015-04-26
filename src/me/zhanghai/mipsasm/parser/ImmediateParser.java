@@ -6,7 +6,8 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.Immediate;
-import me.zhanghai.mipsasm.util.IoUtils;
+
+import javax.script.ScriptException;
 
 public class ImmediateParser {
 
@@ -14,8 +15,8 @@ public class ImmediateParser {
 
     public static Immediate parse(String immediateString) throws ParserException {
         try {
-            return Immediate.of(IoUtils.parseInteger(immediateString));
-        } catch (NumberFormatException e) {
+            return Immediate.of(IntegerParser.parseInteger(immediateString));
+        } catch (ScriptException | NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse immediate: " + immediateString, e);
         } catch (IllegalArgumentException e) {
             throw new IllegalOperandException("Immediate length too long: " + immediateString, e);

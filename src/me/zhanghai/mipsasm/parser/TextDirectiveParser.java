@@ -9,8 +9,8 @@ import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.BackwardAddressException;
 import me.zhanghai.mipsasm.assembler.TextDirective;
 import me.zhanghai.mipsasm.assembler.WordImmediate;
-import me.zhanghai.mipsasm.util.IoUtils;
 
+import javax.script.ScriptException;
 import java.util.Arrays;
 
 public class TextDirectiveParser {
@@ -27,8 +27,8 @@ public class TextDirectiveParser {
         String addressString = operandStringList[0];
         WordImmediate address;
         try {
-            address = WordImmediate.of(IoUtils.parseUnsignedInteger(addressString));
-        } catch (IllegalArgumentException e) {
+            address = WordImmediate.of(IntegerParser.parseUnsignedInteger(addressString));
+        } catch (ScriptException | IllegalArgumentException e) {
             throw new IllegalOperandException("Address: " + addressString, e);
         }
         if (address.getValue().get(0) || address.getValue().get(1)) {

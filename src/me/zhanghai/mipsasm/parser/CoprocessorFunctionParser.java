@@ -6,7 +6,8 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.CoprocessorFunction;
-import me.zhanghai.mipsasm.util.IoUtils;
+
+import javax.script.ScriptException;
 
 public class CoprocessorFunctionParser {
 
@@ -14,8 +15,8 @@ public class CoprocessorFunctionParser {
 
     public static CoprocessorFunction parse(String coprocessorFunctionString) throws ParserException {
         try {
-            return CoprocessorFunction.of(IoUtils.parseUnsignedInteger(coprocessorFunctionString));
-        } catch (NumberFormatException e) {
+            return CoprocessorFunction.of(IntegerParser.parseUnsignedInteger(coprocessorFunctionString));
+        } catch (ScriptException | NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse coprocessor function: " + coprocessorFunctionString, e);
         } catch (IllegalArgumentException e) {
             throw new IllegalOperandException("coprocessor function length too long: " + coprocessorFunctionString, e);

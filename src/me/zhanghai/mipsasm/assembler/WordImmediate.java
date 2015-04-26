@@ -17,7 +17,7 @@ public class WordImmediate implements Operand {
     }
 
     public static WordImmediate of(int value) {
-        return new WordImmediate(BitArray.ofValue(value));
+        return new WordImmediate(BitArray.of(value, Constants.WORD_LENGTH));
     }
 
     public BitArray getValue() {

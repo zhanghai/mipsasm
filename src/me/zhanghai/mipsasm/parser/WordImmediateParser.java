@@ -6,7 +6,8 @@
 package me.zhanghai.mipsasm.parser;
 
 import me.zhanghai.mipsasm.assembler.WordImmediate;
-import me.zhanghai.mipsasm.util.IoUtils;
+
+import javax.script.ScriptException;
 
 public class WordImmediateParser {
 
@@ -14,8 +15,8 @@ public class WordImmediateParser {
 
     public static WordImmediate parse(String wordImmediateString) throws ParserException {
         try {
-            return WordImmediate.of(IoUtils.parseInteger(wordImmediateString));
-        } catch (NumberFormatException e) {
+            return WordImmediate.of(IntegerParser.parseInteger(wordImmediateString));
+        } catch (ScriptException | NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse word immediate: " + wordImmediateString, e);
         } catch (IllegalArgumentException e) {
             throw new IllegalOperandException("Word immediate length too long: " + wordImmediateString, e);

@@ -8,9 +8,9 @@ package me.zhanghai.mipsasm.parser;
 import me.zhanghai.mipsasm.assembler.Immediate;
 import me.zhanghai.mipsasm.assembler.OffsetBase;
 import me.zhanghai.mipsasm.assembler.Register;
-import me.zhanghai.mipsasm.util.IoUtils;
 import me.zhanghai.mipsasm.util.RegexUtils;
 
+import javax.script.ScriptException;
 import java.util.regex.Matcher;
 
 public class OffsetBaseParser {
@@ -34,8 +34,8 @@ public class OffsetBaseParser {
             offset = Immediate.of(0);
         } else {
             try {
-                offset = Immediate.of(IoUtils.parseSignedInteger(offsetString));
-            } catch (NumberFormatException e) {
+                offset = Immediate.of(IntegerParser.parseSignedInteger(offsetString));
+            } catch (ScriptException | NumberFormatException e) {
                 throw new IllegalOperandException("Offset cannot be parsed: " + offsetString, e);
             } catch (IllegalArgumentException e) {
                 throw new IllegalOperandException("Offset length to long: " + offsetString, e);

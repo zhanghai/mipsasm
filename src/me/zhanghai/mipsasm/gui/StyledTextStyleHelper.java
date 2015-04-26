@@ -94,7 +94,12 @@ public class StyledTextStyleHelper {
             ",",
             "\\(",
             "\\)",
-            "\""
+            "\\[",
+            "\\]",
+            "\\{",
+            "\\}",
+            "\"",
+            "\'"
     };
     private static final ThreadLocal<Matcher>[] PUNCTUATION_MATCHERS;
     static {

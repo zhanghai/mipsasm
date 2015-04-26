@@ -8,7 +8,8 @@ package me.zhanghai.mipsasm.parser;
 import me.zhanghai.mipsasm.assembler.Immediate;
 import me.zhanghai.mipsasm.assembler.Offset;
 import me.zhanghai.mipsasm.assembler.OffsetLabel;
-import me.zhanghai.mipsasm.util.IoUtils;
+
+import javax.script.ScriptException;
 
 public class OffsetParser {
 
@@ -16,8 +17,8 @@ public class OffsetParser {
 
     public static Offset parse(String offsetString) throws ParserException {
         try {
-            return Offset.of(Immediate.of(IoUtils.parseSignedInteger(offsetString)));
-        } catch (NumberFormatException e) {
+            return Offset.of(Immediate.of(IntegerParser.parseSignedInteger(offsetString)));
+        } catch (ScriptException | NumberFormatException e) {
             try {
                 return Offset.of(OffsetLabel.of(offsetString));
             } catch (IllegalArgumentException ex) {

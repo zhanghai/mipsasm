@@ -38,7 +38,7 @@ public class Instruction implements Assemblable {
             }
         }
         throw new OperandNotFoundException("Operand name: " + operandName + ", operandListInstance: "
-                + Arrays.toString(operandListInstance));
+                + Arrays.toString(operandListInstance) + ", instruction: "+ this);
     }
 
     public Operand getOperand(String operandName) {

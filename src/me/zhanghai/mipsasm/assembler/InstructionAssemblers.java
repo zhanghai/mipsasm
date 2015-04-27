@@ -338,7 +338,12 @@ public class InstructionAssemblers {
     public static final InstructionAssembler LA = new BaseTransformInstructionAssembler() {
         @Override
         public void allocate(Instruction instruction, AssemblyContext context) {
-            LI.allocate(null, context);
+            LI.allocate(Instruction.of(Operation.LI, new OperandInstance[] {
+                    OperandInstance.fromPrototype(OperandPrototypes.SOURCE2, getSource2(instruction)),
+                    // HACK: In allocation phase, label may not yet be available, however a valid structure of
+                    // instruction is required in the implementation of LI.
+                    OperandInstance.fromPrototype(OperandPrototypes.WORD_IMMEDIATE, WordImmediate.of(0))
+            }), context);
         }
         @Override
         protected Instruction transformInstruction(Instruction instruction, AssemblyContext context)
@@ -443,7 +448,7 @@ public class InstructionAssemblers {
         public void allocate(Instruction instruction, AssemblyContext context) {
             try {
                 for (Instruction transformedInstruction : transformInstruction(instruction, context)) {
-                    transformInstruction(transformedInstruction, context);
+                    transformedInstruction.allocate(context);
                 }
             } catch (AssemblerException e) {
                 throw new InternalException(

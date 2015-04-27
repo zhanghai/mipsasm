@@ -72,13 +72,20 @@ public class Cli {
             .withLongOpt("help")
             .create("h");
 
+    @SuppressWarnings("AccessStaticViaInstance")
+    private static final Option OPTION_VERSION = OptionBuilder
+            .withDescription("Display version information and exit")
+            .withLongOpt("version")
+            .create("v");
+
     private static final Options OPTIONS = new Options()
             .addOption(OPTION_GRAPHICAL)
             .addOption(OPTION_TERMINAL)
             .addOption(OPTION_INPUT)
             .addOption(OPTION_OUTPUT)
             .addOption(OPTION_WRITER)
-            .addOption(OPTION_HELP);
+            .addOption(OPTION_HELP)
+            .addOption(OPTION_VERSION);
 
     public static CommandLine parseCommandLine(String[] args) throws ParseException {
         org.apache.commons.cli.Parser commandLineParser = new GnuParser();
@@ -113,10 +120,23 @@ public class Cli {
         new HelpFormatter().printHelp("mipsasm [OPTION]...", OPTIONS);
     }
 
+    public static void printVersion() {
+        System.out.print("mipsasm 1.0.0\n" +
+                "Copyright (C) 2015 Zhang Hai\n" +
+                "License GPLv3+: GNU GPL version 3 or later\n" +
+                "<https://www.gnu.org/licenses/gpl.html>.\n" +
+                "This program comes with ABSOLUTELY NO WARRANTY.\n" +
+                "This is free software, and you are welcome to redistribute it\n" +
+                "under certain conditions.\n");
+    }
+
     public static void run(CommandLine commandLine) {
 
         if (commandLine.hasOption(OPTION_HELP.getOpt())) {
             printHelp();
+            return;
+        } else if (commandLine.hasOption(OPTION_VERSION.getOpt())) {
+            printVersion();
             return;
         }
         InputStream inputStream;

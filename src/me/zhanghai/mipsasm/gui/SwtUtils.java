@@ -56,6 +56,22 @@ public class SwtUtils {
         return imageArray;
     }
 
+    public static void setFontHeight(Control control, int height) {
+        Font oldFont = control.getFont();
+        FontData[] fontDataArray = oldFont.getFontData();
+        for (FontData fontData : fontDataArray) {
+            fontData.setHeight(height);
+        }
+        final Font newFont = new Font(Display.getCurrent(), fontDataArray);
+        control.setFont(newFont);
+        control.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent disposeEvent) {
+                newFont.dispose();
+            }
+        });
+    }
+
     public static void setFontStyle(Control control, int style) {
         Font oldFont = control.getFont();
         FontData[] fontDataArray = oldFont.getFontData();

@@ -16,10 +16,13 @@ public class AsciizParser {
 
     public static void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
 
-        AsciiParser.parse(operandStringList, context);
+        for (String operandString : operandStringList) {
 
-        StorageDirective storage;
-        storage = StorageDirective.of(BitArray.of(0, Constants.BYTE_LENGTH));
-        context.appendAssemblable(storage);
+            AsciiParser.parse(new String[] {operandString}, context);
+
+            StorageDirective storage;
+            storage = StorageDirective.of(BitArray.of(0, Constants.BYTE_LENGTH));
+            context.appendAssemblable(storage);
+        }
     }
 }

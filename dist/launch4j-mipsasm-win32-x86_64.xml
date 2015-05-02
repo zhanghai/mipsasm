@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>../out/artifacts/mipsasm_win32_x86_64/mipsasm-win32-x86_64.jar</jar>
-  <outfile>out/mipside.exe</outfile>
+  <outfile>out/mipsasm-win32-x86_64.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="swt-4.4.2-gtk-linux-x86_64-debug">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-gtk-linux-x86_64-debug.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-gtk-linux-x86_64-debug.jar!/" />
+    </NATIVE>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/swt-4.4.2-gtk-linux-x86_64-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>

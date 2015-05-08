@@ -16,7 +16,9 @@ public enum  DirectiveInformation {
     BYTE,
     HALF,
     WORD,
-    SPACE;
+    SPACE,
+    EVAL,
+    ECHO;
 
     public void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
         switch (this) {
@@ -43,6 +45,12 @@ public enum  DirectiveInformation {
                 break;
             case SPACE:
                 SpaceDirectiveParser.parse(operandStringList, context);
+                break;
+            case EVAL:
+                EvalDirectiveParser.parse(operandStringList, context);
+                break;
+            case ECHO:
+                EchoDirectiveParser.parse(operandStringList, context);
                 break;
             default:
                 throw new IllegalStateException("Parser not found: " + this);

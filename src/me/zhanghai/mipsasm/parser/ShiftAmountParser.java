@@ -15,7 +15,7 @@ public class ShiftAmountParser {
 
     public static ShiftAmount parse(String shiftAmountString) throws ParserException {
         try {
-            return ShiftAmount.of(IntegerParser.parseUnsignedInteger(shiftAmountString));
+            return ShiftAmount.of(JavaScriptParser.parseUnsignedInteger(shiftAmountString));
         } catch (ScriptException | NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse shift amount: " + shiftAmountString, e);
         } catch (IllegalArgumentException e) {

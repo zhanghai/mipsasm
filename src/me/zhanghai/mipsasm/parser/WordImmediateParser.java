@@ -15,7 +15,7 @@ public class WordImmediateParser {
 
     public static WordImmediate parse(String wordImmediateString) throws ParserException {
         try {
-            return WordImmediate.of(IntegerParser.parseInteger(wordImmediateString));
+            return WordImmediate.of(JavaScriptParser.parseInteger(wordImmediateString));
         } catch (ScriptException | NumberFormatException e) {
             throw new IllegalOperandException("Unable to parse word immediate: " + wordImmediateString, e);
         } catch (IllegalArgumentException e) {

@@ -17,7 +17,7 @@ public class OffsetParser {
 
     public static Offset parse(String offsetString) throws ParserException {
         try {
-            return Offset.of(Immediate.of(IntegerParser.parseSignedInteger(offsetString)));
+            return Offset.of(Immediate.of(JavaScriptParser.parseSignedInteger(offsetString)));
         } catch (ScriptException | NumberFormatException e) {
             try {
                 return Offset.of(OffsetLabel.of(offsetString));

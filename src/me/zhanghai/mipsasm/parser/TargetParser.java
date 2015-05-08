@@ -17,7 +17,7 @@ public class TargetParser {
 
     public static Target parse(String targetString) throws ParserException {
         try {
-            return Target.of(InstructionIndex.of(IntegerParser.parseUnsignedInteger(targetString)));
+            return Target.of(InstructionIndex.of(JavaScriptParser.parseUnsignedInteger(targetString)));
         } catch (ScriptException | NumberFormatException e) {
             try {
                 return Target.of(TargetLabel.of(targetString));

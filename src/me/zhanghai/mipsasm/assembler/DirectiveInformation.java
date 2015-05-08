@@ -27,10 +27,10 @@ public enum  DirectiveInformation {
                 DataDirectiveParser.parse(operandStringList, context);
                 break;
             case ASCII:
-                AsciiParser.parse(operandStringList, context);
+                AsciiDirectiveParser.parse(operandStringList, context);
                 break;
             case ASCIIZ:
-                AsciizParser.parse(operandStringList, context);
+                AsciizDirectiveParser.parse(operandStringList, context);
                 break;
             case BYTE:
                 ByteDirectiveParser.parse(operandStringList, context);

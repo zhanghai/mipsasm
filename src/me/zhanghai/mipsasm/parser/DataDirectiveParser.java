@@ -27,7 +27,7 @@ public class DataDirectiveParser {
         String addressString = operandStringList[0];
         WordImmediate address;
         try {
-            address = WordImmediate.of(IntegerParser.parseUnsignedInteger(addressString));
+            address = WordImmediate.of(JavaScriptParser.parseUnsignedInteger(addressString));
         } catch (ScriptException | IllegalArgumentException e) {
             throw new IllegalOperandException("Address: " + addressString, e);
         }

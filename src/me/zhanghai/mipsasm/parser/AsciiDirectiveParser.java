@@ -16,12 +16,12 @@ import me.zhanghai.mipsasm.util.UnsignedCompat;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 
-public class AsciiParser {
+public class AsciiDirectiveParser {
 
     private static final ThreadLocal<Matcher> STRING_MATCHER = RegexUtils.makeThreadLocalMatcher(
             "(?<!\\\\)" + Tokens.STRING_QUOTATION + "(.*)" + "(?<!\\\\)" + Tokens.STRING_QUOTATION);
 
-    private AsciiParser() {}
+    private AsciiDirectiveParser() {}
 
     public static void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
 

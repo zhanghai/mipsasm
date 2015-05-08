@@ -34,7 +34,7 @@ public class OffsetBaseParser {
             offset = Immediate.of(0);
         } else {
             try {
-                offset = Immediate.of(IntegerParser.parseSignedInteger(offsetString));
+                offset = Immediate.of(JavaScriptParser.parseSignedInteger(offsetString));
             } catch (ScriptException | NumberFormatException e) {
                 throw new IllegalOperandException("Offset cannot be parsed: " + offsetString, e);
             } catch (IllegalArgumentException e) {

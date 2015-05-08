@@ -10,15 +10,15 @@ import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.assembler.StorageDirective;
 import me.zhanghai.mipsasm.util.BitArray;
 
-public class AsciizParser {
+public class AsciizDirectiveParser {
 
-    private AsciizParser() {}
+    private AsciizDirectiveParser() {}
 
     public static void parse(String[] operandStringList, AssemblyContext context) throws ParserException {
 
         for (String operandString : operandStringList) {
 
-            AsciiParser.parse(new String[] {operandString}, context);
+            AsciiDirectiveParser.parse(new String[]{operandString}, context);
 
             StorageDirective storage;
             storage = StorageDirective.of(BitArray.of(0, Constants.BYTE_LENGTH));

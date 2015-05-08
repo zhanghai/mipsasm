@@ -11,14 +11,18 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-public class IntegerParser {
+public class JavaScriptParser {
 
     private static final ScriptEngine JAVA_SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("JavaScript");
 
-    private IntegerParser() {}
+    private JavaScriptParser() {}
 
-    private static String eval(String script) throws ScriptException {
-        Object result = JAVA_SCRIPT_ENGINE.eval(script);
+    public static Object eval(String script) throws ScriptException {
+        return JAVA_SCRIPT_ENGINE.eval(script);
+    }
+
+    private static String evalForInteger(String script) throws ScriptException {
+        Object result = eval(script);
         // Double is default return type for Number.
         if (result instanceof Double && result.equals(Math.rint((Double) result))) {
             result = ((Double) result).intValue();
@@ -30,7 +34,7 @@ public class IntegerParser {
         try {
             return IoUtils.parseSignedInteger(expression);
         } catch (NumberFormatException e) {
-            expression = eval(expression);
+            expression = evalForInteger(expression);
             return IoUtils.parseSignedInteger(expression);
         }
     }
@@ -39,7 +43,7 @@ public class IntegerParser {
         try {
             return IoUtils.parseUnsignedInteger(expression);
         } catch (NumberFormatException e) {
-            expression = eval(expression);
+            expression = evalForInteger(expression);
             return IoUtils.parseUnsignedInteger(expression);
         }
     }
@@ -48,7 +52,7 @@ public class IntegerParser {
         try {
             return IoUtils.parseInteger(expression);
         } catch (NumberFormatException e) {
-            expression = eval(expression);
+            expression = evalForInteger(expression);
             return IoUtils.parseInteger(expression);
         }
     }

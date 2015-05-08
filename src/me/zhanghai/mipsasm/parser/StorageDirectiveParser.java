@@ -23,7 +23,7 @@ public abstract class StorageDirectiveParser {
         for (String operandString : operandStringList) {
             StorageDirective storage;
             try {
-                storage = StorageDirective.of(IntegerParser.parseUnsignedInteger(operandString), length);
+                storage = StorageDirective.of(JavaScriptParser.parseUnsignedInteger(operandString), length);
             } catch (ScriptException | IllegalArgumentException e) {
                 throw new IllegalOperandException("Operand: " + operandString, e);
             }

@@ -116,7 +116,7 @@ public enum InstructionInformation {
             InstructionAssemblers.DESTINATION_SOURCE_SOURCE2, InstructionDisassemblers.DESTINATION_SOURCE_SOURCE2),
     MOVZ(Operation.MOVZ, OperandListPrototypes.DESTINATION_SOURCE_SOURCE2,
             InstructionAssemblers.DESTINATION_SOURCE_SOURCE2, InstructionDisassemblers.DESTINATION_SOURCE_SOURCE2),
-    MTC0(Operation.MFC0, OperandListPrototypes.SOURCE2_DESTINATION, InstructionAssemblers.SOURCE2_DESTINATION,
+    MTC0(Operation.MTC0, OperandListPrototypes.SOURCE2_DESTINATION, InstructionAssemblers.SOURCE2_DESTINATION,
             InstructionDisassemblers.SOURCE2_DESTINATION),
     MTHI(Operation.MTHI, OperandListPrototypes.SOURCE, InstructionAssemblers.SOURCE, InstructionDisassemblers.SOURCE),
     MTLO(Operation.MTLO, OperandListPrototypes.SOURCE, InstructionAssemblers.SOURCE, InstructionDisassemblers.SOURCE),
@@ -207,6 +207,11 @@ public enum InstructionInformation {
 
     InstructionInformation(Operation operation, OperandPrototype[] operandListPrototype,
                            InstructionAssembler instructionAssembler, InstructionDisassembler instructionDisassembler) {
+        if (!name().equals(operation.name())) {
+            throw new IllegalArgumentException(
+                    "InstructionInformation and Operation name mismatch, please check the corresponding code, name: "
+                            + name() + ", operation: " + operation.name());
+        }
         this.operation = operation;
         this.operandListPrototype = operandListPrototype;
         this.instructionAssembler = instructionAssembler;

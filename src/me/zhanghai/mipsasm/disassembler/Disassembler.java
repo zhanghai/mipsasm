@@ -11,6 +11,7 @@ import me.zhanghai.mipsasm.util.BitArray;
 import me.zhanghai.mipsasm.util.IoUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class Disassembler {
@@ -41,7 +42,7 @@ public class Disassembler {
         }
         context.packStorageDirective();
 
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         for (Map.Entry<Integer, Assemblable> entry : context.getAddressAssemblableMap().entrySet()) {
             Integer address = entry.getKey();
             String label = context.getLabel(address);

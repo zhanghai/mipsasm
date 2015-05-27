@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 public class CoeWriter {
 
@@ -22,7 +23,7 @@ public class CoeWriter {
 
     public static void write(OutputStream outputStream, AssemblyContext context) throws WriterException {
 
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
 
         try {
             writer.write("memory_initialization_radix=16;");

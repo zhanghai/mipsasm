@@ -6,6 +6,7 @@
 package me.zhanghai.mipsasm.util;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class IoUtils {
 
@@ -53,7 +54,7 @@ public class IoUtils {
 
     public static String inputStreamToString(InputStream inputStream) throws IOException {
         StringBuilder builder = new StringBuilder();
-        InputStreamReader reader = new InputStreamReader(inputStream);
+        InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         char[] buffer = new char[BUFFER_SIZE];
         int length;
         while ((length = reader.read(buffer)) != -1) {

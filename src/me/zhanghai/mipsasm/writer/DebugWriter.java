@@ -14,6 +14,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 public class DebugWriter {
 
@@ -21,7 +22,7 @@ public class DebugWriter {
 
     public static void write(OutputStream outputStream, AssemblyContext context) throws WriterException {
 
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
 
         int address = 0;
         for (BitArray assembly : context.getAssembly()) {

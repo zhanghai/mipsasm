@@ -2,7 +2,7 @@
 
 This is my project for Computer Organization, Shi Qingsong, Zhejiang University.
 
-The MIPS assembler is partly based on MIPS 32 specification, with some custom extensions.
+The MIPS assembler is based on the MIPS 32 specification, with some custom extensions.
 
 The MIPS IDE is built upon SWT, packaged with launch4j for Windows executable.
 
@@ -112,7 +112,7 @@ The MIPS IDE is built upon SWT, packaged with launch4j for Windows executable.
 - XOR
 - XOR
 
-8 directives:
+10 directives:
 
 - .TEXT
 - .DATA

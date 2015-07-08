@@ -15,27 +15,39 @@ import java.nio.charset.StandardCharsets;
 
 public class Parser {
 
+    private static final String CONTINUATION_STRING = "\\";
+
     private Parser() {}
 
     public static void parse(InputStream inputStream, AssemblyContext context) throws ParserException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         int lineNumber = 0;
+        String line = "";
+        boolean hasContinuation = false;
         while (true) {
-            String line;
+            ++lineNumber;
             try {
-                line = reader.readLine();
+                if (hasContinuation) {
+                    line += reader.readLine();
+                } else {
+                    line = reader.readLine();
+                }
             } catch (IOException e) {
                 throw new ParserException("Line " + lineNumber, e);
             }
             if (line == null) {
                 break;
             }
-            try {
-                LineParser.parse(line, context);
-            } catch (ParserException e) {
-                throw new ParserException("Line " + lineNumber + ": " + line, e);
+            hasContinuation = line.endsWith(CONTINUATION_STRING);
+            if (hasContinuation) {
+                line = line.substring(0, line.length() - CONTINUATION_STRING.length());
+            } else {
+                try {
+                    LineParser.parse(line, context);
+                } catch (ParserException e) {
+                    throw new ParserException("Line " + lineNumber + ": " + line, e);
+                }
             }
-            ++lineNumber;
         }
         context.finishAllocation();
     }

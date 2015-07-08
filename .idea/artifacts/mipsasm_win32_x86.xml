@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="mipsasm-win32-x86">
+    <output-path>$PROJECT_DIR$/out/artifacts/mipsasm_win32_x86</output-path>
+    <root id="archive" name="mipsasm-win32-x86.jar">
+      <element id="module-output" name="mipsasm" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/swt-4.4.2-win32-x86.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

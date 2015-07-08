@@ -121,7 +121,7 @@ public class Cli {
     }
 
     public static void printVersion() {
-        System.out.print("mipsasm 1.0.0\n" +
+        System.out.print("mipsasm 1.0.1\n" +
                 "Copyright (C) 2015 Zhang Hai\n" +
                 "License GPLv3+: GNU GPL version 3 or later\n" +
                 "<https://www.gnu.org/licenses/gpl.html>.\n" +

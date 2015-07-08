@@ -85,7 +85,7 @@ public class Ide {
     private void onCreateDisplay() {
 
         Display.setAppName(resourceBundle.getString("app_name"));
-        Display.setAppVersion("1.0.0");
+        Display.setAppVersion("1.0.1");
         display = new Display();
 
         icons = SwtUtils.loadImageArray(new String[] {

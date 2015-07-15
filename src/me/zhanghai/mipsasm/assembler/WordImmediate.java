@@ -24,11 +24,11 @@ public class WordImmediate implements Operand {
         return value;
     }
 
-    public BitArray getUpper() {
+    public BitArray getLower() {
         return value.subArray(0, Constants.HALF_WORD_LENGTH);
     }
 
-    public BitArray getLower() {
+    public BitArray getUpper() {
         return value.subArray(Constants.HALF_WORD_LENGTH);
     }
 

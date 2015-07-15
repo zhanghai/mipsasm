@@ -25,7 +25,8 @@ public class JavaScriptParser {
         Object result = eval(script);
         // Double is default return type for Number.
         if (result instanceof Double && result.equals(Math.rint((Double) result))) {
-            result = ((Double) result).intValue();
+            // Java's signed int will make 0x7FFFFFFF for values larger than that if we use Double.intValue().
+            result = ((Double) result).longValue();
         }
         return result.toString();
     }

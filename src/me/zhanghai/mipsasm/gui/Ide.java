@@ -434,7 +434,7 @@ public class Ide {
         if (file != null) {
             fileDialog.setFileName(file.getName());
             fileDialog.setFilterPath(file.getParent());
-            fileDialog.setFilterNames(resourceBundle.getString("menu.file.sava_as.filter_names").split("\\|"));
+            fileDialog.setFilterNames(resourceBundle.getString("menu.file.save_as.filter_names").split("\\|"));
             fileDialog.setFilterExtensions(new String[] {
                     "*.s",
                     "*.asm",
@@ -446,7 +446,15 @@ public class Ide {
         if (filename == null) {
             return;
         }
-        setFile(new File(filename));
+        File file = new File(filename);
+        if (file.exists()) {
+            MessageBox messageBox = new MessageBox(shell, SWT.PRIMARY_MODAL | SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+            messageBox.setMessage(String.format(resourceBundle.getString("file.overwrite"), filename));
+            if (messageBox.open() != SWT.OK) {
+                return;
+            }
+        }
+        setFile(file);
         onSave();
     }
 

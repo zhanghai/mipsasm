@@ -5,6 +5,7 @@
 
 package me.zhanghai.mipsasm.gui;
 
+import me.zhanghai.mipsasm.Build;
 import me.zhanghai.mipsasm.assembler.Assembler;
 import me.zhanghai.mipsasm.assembler.AssemblerException;
 import me.zhanghai.mipsasm.assembler.AssemblerPreferences;
@@ -86,7 +87,7 @@ public class Ide {
     private void onCreateDisplay() {
 
         Display.setAppName(resourceBundle.getString("app_name"));
-        Display.setAppVersion("1.0.1");
+        Display.setAppVersion(Build.VERSION_NAME);
         display = new Display();
 
         icons = SwtUtils.loadImageArray(new String[] {

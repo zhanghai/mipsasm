@@ -419,28 +419,6 @@ public class InstructionAssemblers {
         }
     }
 
-    public static class DelaySlotInstructionAssembler extends BaseTransformInstructionAssembler {
-        private InstructionAssembler assembler;
-        public DelaySlotInstructionAssembler(InstructionAssembler assembler) {
-            this.assembler = assembler;
-        }
-        @Override
-        protected Instruction transformInstruction(Instruction instruction, AssemblyContext context)
-                throws AssemblerException {
-            return Instruction.of(Operation.NOP, new OperandInstance[] {});
-        }
-        @Override
-        public void allocate(Instruction instruction, AssemblyContext context) {
-            assembler.allocate(instruction, context);
-            super.allocate(null, context);
-        }
-        @Override
-        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
-            assembler.write(instruction, context);
-            super.write(null, context);
-        }
-    }
-
     public static abstract class BaseMultipleTransformInstructionAssembler implements InstructionAssembler {
         protected abstract Instruction[] transformInstruction(Instruction instruction, AssemblyContext context)
                 throws AssemblerException;
@@ -459,6 +437,28 @@ public class InstructionAssemblers {
         public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
             for (Instruction transformedInstruction : transformInstruction(instruction, context)) {
                 transformedInstruction.write(context);
+            }
+        }
+    }
+
+    public static class DelaySlotInstructionAssembler implements InstructionAssembler {
+        private static final Instruction NOP = Instruction.of(Operation.NOP, new OperandInstance[] {});
+        private InstructionAssembler assembler;
+        public DelaySlotInstructionAssembler(InstructionAssembler assembler) {
+            this.assembler = assembler;
+        }
+        @Override
+        public void allocate(Instruction instruction, AssemblyContext context) {
+            assembler.allocate(instruction, context);
+            if (AssemblerPreferences.getUseDelaySlot()) {
+                NOP.allocate(context);
+            }
+        }
+        @Override
+        public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
+            assembler.write(instruction, context);
+            if (AssemblerPreferences.getUseDelaySlot()) {
+                NOP.write(context);
             }
         }
     }

@@ -450,14 +450,14 @@ public class InstructionAssemblers {
         @Override
         public void allocate(Instruction instruction, AssemblyContext context) {
             assembler.allocate(instruction, context);
-            if (AssemblerPreferences.getUseDelaySlot()) {
+            if (AssemblerPreferences.getDelaySlotEnabled()) {
                 NOP.allocate(context);
             }
         }
         @Override
         public void write(Instruction instruction, AssemblyContext context) throws AssemblerException {
             assembler.write(instruction, context);
-            if (AssemblerPreferences.getUseDelaySlot()) {
+            if (AssemblerPreferences.getDelaySlotEnabled()) {
                 NOP.write(context);
             }
         }

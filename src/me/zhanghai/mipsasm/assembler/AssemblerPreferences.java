@@ -11,7 +11,7 @@ public class AssemblerPreferences {
 
     private enum Preference {
 
-        USE_DELAY_SLOT(true);
+        DELAY_SLOT_ENABLED(true);
 
         private Object defaultValue;
 
@@ -29,8 +29,12 @@ public class AssemblerPreferences {
 
     private AssemblerPreferences() {}
 
-    public static boolean getUseDelaySlot() {
-        return PREFERENCES.getBoolean(Preference.USE_DELAY_SLOT.name(),
-                Preference.USE_DELAY_SLOT.<Boolean>getDefaultValue());
+    public static boolean getDelaySlotEnabled() {
+        return PREFERENCES.getBoolean(Preference.DELAY_SLOT_ENABLED.name(),
+                Preference.DELAY_SLOT_ENABLED.<Boolean>getDefaultValue());
+    }
+
+    public static void setDelaySlotEnabled(boolean delaySlotEnabled) {
+        PREFERENCES.putBoolean(Preference.DELAY_SLOT_ENABLED.name(), delaySlotEnabled);
     }
 }

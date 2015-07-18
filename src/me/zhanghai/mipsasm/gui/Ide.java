@@ -7,6 +7,7 @@ package me.zhanghai.mipsasm.gui;
 
 import me.zhanghai.mipsasm.assembler.Assembler;
 import me.zhanghai.mipsasm.assembler.AssemblerException;
+import me.zhanghai.mipsasm.assembler.AssemblerPreferences;
 import me.zhanghai.mipsasm.assembler.AssemblyContext;
 import me.zhanghai.mipsasm.disassembler.CoeReader;
 import me.zhanghai.mipsasm.disassembler.CoeReaderException;
@@ -293,8 +294,6 @@ public class Ide {
                     }
                 })
                 .build();
-        new MenuItemBuilder(assembleMenu, SWT.SEPARATOR)
-                .build();
         final MenuItem assembleAllMenuItem = new MenuItemBuilder(assembleMenu)
                 .setText(resourceBundle.getString("menu.assemble.all"))
                 .setAccelerator(SWT.F12)
@@ -314,6 +313,17 @@ public class Ide {
                     @Override
                     public void widgetSelected(SelectionEvent selectionEvent) {
                         onOpenAssembleDirectory();
+                    }
+                })
+                .build();
+        new MenuItemBuilder(assembleMenu, SWT.SEPARATOR)
+                .build();
+        new MenuItemBuilder(assembleMenu, SWT.CHECK)
+                .setText(resourceBundle.getString("menu.assemble.enable_delay_slot"))
+                .addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent selectionEvent) {
+                        onSetDelaySlotEnabled(((MenuItem) selectionEvent.widget).getSelection());
                     }
                 })
                 .build();
@@ -501,6 +511,10 @@ public class Ide {
         }
 
         Program.launch(file.getParent());
+    }
+
+    private void onSetDelaySlotEnabled(boolean delaySlotEnabled) {
+        AssemblerPreferences.setDelaySlotEnabled(delaySlotEnabled);
     }
 
     private void onAbout() {

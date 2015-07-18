@@ -327,7 +327,8 @@ public class Ide {
                         onSetDelaySlotEnabled(((MenuItem) selectionEvent.widget).getSelection());
                     }
                 })
-                .build();
+                .build()
+                .setSelection(AssemblerPreferences.getDelaySlotEnabled());
         new MenuItemBuilder(menu, SWT.CASCADE)
                 .setText(resourceBundle.getString("menu.assemble"))
                 .setMenu(assembleMenu)

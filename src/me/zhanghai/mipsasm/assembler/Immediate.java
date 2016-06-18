@@ -26,6 +26,7 @@ public class Immediate implements Operand, AssemblyProvider {
         return value;
     }
 
+    @Override
     public BitArray assemble(AssemblyContext context) {
         return value;
     }

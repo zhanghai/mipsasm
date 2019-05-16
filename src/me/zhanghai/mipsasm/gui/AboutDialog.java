@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class AboutDialog extends Dialog {
 
-    private static final String WEBSITE_URL = "https://github.com/DreaminginCodeZH/mipsasm";
+    private static final String WEBSITE_URL = "https://github.com/zhanghai/mipsasm";
 
     private static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl.html";
 

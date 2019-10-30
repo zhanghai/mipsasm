@@ -14,6 +14,7 @@ import me.zhanghai.mipsasm.disassembler.CoeReader;
 import me.zhanghai.mipsasm.disassembler.CoeReaderException;
 import me.zhanghai.mipsasm.disassembler.Disassembler;
 import me.zhanghai.mipsasm.disassembler.DisassemblerException;
+import me.zhanghai.mipsasm.disassembler.HexReader;
 import me.zhanghai.mipsasm.parser.MigratorException;
 import me.zhanghai.mipsasm.parser.Parser;
 import me.zhanghai.mipsasm.parser.ParserException;
@@ -22,6 +23,7 @@ import me.zhanghai.mipsasm.util.IoUtils;
 import me.zhanghai.mipsasm.util.StringUtils;
 import me.zhanghai.mipsasm.writer.Writer;
 import me.zhanghai.mipsasm.writer.WriterException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.SashForm;
@@ -90,7 +92,7 @@ public class Ide {
         Display.setAppVersion(Build.VERSION_NAME);
         display = new Display();
 
-        icons = SwtUtils.loadImageArray(new String[] {
+        icons = SwtUtils.loadImageArray(new String[]{
                 "/res/drawable/mipside_512.png",
                 "/res/drawable/mipside_256.png",
                 "/res/drawable/mipside_128.png",
@@ -105,7 +107,7 @@ public class Ide {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        editFont = new Font(display, new FontData[] {
+        editFont = new Font(display, new FontData[]{
                 new FontDataBuilder().setName("Source Code Pro").setHeight(11).build(),
                 new FontDataBuilder().setName("monospace").setHeight(11).build(),
         });
@@ -285,6 +287,16 @@ public class Ide {
                     }
                 })
                 .build();
+        final MenuItem assembleHexMenuItem = new MenuItemBuilder(assembleMenu)
+                .setText(resourceBundle.getString("menu.assemble.hex"))
+                .setAccelerator(SWT.F7)
+                .addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent selectionEvent) {
+                        onAssembleHex();
+                    }
+                })
+                .build();
         final MenuItem assembleDebugMenuItem = new MenuItemBuilder(assembleMenu)
                 .setText(resourceBundle.getString("menu.assemble.debug"))
                 .setAccelerator(SWT.F11)
@@ -339,6 +351,7 @@ public class Ide {
                 boolean hasText = !StringUtils.isEmpty(editText.getText());
                 assembleBinaryMenuItem.setEnabled(hasText);
                 assembleCoeMenuItem.setEnabled(hasText);
+                assembleHexMenuItem.setEnabled(hasText);
                 assembleDebugMenuItem.setEnabled(hasText);
                 assembleAllMenuItem.setEnabled(hasText);
             }
@@ -415,9 +428,10 @@ public class Ide {
         FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
         fileDialog.setFilterNames(resourceBundle.getString("menu.file.disassemble.filter_names").split("\\|"));
         fileDialog.setFilterExtensions(new String[]{
-                "*.bin;*.coe",
+                "*.bin;*.coe;*.hex",
                 "*.bin",
                 "*.coe",
+                "*.hex",
                 "*.*"
         });
         String filename = fileDialog.open();
@@ -447,7 +461,7 @@ public class Ide {
             fileDialog.setFileName(file.getName());
             fileDialog.setFilterPath(file.getParent());
             fileDialog.setFilterNames(resourceBundle.getString("menu.file.save_as.filter_names").split("\\|"));
-            fileDialog.setFilterExtensions(new String[] {
+            fileDialog.setFilterExtensions(new String[]{
                     "*.s",
                     "*.asm",
                     "*.txt",
@@ -493,6 +507,10 @@ public class Ide {
         assemble(Writer.COE, "coe");
     }
 
+    private void onAssembleHex() {
+        assemble(Writer.HEX, "hex");
+    }
+
     private void onAssembleDebug() {
         assemble(Writer.DEBUG, "txt");
     }
@@ -500,6 +518,7 @@ public class Ide {
     private void onAssembleAll() {
         assemble(Writer.BINARY, "bin");
         assemble(Writer.COE, "coe", false);
+        assemble(Writer.HEX, "hex", false);
         assemble(Writer.DEBUG, "txt", false);
     }
 
@@ -614,6 +633,17 @@ public class Ide {
             InputStream fileInputStream = inputStream;
             try {
                 inputStream = CoeReader.coeToBytes(fileInputStream);
+            } catch (Exception e) {
+                showMessage(e);
+                return;
+            } finally {
+                IoUtils.close(fileInputStream);
+            }
+        }
+        if (IoUtils.getFileExtension(file).equals("hex")) {
+            InputStream fileInputStream = inputStream;
+            try {
+                inputStream = HexReader.hexToBytes(fileInputStream);
             } catch (Exception e) {
                 showMessage(e);
                 return;

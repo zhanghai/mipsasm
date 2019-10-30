@@ -25,7 +25,7 @@ public class CoeReader {
     private static ThreadLocal<Matcher> VECTOR_MATCHER = RegexUtils.makeThreadLocalMatcher(
             "memory_initialization_vector\\s*=\\s*(?<" + GROUP_VECTOR + ">.*?)\\s*;", Pattern.DOTALL);
 
-    private static ThreadLocal<Matcher> VECTOR_IGNORE_MATCHER = RegexUtils.makeThreadLocalMatcher("[,\\s]+");
+    static ThreadLocal<Matcher> VECTOR_IGNORE_MATCHER = RegexUtils.makeThreadLocalMatcher("[,\\s]+");
 
     public static ByteArrayInputStream coeToBytes(InputStream inputStream) throws IOException, CoeReaderException {
 

@@ -13,6 +13,7 @@ public enum Writer {
 
     BINARY,
     COE,
+    HEX,
     DEBUG,
     HEXDEBUG;
 
@@ -23,6 +24,9 @@ public enum Writer {
                 break;
             case COE:
                 CoeWriter.write(outputStream, context);
+                break;
+            case HEX:
+                HexWriter.write(outputStream, context);
                 break;
             case DEBUG:
                 DebugWriter.write(outputStream, context);
